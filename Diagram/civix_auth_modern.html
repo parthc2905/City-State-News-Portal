@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIVIX — Sign In</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --red: #dc2626;
+    --blue: #0066cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ═══ ANIMATED BACKGROUND ═══ */
+  .bg-pattern {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: 
+      radial-gradient(circle at 20% 30%, rgba(26, 137, 23, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(0, 102, 204, 0.06) 0%, transparent 50%);
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: 
+      linear-gradient(var(--gray-200) 1px, transparent 1px),
+      linear-gradient(90deg, var(--gray-200) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+  }
+
+  /* ═══ MAIN CONTAINER ═══ */
+  .auth-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+  }
+
+  /* ═══ TOP BAR ═══ */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    animation: slideDown 0.6s ease;
+  }
+
+  .logo-link {
+    text-decoration: none;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--black);
+    transition: color 0.3s;
+  }
+
+  .logo:hover {
+    color: var(--green);
+  }
+
+  .back-home {
+    padding: 8px 16px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .back-home:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+  }
+
+  /* ═══ AUTH CARD ═══ */
+  .auth-card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: 
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 2px 4px rgba(0,0,0,0.04),
+      0 12px 24px rgba(0,0,0,0.06);
+    padding: 48px;
+    position: relative;
+    animation: slideUp 0.6s ease;
+  }
+
+  /* ═══ FORM HEADER ═══ */
+  .form-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .form-title {
+    font-family: 'Spectral', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .form-subtitle {
+    font-size: 15px;
+    color: var(--gray-600);
+    line-height: 1.5;
+  }
+
+  /* ═══ TABS ═══ */
+  .auth-tabs {
+    display: flex;
+    background: var(--gray-100);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-600);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 2;
+  }
+
+  .tab-btn.active {
+    color: var(--black);
+    background: var(--white);
+    box-shadow: 
+      0 1px 3px rgba(0,0,0,0.08),
+      0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  /* ═══ FORM CONTAINER ═══ */
+  .forms-container {
+    position: relative;
+    min-height: 400px;
+  }
+
+  .form-view {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .form-view.active {
+    position: relative;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+
+  /* ═══ FORM ELEMENTS ═══ */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+  }
+
+  .input-wrapper {
+    position: relative;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    background: var(--white);
+  }
+
+  .form-input:hover {
+    border-color: var(--gray-300);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .form-input.error {
+    border-color: var(--red);
+  }
+
+  .form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-400);
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .input-icon:hover {
+    color: var(--gray-600);
+  }
+
+  .error-text {
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 6px;
+    display: none;
+  }
+
+  .error-text.show {
+    display: block;
+    animation: shake 0.3s;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .form-select:hover {
+    border-color: var(--gray-300);
+  }
+
+  .form-select:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  /* ═══ PASSWORD STRENGTH ═══ */
+  .password-strength {
+    margin-top: 8px;
+    display: none;
+  }
+
+  .password-strength.show {
+    display: block;
+    animation: fadeIn 0.3s;
+  }
+
+  .strength-bars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .strength-bar {
+    flex: 1;
+    height: 3px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  .strength-bar.active.weak { background: var(--red); }
+  .strength-bar.active.medium { background: #f59e0b; }
+  .strength-bar.active.strong { background: var(--green); }
+
+  .strength-text {
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .strength-text.weak { color: var(--red); }
+  .strength-text.medium { color: #f59e0b; }
+  .strength-text.strong { color: var(--green); }
+
+  /* ═══ CHECKBOX ═══ */
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--gray-300);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .custom-checkbox.checked {
+    background: var(--green);
+    border-color: var(--green);
+    position: relative;
+  }
+
+  .custom-checkbox.checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .checkbox-label {
+    font-size: 14px;
+    color: var(--gray-700);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .checkbox-label a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .checkbox-label a:hover {
+    text-decoration: underline;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .btn {
+    width: 100%;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary:disabled {
+    background: var(--gray-400);
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--gray-900);
+    border: 1.5px solid var(--gray-200);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+  }
+
+  .btn.loading {
+    pointer-events: none;
+    position: relative;
+    color: transparent;
+  }
+
+  .btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.6s linear infinite;
+  }
+
+  /* ═══ DIVIDER ═══ */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  .divider-text {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+
+  /* ═══ SOCIAL BUTTONS ═══ */
+  .social-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .btn-social {
+    padding: 12px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--gray-900);
+  }
+
+  .btn-social:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-300);
+  }
+
+  .social-icon {
+    font-size: 18px;
+  }
+
+  /* ═══ FORGOT PASSWORD ═══ */
+  .forgot-link {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
+  }
+
+  .forgot-link a {
+    color: var(--green);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .forgot-link a:hover {
+    text-decoration: underline;
+  }
+
+  /* ═══ FOOTER TEXT ═══ */
+  .form-footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  .form-footer a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .form-footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* ═══ SUCCESS STATE ═══ */
+  .success-view {
+    text-align: center;
+    padding: 40px 0;
+    display: none;
+  }
+
+  .success-view.show {
+    display: block;
+    animation: fadeIn 0.5s;
+  }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 40px;
+  }
+
+  .success-title {
+    font-family: 'Spectral', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+
+  .success-text {
+    font-size: 15px;
+    color: var(--gray-600);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ═══ INFO BOX ═══ */
+  .info-box {
+    background: var(--blue);
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 12px;
+    margin-bottom: 32px;
+    animation: slideDown 0.6s ease 0.2s backwards;
+  }
+
+  .info-box-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+
+  .info-box-text {
+    font-size: 14px;
+    opacity: 0.95;
+    line-height: 1.5;
+  }
+
+  /* ═══ ANIMATIONS ═══ */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 640px) {
+    .auth-card {
+      padding: 32px 24px;
+    }
+
+    .form-title {
+      font-size: 28px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .social-buttons {
+      grid-template-columns: 1fr;
+    }
+
+    .top-bar {
+      margin-bottom: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div class="bg-grid"></div>
+
+<div class="auth-wrapper">
+  
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <a href="civix_final.html" class="logo-link">
+      <div class="logo">CIVIX</div>
+    </a>
+    <a href="civix_final.html" class="back-home">← Back to Home</a>
+  </div>
+
+  <!-- INFO BOX -->
+  <div class="info-box" id="infoBox">
+    <div class="info-box-title">🎉 Join 2.4M+ Informed Citizens</div>
+    <div class="info-box-text">Get hyper-local news, contribute stories, and stay connected with your community.</div>
+  </div>
+
+  <!-- AUTH CARD -->
+  <div class="auth-card">
+    
+    <!-- FORM HEADER -->
+    <div class="form-header">
+      <h1 class="form-title" id="formTitle">Welcome to CIVIX</h1>
+      <p class="form-subtitle" id="formSubtitle">Sign in to your account or create a new one</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="tab-btn active" onclick="switchTab('signin')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+    </div>
+
+    <!-- FORMS CONTAINER -->
+    <div class="forms-container">
+      
+      <!-- ═══ SIGN IN FORM ═══ -->
+      <div class="form-view active" id="signinView">
+        <form onsubmit="handleSignin(event)">
+          
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input type="password" class="form-input" id="signinPassword" placeholder="••••••••" required>
+              <span class="input-icon" onclick="togglePassword('signinPassword')">👁️</span>
+            </div>
+          </div>
+
+          <div class="forgot-link">
+            <a href="#forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="signinBtn">
+            Sign In
+          </button>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or continue with</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="social-buttons">
+            <button type="button" class="btn-social">
+              <span class="social-icon">G</span> Google
+            </button>
+            <button type="button" class="btn-social">
+              <span class="social-icon">f</span> Facebook
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- ═══ SIGN UP FORM ═══ -->
+      <div class="form-view" id="signupView">
+        <form onsubmit="handleSignup(event)">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-input" placeholder="John" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-input" placeholder="Doe" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="signupEmail" placeholder="you@example.com" required>
+            <div class="error-text" id="emailError">Please enter a valid email</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" placeholder="+91 98765 43210" required pattern="[0-9+\s\-()]{10,15}">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <select class="form-select" required>
+                <option value="">Select State</option>
+                <option value="maharashtra">Maharashtra</option>
+                <option value="gujarat">Gujarat</option>
+                <option value="karnataka">Karnataka</option>
+                <option value="delhi">Delhi</option>
+                <option value="rajasthan">Rajasthan</option>
+                <option value="tamil-nadu">Tamil Nadu</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <select class="form-select" required>
+                <option value="">Select City</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="pune">Pune</option>
+                <option value="ahmedabad">Ahmedabad</option>
+                <option value="bengaluru">Bengaluru</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input type="password" class="form-input" id="signupPassword" placeholder="••••••••" required minlength="8" oninput="checkPasswordStrength()">
+              <span class="input-icon" onclick="togglePassword('signupPassword')">👁️</span>
+            </div>
+            <div class="password-strength" id="passwordStrength">
+              <div class="strength-bars">
+                <div class="strength-bar" id="bar1"></div>
+                <div class="strength-bar" id="bar2"></div>
+                <div class="strength-bar" id="bar3"></div>
+                <div class="strength-bar" id="bar4"></div>
+              </div>
+              <div class="strength-text" id="strengthText">Enter a password</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <div class="input-wrapper">
+              <input type="password" class="form-input" id="confirmPassword" placeholder="••••••••" required minlength="8">
+              <span class="input-icon" onclick="togglePassword('confirmPassword')">👁️</span>
+            </div>
+            <div class="error-text" id="passwordMatchError">Passwords do not match</div>
+          </div>
+
+          <div class="checkbox-group">
+            <div class="custom-checkbox" id="termsCheckbox" onclick="toggleCheckbox('termsCheckbox')"></div>
+            <label class="checkbox-label" for="termsCheckbox">
+              I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="signupBtn">
+            Create Account
+          </button>
+
+        </form>
+      </div>
+
+      <!-- ═══ SUCCESS VIEW ═══ -->
+      <div class="success-view" id="successView">
+        <div class="success-icon">✅</div>
+        <h2 class="success-title">Welcome to CIVIX!</h2>
+        <p class="success-text">Your account has been created successfully. You'll be redirected to the homepage in a moment.</p>
+        <button class="btn btn-primary" onclick="window.location.href='civix_final.html'">
+          Go to Homepage
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  let termsAccepted = false;
+
+  // Tab switching
+  function switchTab(tab) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const signinView = document.getElementById('signinView');
+    const signupView = document.getElementById('signupView');
+    const formTitle = document.getElementById('formTitle');
+    const formSubtitle = document.getElementById('formSubtitle');
+    const infoBox = document.getElementById('infoBox');
+
+    tabs.forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if (tab === 'signin') {
+      signinView.classList.add('active');
+      signupView.classList.remove('active');
+      formTitle.textContent = 'Welcome Back';
+      formSubtitle.textContent = 'Sign in to continue to your account';
+      infoBox.style.display = 'none';
+    } else {
+      signupView.classList.add('active');
+      signinView.classList.remove('active');
+      formTitle.textContent = 'Create Your Account';
+      formSubtitle.textContent = 'Join our community of informed citizens';
+      infoBox.style.display = 'block';
+    }
+  }
+
+  // Toggle password visibility
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    const icon = input.nextElementSibling;
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = '🙈';
+    } else {
+      input.type = 'password';
+      icon.textContent = '👁️';
+    }
+  }
+
+  // Toggle checkbox
+  function toggleCheckbox(id) {
+    const checkbox = document.getElementById(id);
+    checkbox.classList.toggle('checked');
+    termsAccepted = checkbox.classList.contains('checked');
+  }
+
+  // Password strength checker
+  function checkPasswordStrength() {
+    const password = document.getElementById('signupPassword').value;
+    const strengthDiv = document.getElementById('passwordStrength');
+    const strengthText = document.getElementById('strengthText');
+    const bars = [
+      document.getElementById('bar1'),
+      document.getElementById('bar2'),
+      document.getElementById('bar3'),
+      document.getElementById('bar4')
+    ];
+
+    if (password.length === 0) {
+      strengthDiv.classList.remove('show');
+      return;
+    }
+
+    strengthDiv.classList.add('show');
+
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+    // Reset bars
+    bars.forEach(bar => {
+      bar.classList.remove('active', 'weak', 'medium', 'strong');
+    });
+    strengthText.className = 'strength-text';
+
+    if (strength <= 2) {
+      for (let i = 0; i < 2; i++) {
+        bars[i].classList.add('active', 'weak');
+      }
+      strengthText.classList.add('weak');
+      strengthText.textContent = 'Weak password';
+    } else if (strength === 3) {
+      for (let i = 0; i < 3; i++) {
+        bars[i].classList.add('active', 'medium');
+      }
+      strengthText.classList.add('medium');
+      strengthText.textContent = 'Medium strength';
+    } else {
+      bars.forEach(bar => bar.classList.add('active', 'strong'));
+      strengthText.classList.add('strong');
+      strengthText.textContent = 'Strong password';
+    }
+  }
+
+  // Validate password match
+  document.getElementById('confirmPassword')?.addEventListener('input', function() {
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = this.value;
+    const errorDiv = document.getElementById('passwordMatchError');
+
+    if (password === confirmPassword || confirmPassword === '') {
+      this.classList.remove('error');
+      errorDiv.classList.remove('show');
+    } else {
+      this.classList.add('error');
+      errorDiv.classList.add('show');
+    }
+  });
+
+  // Handle signin
+  function handleSignin(event) {
+    event.preventDefault();
+    const btn = document.getElementById('signinBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    setTimeout(() => {
+      window.location.href = 'civix_final.html';
+    }, 1000);
+  }
+
+  // Handle signup
+  function handleSignup(event) {
+    event.preventDefault();
+
+    // Validate passwords match
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const passwordError = document.getElementById('passwordMatchError');
+
+    if (password !== confirmPassword) {
+      document.getElementById('confirmPassword').classList.add('error');
+      passwordError.classList.add('show');
+      return;
+    }
+
+    // Check terms
+    if (!termsAccepted) {
+      alert('Please accept the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    const btn = document.getElementById('signupBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    setTimeout(() => {
+      document.getElementById('signupView').style.display = 'none';
+      document.getElementById('successView').classList.add('show');
+      document.getElementById('infoBox').style.display = 'none';
+
+      setTimeout(() => {
+        window.location.href = 'civix_final.html';
+      }, 3000);
+    }, 1500);
+  }
+
+  // Email validation
+  document.getElementById('signupEmail')?.addEventListener('blur', function() {
+    const emailError = document.getElementById('emailError');
+    if (!this.validity.valid && this.value) {
+      this.classList.add('error');
+      emailError.classList.add('show');
+    } else {
+      this.classList.remove('error');
+      emailError.classList.remove('show');
+    }
+  });
+
+  // Hide info box initially if on signin
+  document.getElementById('infoBox').style.display = 'none';
+</script>
+
+</body>
+</html>

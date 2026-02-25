@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CIVIX — Join Our Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --red: #dc2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--gray-900);
+    overflow-x: hidden;
+  }
+
+  /* ═══ MAIN CONTAINER ═══ */
+  .auth-container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ═══ LEFT SECTION - IMAGE WITH GRADIENT ═══ */
+  .left-section {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d4a6e 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .bg-image {
+    position: absolute;
+    inset: 0;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%231a1a2e" width="1200" height="800"/><g opacity="0.15"><circle cx="200" cy="200" r="300" fill="%232d4a6e"/><circle cx="1000" cy="600" r="400" fill="%231a8917"/></g></svg>');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3;
+  }
+
+  .gradient-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(26, 137, 23, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+  }
+
+  .left-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 80px 60px;
+    color: var(--white);
+  }
+
+  .logo-large {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 72px;
+    letter-spacing: 6px;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.8s ease;
+  }
+
+  .tagline {
+    font-family: 'Spectral', serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 20px;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
+  }
+
+  .description {
+    font-size: 18px;
+    line-height: 1.7;
+    opacity: 0.9;
+    max-width: 500px;
+    animation: fadeInUp 0.8s ease 0.4s backwards;
+  }
+
+  .features {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeInUp 0.8s ease 0.6s backwards;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 16px;
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  /* ═══ RIGHT SECTION - FORM ═══ */
+  .right-section {
+    flex: 1;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+  }
+
+  .form-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+  }
+
+  .form-slide {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+  }
+
+  .form-slide.active {
+    position: relative;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  /* ═══ LOGO IN FORM ═══ */
+  .form-logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 42px;
+    letter-spacing: 4px;
+    color: var(--black);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .form-title {
+    font-family: 'Spectral', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .form-subtitle {
+    font-size: 15px;
+    color: var(--gray-600);
+    margin-bottom: 32px;
+    text-align: center;
+  }
+
+  /* ═══ FORM ELEMENTS ═══ */
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
+    background: var(--white);
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .form-input.error {
+    border-color: var(--red);
+  }
+
+  .form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+  }
+
+  .error-message {
+    font-size: 13px;
+    color: var(--red);
+    margin-top: 4px;
+    display: none;
+  }
+
+  .error-message.show {
+    display: block;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .form-select:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .checkbox-group label {
+    font-size: 14px;
+    color: var(--gray-700);
+    cursor: pointer;
+    line-height: 1.5;
+  }
+
+  .checkbox-group a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .checkbox-group a:hover {
+    text-decoration: underline;
+  }
+
+  .forgot-password {
+    text-align: right;
+    margin-bottom: 24px;
+  }
+
+  .forgot-password a {
+    color: var(--green);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .forgot-password a:hover {
+    text-decoration: underline;
+  }
+
+  /* ═══ PASSWORD STRENGTH INDICATOR ═══ */
+  .password-strength {
+    margin-top: 8px;
+    display: none;
+  }
+
+  .password-strength.show {
+    display: block;
+  }
+
+  .strength-bar {
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+
+  .strength-fill {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+
+  .strength-fill.weak { width: 33%; background: var(--red); }
+  .strength-fill.medium { width: 66%; background: #f59e0b; }
+  .strength-fill.strong { width: 100%; background: var(--green); }
+
+  .strength-text {
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .btn-primary {
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .btn-primary:disabled {
+    background: var(--gray-400);
+    cursor: not-allowed;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--gray-200);
+  }
+
+  .divider-text {
+    font-size: 14px;
+    color: var(--gray-600);
+  }
+
+  .social-login {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .btn-social {
+    padding: 12px;
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--white);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-social:hover {
+    border-color: var(--gray-400);
+    background: var(--gray-200);
+  }
+
+  .switch-form {
+    text-align: center;
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-top: 24px;
+  }
+
+  .switch-form a {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .switch-form a:hover {
+    text-decoration: underline;
+  }
+
+  /* ═══ ANIMATIONS ═══ */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 968px) {
+    .auth-container {
+      flex-direction: column;
+    }
+
+    .left-section {
+      min-height: 300px;
+    }
+
+    .left-content {
+      padding: 40px 32px;
+    }
+
+    .logo-large {
+      font-size: 48px;
+    }
+
+    .tagline {
+      font-size: 24px;
+    }
+
+    .features {
+      display: none;
+    }
+  }
+
+  /* ═══ BACK BUTTON ═══ */
+  .back-btn {
+    position: absolute;
+    top: 32px;
+    left: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    z-index: 10;
+  }
+
+  .back-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* ═══ SUCCESS MESSAGE ═══ */
+  .success-message {
+    display: none;
+    text-align: center;
+    animation: fadeInUp 0.6s ease;
+    padding: 40px 0;
+  }
+
+  .success-message.show {
+    display: block;
+  }
+
+  .success-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+  }
+
+  .success-message h2 {
+    font-family: 'Spectral', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 12px;
+  }
+
+  .success-message p {
+    font-size: 16px;
+    color: var(--gray-600);
+    margin-bottom: 24px;
+  }
+
+  /* ═══ LOADING STATE ═══ */
+  .btn-primary.loading {
+    position: relative;
+    color: transparent;
+  }
+
+  .btn-primary.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.6s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="auth-container" id="authContainer">
+  
+  <!-- ═══ LEFT SECTION - IMAGE WITH GRADIENT TEXT ═══ -->
+  <div class="left-section">
+    <button class="back-btn" onclick="window.location.href='civix_final.html'">
+      ← Back to Home
+    </button>
+    <div class="bg-image"></div>
+    <div class="gradient-overlay"></div>
+    <div class="left-content">
+      <div class="logo-large">CIVIX</div>
+      <h1 class="tagline">Every Voice Matters. Every Story Counts.</h1>
+      <p class="description">
+        Join India's most trusted hyper-local news platform. Get verified news from your city, contribute as a citizen journalist, and stay connected with what matters to your community.
+      </p>
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">📰</div>
+          <div>
+            <strong>Hyper-local Coverage</strong><br>
+            <span style="opacity:0.8;font-size:14px;">News from 500+ cities across India</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">✅</div>
+          <div>
+            <strong>Verified Reporting</strong><br>
+            <span style="opacity:0.8;font-size:14px;">Every story fact-checked by professionals</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📸</div>
+          <div>
+            <strong>Citizen Journalism</strong><br>
+            <span style="opacity:0.8;font-size:14px;">Share your local stories with millions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT SECTION - FORM ═══ -->
+  <div class="right-section">
+    <div class="form-wrapper">
+      
+      <div class="form-container">
+        
+        <!-- ═══ SIGN IN FORM ═══ -->
+        <div class="form-slide active" id="signinForm">
+          <div class="form-logo">CIVIX</div>
+          <h2 class="form-title">Welcome Back</h2>
+          <p class="form-subtitle">Sign in to continue to your account</p>
+
+          <form onsubmit="handleSignin(event)">
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="you@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="remember">
+              <label for="remember">Remember me for 30 days</label>
+            </div>
+
+            <div class="forgot-password">
+              <a href="#">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-primary" id="signinBtn">Sign In</button>
+          </form>
+
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or continue with</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="social-login">
+            <button class="btn-social" type="button">
+              <span style="font-size:18px;">G</span> Google
+            </button>
+            <button class="btn-social" type="button">
+              <span style="font-size:18px;">f</span> Facebook
+            </button>
+          </div>
+
+          <div class="switch-form">
+            Don't have an account? <a onclick="switchToSignup()">Sign up</a>
+          </div>
+        </div>
+
+        <!-- ═══ SIGN UP FORM ═══ -->
+        <div class="form-slide" id="signupForm">
+          <div class="form-logo">CIVIX</div>
+          <h2 class="form-title">Create Account</h2>
+          <p class="form-subtitle">Join our community of informed citizens</p>
+
+          <form onsubmit="handleSignup(event)" id="signupFormElement">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-input" placeholder="John" required id="firstName">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-input" placeholder="Doe" required id="lastName">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email Address</label>
+              <input type="email" class="form-input" placeholder="you@example.com" required id="email">
+              <div class="error-message" id="emailError">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" class="form-input" placeholder="+91 98765 43210" required id="phone" pattern="[0-9+\s\-()]{10,15}">
+              <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">State</label>
+                <select class="form-select" required id="state">
+                  <option value="">Select State</option>
+                  <option value="maharashtra">Maharashtra</option>
+                  <option value="gujarat">Gujarat</option>
+                  <option value="karnataka">Karnataka</option>
+                  <option value="delhi">Delhi</option>
+                  <option value="rajasthan">Rajasthan</option>
+                  <option value="tamil-nadu">Tamil Nadu</option>
+                  <option value="west-bengal">West Bengal</option>
+                  <option value="uttar-pradesh">Uttar Pradesh</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">City</label>
+                <select class="form-select" required id="city">
+                  <option value="">Select City</option>
+                  <option value="mumbai">Mumbai</option>
+                  <option value="pune">Pune</option>
+                  <option value="ahmedabad">Ahmedabad</option>
+                  <option value="bengaluru">Bengaluru</option>
+                  <option value="delhi">Delhi</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-input" placeholder="••••••••" required id="password" minlength="8" oninput="checkPasswordStrength()">
+              <div class="password-strength" id="passwordStrength">
+                <div class="strength-bar">
+                  <div class="strength-fill" id="strengthFill"></div>
+                </div>
+                <div class="strength-text" id="strengthText">Enter a password</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Confirm Password</label>
+              <input type="password" class="form-input" placeholder="••••••••" required id="confirmPassword" minlength="8">
+              <div class="error-message" id="passwordMatchError">Passwords do not match</div>
+            </div>
+
+            <div class="checkbox-group">
+              <input type="checkbox" id="terms" required>
+              <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+            </div>
+
+            <button type="submit" class="btn-primary" id="signupBtn">Create Account</button>
+          </form>
+
+          <div class="switch-form">
+            Already have an account? <a onclick="switchToSignin()">Sign in</a>
+          </div>
+        </div>
+
+        <!-- ═══ SUCCESS MESSAGE ═══ -->
+        <div class="success-message" id="successMessage">
+          <div class="success-icon">✅</div>
+          <h2>Welcome to CIVIX!</h2>
+          <p>Your account has been created successfully. Redirecting you to the homepage...</p>
+          <button class="btn-primary" onclick="window.location.href='civix_final.html'">Go to Homepage</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const authContainer = document.getElementById('authContainer');
+  const signinForm = document.getElementById('signinForm');
+  const signupForm = document.getElementById('signupForm');
+  const successMessage = document.getElementById('successMessage');
+
+  function switchToSignup() {
+    // Switch forms with slide animation
+    signinForm.classList.remove('active');
+    setTimeout(() => {
+      signupForm.classList.add('active');
+    }, 100);
+  }
+
+  function switchToSignin() {
+    // Switch forms with slide animation
+    signupForm.classList.remove('active');
+    setTimeout(() => {
+      signinForm.classList.add('active');
+    }, 100);
+  }
+
+  function handleSignin(event) {
+    event.preventDefault();
+    const btn = document.getElementById('signinBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      window.location.href = 'civix_final.html';
+    }, 1000);
+  }
+
+  function handleSignup(event) {
+    event.preventDefault();
+    
+    // Validate passwords match
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const passwordMatchError = document.getElementById('passwordMatchError');
+    
+    if (password !== confirmPassword) {
+      document.getElementById('confirmPassword').classList.add('error');
+      passwordMatchError.classList.add('show');
+      return;
+    }
+    
+    // Clear any errors
+    document.getElementById('confirmPassword').classList.remove('error');
+    passwordMatchError.classList.remove('show');
+    
+    // Show loading state
+    const btn = document.getElementById('signupBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+    
+    // Simulate API call
+    setTimeout(() => {
+      // Hide form, show success
+      signupForm.style.display = 'none';
+      successMessage.classList.add('show');
+      
+      // Redirect after 3 seconds
+      setTimeout(() => {
+        window.location.href = 'civix_final.html';
+      }, 3000);
+    }, 1500);
+  }
+
+  // Password strength checker
+  function checkPasswordStrength() {
+    const password = document.getElementById('password').value;
+    const strengthIndicator = document.getElementById('passwordStrength');
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    
+    if (password.length === 0) {
+      strengthIndicator.classList.remove('show');
+      return;
+    }
+    
+    strengthIndicator.classList.add('show');
+    
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+    if (password.match(/[0-9]/)) strength++;
+    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+    
+    strengthFill.className = 'strength-fill';
+    
+    if (strength <= 2) {
+      strengthFill.classList.add('weak');
+      strengthText.textContent = 'Weak password';
+      strengthText.style.color = 'var(--red)';
+    } else if (strength === 3) {
+      strengthFill.classList.add('medium');
+      strengthText.textContent = 'Medium strength';
+      strengthText.style.color = '#f59e0b';
+    } else {
+      strengthFill.classList.add('strong');
+      strengthText.textContent = 'Strong password';
+      strengthText.style.color = 'var(--green)';
+    }
+  }
+
+  // Clear password match error on input
+  document.getElementById('confirmPassword')?.addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    const passwordMatchError = document.getElementById('passwordMatchError');
+    
+    if (password === confirmPassword) {
+      this.classList.remove('error');
+      passwordMatchError.classList.remove('show');
+    }
+  });
+
+  // Email validation
+  document.getElementById('email')?.addEventListener('blur', function() {
+    const emailError = document.getElementById('emailError');
+    if (!this.validity.valid && this.value) {
+      this.classList.add('error');
+      emailError.classList.add('show');
+    } else {
+      this.classList.remove('error');
+      emailError.classList.remove('show');
+    }
+  });
+
+  // Phone validation
+  document.getElementById('phone')?.addEventListener('blur', function() {
+    const phoneError = document.getElementById('phoneError');
+    if (!this.validity.valid && this.value) {
+      this.classList.add('error');
+      phoneError.classList.add('show');
+    } else {
+      this.classList.remove('error');
+      phoneError.classList.remove('show');
+    }
+  });
+
+  // Add subtle parallax effect on background
+  document.addEventListener('mousemove', (e) => {
+    const bgImage = document.querySelector('.bg-image');
+    if (bgImage && window.innerWidth > 968) {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      bgImage.style.transform = `translate(${x * 20}px, ${y * 20}px) scale(1.1)`;
+    }
+  });
+</script>
+
+</body>
+</html>
