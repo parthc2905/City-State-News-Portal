@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .forms import UserSignupForm, UserLoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from .decorators import role_required
 
 # signup view for user registration
 def userSignupView(request):
@@ -32,8 +33,8 @@ def userLoginView(request):
                 login(request, user)
                 if user.role == 'admin':
                     return redirect('admin_dashboard') # Replace with your admin dashboard URL name
-                elif user.role == 'user':
-                    print(user)
+                elif user.role == 'reader':
+                    # print(user)
                     return redirect('reader_dashboard') # Replace with your reader dashboard URL name
             else:
                 return render(request,'core/login.html',{'form':form}) 
@@ -41,11 +42,14 @@ def userLoginView(request):
         form = UserLoginForm()
         return render(request, 'core/login.html', {'form': form})   
 
-@login_required(login_url='login')
+
+# @login_required(login_url='login')
+@role_required(allowed_roles=["admin"])
 def adminDashboardView(request):
-    return render(request, 'core/admin_dashboard.html')
+    return render(request, 'core/admin/admin_dashboard.html')
 
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
+@role_required(allowed_roles=["reader"])
 def readerDashboardView(request):
-    return render(request, 'core/reader_dashboard.html')
+    return render(request, 'core/reader/reader_dashboard.html')

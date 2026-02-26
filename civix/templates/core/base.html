@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'style.css' %}"> {% endcomment %}
+</head>
+<body>
+    {% comment %} //check rol for navbar... {% endcomment %}
+    {% if request.user.role == 'admin' %}
+        {% include 'core/admin/ownerSidebar.html' %}
+    {% elif request.user.role == 'reader' %}
+        {% include 'core/reader/readerNavbar.html' %}
+    {% endif %}
+    {% block content %}
+    {% endblock %}
+    footer...
+</body>
+</html>

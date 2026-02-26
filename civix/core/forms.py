@@ -15,5 +15,5 @@ class UserSignupForm(UserCreationForm):
 
 # User Login Form
 class UserLoginForm(forms.Form):
-    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'autofocus': True}))
+    email = forms.EmailField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput())
