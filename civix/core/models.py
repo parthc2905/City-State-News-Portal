@@ -32,14 +32,32 @@ class User(AbstractBaseUser):
         return self.is_admin
         
     # we will use email as the unique identifier for authentication instead of username
+    first_name = models.CharField(max_length=50,null=True)
+    middle_name = models.CharField(max_length=50,null=True)
+    last_name = models.CharField(max_length=50,null=True)
     email = models.EmailField(unique=True)
     role_choice =(
         ('admin','admin'),
-        ('user','user'),
+        ('reader','reader'),
         ('journalist','journalist'),
         ('advertiser','advertiser'),
     )
-    role = models.CharField(max_length=10,choices=role_choice, default='admin')
+    role = models.CharField(max_length=10,choices=role_choice, default='reader')
+    phone = models.CharField(max_length=15, null=True)
+    profile_image = models.CharField(max_length=255, null=True)
+    acc_choice = (
+        ('active','active'),
+        ('blocked','blocked'),
+        ('suspended','suspended'),
+    )
+    account_status = models.CharField(max_length=10,choices=acc_choice, default='active')
+    app_choice = (
+        ('pending','pending'),
+        ('approved','approved'),
+        ('rejected','rejected'),
+        ('not_required','not_required'),
+    )
+    approval_status = models.CharField(max_length=15,choices=app_choice, default='pending')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
@@ -49,9 +67,12 @@ class User(AbstractBaseUser):
     
     objects = UserManager()
 
-    #override userName filed
+    #override userName field
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    class Meta: 
+        db_table = "users"
     
     def __str__(self):
         return self.email

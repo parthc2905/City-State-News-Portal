@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Settings — CIVIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --red: #dc2626;
+    --blue: #0066cc;
+    --orange: #e67700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ═══ HEADER ═══ */
+  .top-nav {
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    background: rgba(255,255,255,0.95);
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-back {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ═══ CONTAINER ═══ */
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* ═══ HEADER ═══ */
+  .page-header {
+    margin-bottom: 32px;
+  }
+  .page-title {
+    font-family: 'Spectral', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--gray-600);
+  }
+
+  /* ═══ CARD ═══ */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .card-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-top: 4px;
+  }
+
+  /* ═══ PROFILE HEADER ═══ */
+  .profile-header {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .avatar-section {
+    text-align: center;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green), var(--blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 16px;
+    border: 4px solid var(--white);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .avatar-upload {
+    position: absolute;
+    bottom: 16px;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: 3px solid var(--white);
+    transition: all 0.2s;
+  }
+
+  .avatar-upload:hover {
+    background: var(--green-dark);
+    transform: scale(1.1);
+  }
+
+  .upload-input {
+    display: none;
+  }
+
+  .upload-btn {
+    padding: 8px 16px;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .upload-btn:hover {
+    background: var(--gray-200);
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    font-family: 'Spectral', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+  }
+
+  .profile-email {
+    font-size: 15px;
+    color: var(--gray-600);
+    margin-bottom: 16px;
+  }
+
+  .profile-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge-verified {
+    background: var(--green-light);
+    color: var(--green-dark);
+  }
+
+  .badge-journalist {
+    background: #eff6ff;
+    color: #1e40af;
+  }
+
+  .badge-member {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  /* ═══ FORM ═══ */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+    background: var(--white);
+  }
+
+  .form-input:hover,
+  .form-select:hover,
+  .form-textarea:hover {
+    border-color: var(--gray-300);
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-help {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-top: 6px;
+  }
+
+  /* ═══ TOGGLE SWITCH ═══ */
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .toggle-row:last-child {
+    border-bottom: none;
+  }
+
+  .toggle-info h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .toggle-info p {
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    background: var(--gray-300);
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-switch.active {
+    background: var(--green);
+  }
+
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s;
+  }
+
+  .toggle-switch.active::after {
+    left: 24px;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-300);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-100);
+  }
+
+  .btn-danger {
+    background: var(--red);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+  }
+
+  /* ═══ ALERT ═══ */
+  .alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    display: none;
+  }
+
+  .alert.show {
+    display: block;
+    animation: slideDown 0.3s ease;
+  }
+
+  .alert-success {
+    background: var(--green-light);
+    color: var(--green-dark);
+    border: 1px solid var(--green);
+  }
+
+  .alert-warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+  }
+
+  /* ═══ STATS GRID ═══ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-box {
+    background: var(--gray-100);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+
+  /* ═══ ANIMATIONS ═══ */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .profile-header {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="top-nav">
+  <div class="nav-inner">
+    <a href="civix_final.html" class="logo">CIVIX</a>
+    <a href="civix_final.html" class="nav-back">← Back to Home</a>
+  </div>
+</header>
+
+<div class="container">
+  
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1 class="page-title">Profile Settings</h1>
+    <p class="page-subtitle">Manage your account information and preferences</p>
+  </div>
+
+  <!-- ALERT -->
+  <div class="alert alert-success" id="successAlert">
+    ✓ Profile updated successfully!
+  </div>
+
+  <!-- PROFILE OVERVIEW CARD -->
+  <div class="card">
+    <div class="profile-header">
+      <div class="avatar-section">
+        <div class="avatar-wrapper">
+          <div class="avatar" id="avatarPreview">RK</div>
+          <label for="avatarInput" class="avatar-upload">📷</label>
+          <input type="file" id="avatarInput" class="upload-input" accept="image/*" onchange="previewAvatar(event)">
+        </div>
+        <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">Change Photo</button>
+      </div>
+
+      <div class="profile-info">
+        <h2 class="profile-name">Rajesh Kumar</h2>
+        <p class="profile-email">rajesh.kumar@example.com</p>
+        <div class="profile-badges">
+          <span class="badge badge-verified">✓ Verified</span>
+          <span class="badge badge-journalist">📝 Journalist</span>
+          <span class="badge badge-member">Member since Feb 2024</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-value">47</div>
+        <div class="stat-label">Articles Published</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">12.4K</div>
+        <div class="stat-label">Total Readers</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">342</div>
+        <div class="stat-label">Followers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERSONAL INFORMATION -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Personal Information</h3>
+      <p class="card-description">Update your personal details and contact information</p>
+    </div>
+
+    <form onsubmit="handleProfileUpdate(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" value="Rajesh" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" value="Kumar" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" value="rajesh.kumar@example.com" required>
+          <p class="form-help">Your email will be kept private</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" value="+91 98765 43210" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea class="form-textarea" placeholder="Tell us about yourself...">Investigative journalist covering urban development and civic issues in Mumbai. Passionate about hyperlocal reporting and community engagement.</textarea>
+        <p class="form-help">Write a short introduction about yourself (max 200 characters)</p>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">State</label>
+          <select class="form-select" required>
+            <option value="maharashtra" selected>Maharashtra</option>
+            <option value="gujarat">Gujarat</option>
+            <option value="karnataka">Karnataka</option>
+            <option value="delhi">Delhi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <select class="form-select" required>
+            <option value="mumbai" selected>Mumbai</option>
+            <option value="pune">Pune</option>
+            <option value="nashik">Nashik</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ACCOUNT PREFERENCES -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Notification Preferences</h3>
+      <p class="card-description">Manage how you receive updates from CIVIX</p>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <h4>Email Notifications</h4>
+        <p>Receive email updates about new articles in your city</p>
+      </div>
+      <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <h4>Breaking News Alerts</h4>
+        <p>Get instant notifications for breaking news</p>
+      </div>
+      <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <h4>Weekly Newsletter</h4>
+        <p>Receive a weekly digest of top stories</p>
+      </div>
+      <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+    </div>
+
+    <div class="toggle-row">
+      <div class="toggle-info">
+        <h4>Article Recommendations</h4>
+        <p>Get personalized content suggestions</p>
+      </div>
+      <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+    </div>
+  </div>
+
+  <!-- PRIVACY & SECURITY -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Privacy & Security</h3>
+      <p class="card-description">Manage your account security settings</p>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Change Password</label>
+      <input type="password" class="form-input" placeholder="Enter new password">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirm New Password</label>
+      <input type="password" class="form-input" placeholder="Confirm new password">
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-primary">Update Password</button>
+    </div>
+  </div>
+
+  <!-- DANGER ZONE -->
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title" style="color: var(--red);">Danger Zone</h3>
+      <p class="card-description">Irreversible account actions</p>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Toggle switch
+  function toggleSwitch(element) {
+    element.classList.toggle('active');
+  }
+
+  // Preview avatar
+  function previewAvatar(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('avatarPreview').style.backgroundImage = `url(${e.target.result})`;
+        document.getElementById('avatarPreview').style.backgroundSize = 'cover';
+        document.getElementById('avatarPreview').textContent = '';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Handle profile update
+  function handleProfileUpdate(event) {
+    event.preventDefault();
+    
+    // Show success alert
+    const alert = document.getElementById('successAlert');
+    alert.classList.add('show');
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Hide alert after 3 seconds
+    setTimeout(() => {
+      alert.classList.remove('show');
+    }, 3000);
+  }
+
+  // Reset form
+  function resetForm() {
+    if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+      window.location.reload();
+    }
+  }
+
+  // Confirm delete
+  function confirmDelete() {
+    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      if (confirm('This will permanently delete all your data, articles, and comments. Are you absolutely sure?')) {
+        alert('Account deletion initiated. You will receive a confirmation email.');
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

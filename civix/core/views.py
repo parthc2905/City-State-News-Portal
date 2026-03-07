@@ -4,28 +4,43 @@ from .forms import UserSignupForm, UserLoginForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
+from django.core.mail import send_mail
+from django.conf import settings
 
 # signup view for user registration
 def userSignupView(request):
+    active_tab = "signup"
+
     if request.method == 'POST':
+        print(request.POST)
         form = UserSignupForm(request.POST)
+        # if "signup_submit" in request.POST:
+        #     active_tab = "signup"
+        # elif "signin_submit" in request.POST:
+        #     active_tab = "signin"
+
         if form.is_valid():
+            #email send
+            email = form.cleaned_data['email']
+            send_mail(subject="welcome to find my newspaper",message="Thank you for registering with CIVIX.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
             form.save()
             return redirect('login') # for now error will be shown
         else:
-            return render(request,'core/signup.html',{'form':form})  
+            return render(request,'core/signupsignin.html',{'form':form ,"active_tab": active_tab })
     else:
         form = UserSignupForm()
-        return render(request, 'core/signup.html', {'form': form})
+        return render(request, 'core/signupsignin.html', {'form': form, "active_tab": active_tab})
 
 
 # login view for user authentication
 def userLoginView(request):
+    active_tab = "signin"
     if request.method == 'POST':
         form = UserLoginForm(request.POST or None)
         if form.is_valid():
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
+            
             # print(email,password)
             user = authenticate(request, email=email, password=password)
             # print(user)
@@ -37,10 +52,10 @@ def userLoginView(request):
                     # print(user)
                     return redirect('reader_dashboard') # Replace with your reader dashboard URL name
             else:
-                return render(request,'core/login.html',{'form':form}) 
+                return render(request,'core/signupsignin.html',{'form':form,"active_tab": active_tab}) 
     else:
         form = UserLoginForm()
-        return render(request, 'core/login.html', {'form': form})   
+        return render(request, 'core/signupsignin.html', {'form': form ,"active_tab": active_tab})   
 
 
 # @login_required(login_url='login')

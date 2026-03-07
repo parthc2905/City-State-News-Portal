@@ -1,0 +1,530 @@
+<!-- 
+  CIVIX DYNAMIC NAVBAR - LOGIN STATE AWARE
+  Replace the existing .nav-actions section in civix_final.html with this code
+-->
+
+<!-- ADD THIS JAVASCRIPT AT THE END OF THE <body> TAG (before closing </body>) -->
+<script>
+// User session state - In production, this would come from your backend/session
+const userSession = {
+  isLoggedIn: true, // Change to false to see logged-out state
+  user: {
+    name: "Rajesh Kumar",
+    email: "rajesh.kumar@example.com",
+    avatar: "RK",
+    role: "journalist" // Options: "reader", "journalist", "advertiser", "admin"
+  }
+};
+
+// Function to render navbar based on login state
+function renderNavbar() {
+  const navActions = document.querySelector('.nav-actions');
+  
+  if (userSession.isLoggedIn) {
+    // LOGGED IN STATE
+    navActions.innerHTML = `
+      <div class="nav-user-menu">
+        <div class="nav-notifications" onclick="toggleNotifications()">
+          <span class="notification-icon">🔔</span>
+          <span class="notification-badge">3</span>
+        </div>
+        
+        <div class="nav-user-dropdown" onclick="toggleUserMenu()">
+          <div class="nav-user-avatar">${userSession.user.avatar}</div>
+          <div class="nav-user-info">
+            <div class="nav-user-name">${userSession.user.name}</div>
+            <div class="nav-user-role">${getRoleLabel(userSession.user.role)}</div>
+          </div>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div class="user-dropdown-menu" id="userDropdownMenu" style="display: none;">
+          <div class="dropdown-header">
+            <div class="dropdown-user-avatar">${userSession.user.avatar}</div>
+            <div>
+              <div class="dropdown-user-name">${userSession.user.name}</div>
+              <div class="dropdown-user-email">${userSession.user.email}</div>
+            </div>
+          </div>
+          
+          <div class="dropdown-divider"></div>
+          
+          <a href="civix_profile.html" class="dropdown-item">
+            <span class="dropdown-icon">👤</span>
+            Your Profile
+          </a>
+          
+          ${userSession.user.role === 'journalist' ? `
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon">📝</span>
+              My Articles
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon">✍️</span>
+              Write Article
+            </a>
+          ` : ''}
+          
+          ${userSession.user.role === 'advertiser' ? `
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon">📊</span>
+              Ad Dashboard
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon">➕</span>
+              Create Campaign
+            </a>
+          ` : ''}
+          
+          ${userSession.user.role === 'admin' ? `
+            <a href="civix_admin_panel.html" class="dropdown-item">
+              <span class="dropdown-icon">⚙️</span>
+              Admin Panel
+            </a>
+            <a href="#" class="dropdown-item">
+              <span class="dropdown-icon">📊</span>
+              Analytics
+            </a>
+          ` : ''}
+          
+          <a href="#" class="dropdown-item">
+            <span class="dropdown-icon">🔖</span>
+            Saved Articles
+          </a>
+          <a href="#" class="dropdown-item">
+            <span class="dropdown-icon">⚙️</span>
+            Settings
+          </a>
+          
+          <div class="dropdown-divider"></div>
+          
+          <a href="#" class="dropdown-item" onclick="logout()">
+            <span class="dropdown-icon">🚪</span>
+            Sign Out
+          </a>
+        </div>
+
+        <!-- Notifications Dropdown -->
+        <div class="notifications-dropdown" id="notificationsDropdown" style="display: none;">
+          <div class="notifications-header">
+            <h4>Notifications</h4>
+            <button class="mark-all-read">Mark all as read</button>
+          </div>
+          
+          <div class="notifications-list">
+            <div class="notification-item unread">
+              <div class="notification-icon">💬</div>
+              <div class="notification-content">
+                <div class="notification-text"><strong>Priya Sharma</strong> commented on your article</div>
+                <div class="notification-time">2 minutes ago</div>
+              </div>
+            </div>
+            
+            <div class="notification-item unread">
+              <div class="notification-icon">❤️</div>
+              <div class="notification-content">
+                <div class="notification-text">Your article received <strong>100 likes</strong></div>
+                <div class="notification-time">1 hour ago</div>
+              </div>
+            </div>
+            
+            <div class="notification-item">
+              <div class="notification-icon">✅</div>
+              <div class="notification-content">
+                <div class="notification-text">Your article <strong>"Mumbai Traffic Solutions"</strong> was published</div>
+                <div class="notification-time">3 hours ago</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="notifications-footer">
+            <a href="#">View all notifications</a>
+          </div>
+        </div>
+      </div>
+    `;
+  } else {
+    // LOGGED OUT STATE (Original buttons)
+    navActions.innerHTML = `
+      <button class="btn-secondary" onclick="window.location.href='civix_auth_complete.html'">Sign in</button>
+      <button class="btn-primary" onclick="window.location.href='civix_auth_complete.html'">Subscribe</button>
+    `;
+  }
+}
+
+// Helper function to get role label
+function getRoleLabel(role) {
+  const labels = {
+    reader: 'Reader',
+    journalist: 'Journalist',
+    advertiser: 'Advertiser',
+    admin: 'Admin'
+  };
+  return labels[role] || 'User';
+}
+
+// Toggle user dropdown menu
+function toggleUserMenu() {
+  const menu = document.getElementById('userDropdownMenu');
+  const notifications = document.getElementById('notificationsDropdown');
+  
+  // Close notifications if open
+  if (notifications) notifications.style.display = 'none';
+  
+  // Toggle user menu
+  if (menu) {
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+// Toggle notifications dropdown
+function toggleNotifications() {
+  const notifications = document.getElementById('notificationsDropdown');
+  const menu = document.getElementById('userDropdownMenu');
+  
+  // Close user menu if open
+  if (menu) menu.style.display = 'none';
+  
+  // Toggle notifications
+  if (notifications) {
+    notifications.style.display = notifications.style.display === 'none' ? 'block' : 'none';
+  }
+}
+
+// Logout function
+function logout() {
+  if (confirm('Are you sure you want to sign out?')) {
+    userSession.isLoggedIn = false;
+    renderNavbar();
+    alert('You have been signed out successfully');
+    // In production, redirect to login page or clear session
+  }
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(event) {
+  if (!event.target.closest('.nav-user-dropdown') && !event.target.closest('.user-dropdown-menu')) {
+    const menu = document.getElementById('userDropdownMenu');
+    if (menu) menu.style.display = 'none';
+  }
+  
+  if (!event.target.closest('.nav-notifications') && !event.target.closest('.notifications-dropdown')) {
+    const notifications = document.getElementById('notificationsDropdown');
+    if (notifications) notifications.style.display = 'none';
+  }
+});
+
+// Initialize navbar on page load
+document.addEventListener('DOMContentLoaded', renderNavbar);
+</script>
+
+<!-- ADD THESE STYLES TO THE <style> SECTION IN civix_final.html -->
+<style>
+/* ═══ USER NAVBAR STYLES ═══ */
+.nav-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+}
+
+.nav-notifications {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.nav-notifications:hover {
+  background: var(--gray-100);
+}
+
+.notification-icon {
+  font-size: 20px;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  background: var(--green);
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.nav-user-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 6px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--gray-200);
+}
+
+.nav-user-dropdown:hover {
+  background: var(--gray-100);
+}
+
+.nav-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.nav-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1.2;
+}
+
+.nav-user-role {
+  font-size: 11px;
+  color: var(--gray-600);
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  color: var(--gray-600);
+}
+
+/* ═══ DROPDOWN MENU ═══ */
+.user-dropdown-menu,
+.notifications-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  min-width: 260px;
+  box-shadow: 
+    0 0 0 1px rgba(0,0,0,0.03),
+    0 10px 40px rgba(0,0,0,0.15);
+  z-index: 1000;
+  animation: dropdownSlide 0.2s ease;
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-header {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.dropdown-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--green), var(--blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.dropdown-user-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.dropdown-user-email {
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--gray-200);
+  margin: 4px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  color: var(--gray-900);
+  transition: background 0.2s;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background: var(--gray-100);
+}
+
+.dropdown-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* ═══ NOTIFICATIONS DROPDOWN ═══ */
+.notifications-dropdown {
+  min-width: 360px;
+  max-width: 400px;
+}
+
+.notifications-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.notifications-header h4 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mark-all-read {
+  font-size: 12px;
+  color: var(--green);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mark-all-read:hover {
+  text-decoration: underline;
+}
+
+.notifications-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid var(--gray-200);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background: var(--gray-100);
+}
+
+.notification-item.unread {
+  background: var(--green-light);
+}
+
+.notification-item.unread:hover {
+  background: #d7eed6;
+}
+
+.notification-item .notification-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-text {
+  font-size: 13px;
+  color: var(--gray-900);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.notifications-footer {
+  padding: 12px 16px;
+  text-align: center;
+  border-top: 1px solid var(--gray-200);
+}
+
+.notifications-footer a {
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.notifications-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .nav-user-info {
+    display: none;
+  }
+  
+  .dropdown-arrow {
+    display: none;
+  }
+  
+  .notifications-dropdown {
+    right: -80px;
+    min-width: 320px;
+  }
+}
+</style>
+
+<!-- 
+  USAGE INSTRUCTIONS:
+  
+  1. Copy the <script> section and paste it at the end of civix_final.html (before </body>)
+  2. Copy the <style> section and paste it in the <style> tag of civix_final.html
+  3. Change userSession.isLoggedIn to true/false to toggle states
+  4. Change userSession.user.role to "reader", "journalist", "advertiser", or "admin" to see different menus
+  
+  The navbar will automatically show:
+  - Logged OUT: Sign in + Subscribe buttons
+  - Logged IN: Notifications bell + User dropdown with role-specific menu items
+-->

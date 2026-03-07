@@ -1,0 +1,228 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVIX — Sign In</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/signupsignin.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <div class="auth-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <a href="civix_final.html" class="logo-link">
+                <div class="logo">CIVIX</div>
+            </a>
+            <a href="civix_final.html" class="back-home">← Back to Home</a>
+        </div>
+
+        <!-- INFO BOX -->
+        <div class="info-box" id="infoBox">
+            <div class="info-box-title">🎉 Join 2.4M+ Informed Citizens</div>
+            <div class="info-box-text">Get hyper-local news, contribute stories, and stay connected with your community.
+            </div>
+        </div>
+
+        <!-- AUTH CARD -->
+        <div class="auth-card">
+
+            <!-- FORM HEADER -->
+            <div class="form-header">
+                <h1 class="form-title" id="formTitle">Welcome to CIVIX</h1>
+                <p class="form-subtitle" id="formSubtitle">Sign in to your account or create a new one</p>
+            </div>
+
+            <!-- TABS -->
+            <div class="auth-tabs">
+                <button id="signinTab" class="tab-btn"  data-url="{% url 'login' %}" onclick="switchTab('signin', this)">Sign In</button>
+                <button id="signupTab" class="tab-btn" data-url="{% url 'signup' %}" onclick="switchTab('signup', this)">Sign Up</button>
+            </div>
+
+            <!-- FORMS CONTAINER -->
+            <div class="forms-container">
+
+                <!-- ═══ SIGN IN FORM ═══ -->
+                <div class="form-view {% if active_tab == 'signin' %}active{% endif %}" id="signinView" >
+                    <form method="POST" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="form-group">    
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password }}
+                                <span class="input-icon" onclick="togglePassword('signinPassword')">👀</span>
+                            </div>
+                        </div>
+
+                        <!-- ✅ Show login error from Django -->
+                        {% if login_error %}
+                            <div class="error-text show" style="margin-bottom:10px;">{{ login_error }}</div>
+                        {% endif %}
+                        <div class="forgot-link">
+                            <a href="#forgot">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="signinBtn" name="signin_submit">
+                            Sign In
+                        </button>
+
+                        <div class="divider">
+                            <div class="divider-line"></div>
+                            <span class="divider-text">or continue with</span>
+                            <div class="divider-line"></div>
+                        </div>
+
+                        <div class="social-buttons">
+                            <button type="button" class="btn-social">
+                                <span class="social-icon">G</span> Google
+                            </button>
+                            <button type="button" class="btn-social">
+                                <span class="social-icon">f</span> Facebook
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- ═══ SIGN UP FORM ═══ -->
+                <div class="form-view {% if active_tab == 'signup' %}active{% endif %}" id="signupView" >
+                    <form onsubmit="return handleSignup(event)" method="POST" action="{% url 'signup' %}">
+
+                        {% csrf_token %}
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                            <div class="error-text" id="emailError">Please enter a valid email</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                        </div>
+
+                        <!-- <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">State</label>
+                                <select class="form-select" required>
+                                    <option value="">Select State</option>
+                                    <option value="maharashtra">Maharashtra</option>
+                                    <option value="gujarat">Gujarat</option>
+                                    <option value="karnataka">Karnataka</option>
+                                    <option value="delhi">Delhi</option>
+                                    <option value="rajasthan">Rajasthan</option>
+                                    <option value="tamil-nadu">Tamil Nadu</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">City</label>
+                                <select class="form-select" required>
+                                    <option value="">Select City</option>
+                                    <option value="mumbai">Mumbai</option>
+                                    <option value="pune">Pune</option>
+                                    <option value="ahmedabad">Ahmedabad</option>
+                                    <option value="bengaluru">Bengaluru</option>
+                                </select>
+                            </div>
+                        </div> -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                {{ form.role }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password1 }}
+                                <span class="input-icon" onclick="togglePassword('signupPassword')">👀</span>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bars">
+                                    <div class="strength-bar" id="bar1"></div>
+                                    <div class="strength-bar" id="bar2"></div>
+                                    <div class="strength-bar" id="bar3"></div>
+                                    <div class="strength-bar" id="bar4"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText">Enter a password</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password2 }}
+                                <span class="input-icon" onclick="togglePassword('confirmPassword')">👀</span>
+                            </div>
+                            <div class="error-text" id="passwordMatchError">Passwords do not match</div>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <div class="custom-checkbox" id="termsCheckbox" onclick="toggleCheckbox('termsCheckbox')">
+                            </div>
+                            <label class="checkbox-label" for="termsCheckbox">
+                                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="signupBtn" name="signup_submit">
+                            Create Account
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- ═══ SUCCESS VIEW ═══ -->
+                <div class="success-view" id="successView">
+                    <div class="success-icon">✅</div>
+                    <h2 class="success-title">Welcome to CIVIX!</h2>
+                    <p class="success-text">Your account has been created successfully. You'll be redirected to the
+                        Login page in a
+                        moment.</p>
+                    <!-- <button class="btn btn-primary" onclick="window.location.href='#'">
+                        Go to Homepage
+                    </button> -->
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+        window.activeTab = "{{ active_tab }}";
+    </script>
+
+    <script src="{% static 'js/signupsignin.js' %}"></script>
+
+</body>
+
+</html>
