@@ -1,0 +1,976 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">    
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIVIX — Hyper-local News for Every Indian City</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Archivo+Black&family=Bebas+Neue&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Django Navbar Additional Styles -->
+  <style>
+    /* ═══ USER NAVBAR STYLES ═══ */
+    .nav-user-menu {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+    }
+
+    .nav-notifications {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 50%;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .nav-notifications:hover {
+      background: #f4f4f4;
+    }
+
+    .notification-icon {
+      font-size: 20px;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 18px;
+      height: 18px;
+      background: #1a8917;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+    }
+
+    .nav-user-dropdown {
+      position: relative;
+    }
+
+    .nav-user-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px 6px 6px;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid #e8e8e8;
+      background: white;
+      text-decoration: none;
+    }
+
+    .nav-user-toggle:hover {
+      background: #f4f4f4;
+    }
+
+    .nav-user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a8917, #0066cc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .nav-user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #0a0a0a;
+      line-height: 1.2;
+    }
+
+    .nav-user-role {
+      font-size: 11px;
+      color: #6b6b6b;
+    }
+
+    .dropdown-arrow {
+      font-size: 10px;
+      color: #6b6b6b;
+    }
+
+    /* ═══ DROPDOWN MENU ═══ */
+    .user-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      min-width: 260px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 10px 40px rgba(0,0,0,0.15);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
+    }
+
+    .nav-user-dropdown:hover .user-dropdown-menu,
+    .nav-user-dropdown:focus-within .user-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-header {
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .dropdown-user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a8917, #0066cc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .dropdown-user-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0a0a0a;
+    }
+
+    .dropdown-user-email {
+      font-size: 12px;
+      color: #6b6b6b;
+    }
+
+    .dropdown-divider {
+      height: 1px;
+      background: #e8e8e8;
+      margin: 4px 0;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #1a1a1a;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+
+    .dropdown-item:hover {
+      background: #f4f4f4;
+    }
+
+    .dropdown-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* ═══ NOTIFICATIONS DROPDOWN ═══ */
+    .notifications-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: white;
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      min-width: 360px;
+      max-width: 400px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 10px 40px rgba(0,0,0,0.15);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
+    }
+
+    .nav-notifications:hover + .notifications-dropdown,
+    .notifications-dropdown:hover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .notifications-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .notifications-header h4 {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .mark-all-read {
+      font-size: 12px;
+      color: #1a8917;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .mark-all-read:hover {
+      text-decoration: underline;
+    }
+
+    .notifications-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      padding: 12px 16px;
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid #e8e8e8;
+      transition: background 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .notification-item:hover {
+      background: #f4f4f4;
+    }
+
+    .notification-item.unread {
+      background: #e8f5e8;
+    }
+
+    .notification-item.unread:hover {
+      background: #d7eed6;
+    }
+
+    .notification-item .notification-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-text {
+      font-size: 13px;
+      color: #1a1a1a;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+
+    .notification-time {
+      font-size: 12px;
+      color: #6b6b6b;
+    }
+
+    .notifications-footer {
+      padding: 12px 16px;
+      text-align: center;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .notifications-footer a {
+      font-size: 13px;
+      color: #1a8917;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .notifications-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 768px) {
+      .nav-user-info {
+        display: none;
+      }
+      
+      .dropdown-arrow {
+        display: none;
+      }
+      
+      .notifications-dropdown {
+        right: -80px;
+        min-width: 320px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="top-nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">CIVIX</a>
+      <nav class="nav-links">
+        <a href="#">Politics</a>
+        <a href="#">Business</a>
+        <a href="#">Culture</a>
+        <a href="#">Technology</a>
+        <a href="#">Opinion</a>
+      </nav>
+      <div class="nav-actions">
+        {% if user.is_authenticated %}
+          <!-- LOGGED IN STATE -->
+          <div class="nav-user-menu">
+            
+            <!-- Notifications -->
+            <div style="position: relative;">
+              <a href="{% url 'notifications' %}" class="nav-notifications">
+                <span class="notification-icon">🔔</span>
+                {% if unread_notifications_count > 0 %}
+                  <span class="notification-badge">{{ unread_notifications_count }}</span>
+                {% endif %}
+              </a>
+              
+              <!-- Notifications Dropdown -->
+              <div class="notifications-dropdown">
+                <div class="notifications-header">
+                  <h4>Notifications</h4>
+                  <a href="{% url 'mark_all_read' %}" class="mark-all-read">Mark all as read</a>
+                </div>
+                
+                <div class="notifications-list">
+                  {% for notification in recent_notifications|slice:":5" %}
+                    <a href="{{ notification.url }}" class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                      <div class="notification-icon">{{ notification.icon }}</div>
+                      <div class="notification-content">
+                        <div class="notification-text">{{ notification.text|safe }}</div>
+                        <div class="notification-time">{{ notification.created_at|timesince }} ago</div>
+                      </div>
+                    </a>
+                  {% empty %}
+                    <div style="padding: 24px; text-align: center; color: #6b6b6b; font-size: 14px;">
+                      No notifications yet
+                    </div>
+                  {% endfor %}
+                </div>
+                
+                {% if recent_notifications.count > 5 %}
+                  <div class="notifications-footer">
+                    <a href="{% url 'notifications' %}">View all notifications</a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- User Dropdown -->
+            <div class="nav-user-dropdown">
+              <div class="nav-user-toggle">
+                <div class="nav-user-avatar">
+                  {% if user.profile.avatar %}
+                    <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                  {% else %}
+                    {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+                  {% endif %}
+                </div>
+                <div class="nav-user-info">
+                  <div class="nav-user-name">{{ user.get_full_name|default:user.username }}</div>
+                  <div class="nav-user-role">
+                    {% if user.is_staff %}
+                      Admin
+                    {% elif user.profile.role == 'journalist' %}
+                      Journalist
+                    {% elif user.profile.role == 'advertiser' %}
+                      Advertiser
+                    {% else %}
+                      Reader
+                    {% endif %}
+                  </div>
+                </div>
+                <span class="dropdown-arrow">▼</span>
+              </div>
+
+              <!-- Dropdown Menu -->
+              <div class="user-dropdown-menu">
+                <div class="dropdown-header">
+                  <div class="dropdown-user-avatar">
+                    {% if user.profile.avatar %}
+                      <img src="{{ user.profile.avatar.url }}" alt="{{ user.get_full_name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                      {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+                    {% endif %}
+                  </div>
+                  <div>
+                    <div class="dropdown-user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="dropdown-user-email">{{ user.email }}</div>
+                  </div>
+                </div>
+                
+                <div class="dropdown-divider"></div>
+                
+                <a href="{% url 'profile' %}" class="dropdown-item">
+                  <span class="dropdown-icon">👤</span>
+                  Your Profile
+                </a>
+                
+                {% if user.profile.role == 'journalist' %}
+                  <a href="{% url 'my_articles' %}" class="dropdown-item">
+                    <span class="dropdown-icon">📝</span>
+                    My Articles
+                  </a>
+                  <a href="{% url 'write_article' %}" class="dropdown-item">
+                    <span class="dropdown-icon">✍️</span>
+                    Write Article
+                  </a>
+                {% endif %}
+                
+                {% if user.profile.role == 'advertiser' %}
+                  <a href="{% url 'ad_dashboard' %}" class="dropdown-item">
+                    <span class="dropdown-icon">📊</span>
+                    Ad Dashboard
+                  </a>
+                  <a href="{% url 'create_campaign' %}" class="dropdown-item">
+                    <span class="dropdown-icon">➕</span>
+                    Create Campaign
+                  </a>
+                {% endif %}
+                
+                {% if user.is_staff %}
+                  <a href="{% url 'admin_panel' %}" class="dropdown-item">
+                    <span class="dropdown-icon">⚙️</span>
+                    Admin Panel
+                  </a>
+                  <a href="{% url 'analytics' %}" class="dropdown-item">
+                    <span class="dropdown-icon">📊</span>
+                    Analytics
+                  </a>
+                {% endif %}
+                
+                <a href="{% url 'saved_articles' %}" class="dropdown-item">
+                  <span class="dropdown-icon">🔖</span>
+                  Saved Articles
+                </a>
+                <a href="{% url 'settings' %}" class="dropdown-item">
+                  <span class="dropdown-icon">⚙️</span>
+                  Settings
+                </a>
+                
+                <div class="dropdown-divider"></div>
+                
+                <a href="{% url 'logout' %}" class="dropdown-item">
+                  <span class="dropdown-icon">🚪</span>
+                  Sign Out
+                </a>
+              </div>
+            </div>
+
+          </div>
+
+        {% else %}
+          <!-- LOGGED OUT STATE -->
+          <!-- <button class="btn-secondary" onclick="window.location.href='{% url 'login' %}'">Sign in</button>
+          <button class="btn-primary" onclick="window.location.href='{% url 'signup' %}'">Subscribe</button> -->
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ LOCATION BAR ═══ -->
+  <div class="location-bar">
+    <div class="location-inner">
+      <span class="loc-label">📍 Browse by city:</span>
+      <span class="loc-chip active">All India</span>
+      <span class="loc-chip">Mumbai</span>
+      <span class="loc-chip">Delhi</span>
+      <span class="loc-chip">Bengaluru</span>
+      <span class="loc-chip">Ahmedabad</span>
+      <span class="loc-chip">Pune</span>
+      <span class="loc-chip">Hyderabad</span>
+      <span class="loc-chip">Chennai</span>
+      <span class="loc-chip">Kolkata</span>
+      <span class="loc-chip">Jaipur</span>
+      <span class="loc-chip">Surat</span>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN CONTENT ═══ -->
+  <div class="container">
+
+    <!-- ═══ HERO SECTION ═══ -->
+    <section class="hero-section">
+      <div class="hero-grid">
+        <div class="hero-main">
+          <div class="hero-tag">
+            <div class="dot"></div>
+            Breaking News
+          </div>
+          <h1 class="hero-title">Supreme Court's Historic Ruling Extends OBC Reservations Across State Universities
+            Nationwide</h1>
+          <p class="hero-excerpt">In a landmark 5–2 majority verdict, India's apex court has upheld the constitutional
+            validity of extending Other Backward Class reservations in state-funded higher education institutions,
+            potentially affecting over 2.3 crore students across 18 states in the upcoming academic year.</p>
+          <div class="hero-meta">
+            <div class="author-info">
+              <div class="author-avatar">PK</div>
+              <div>
+                <div class="author-name">Priya Krishnan</div>
+                <div style="font-size:12px;color:var(--gray-500);">Senior Legal Correspondent</div>
+              </div>
+            </div>
+            <span>·</span>
+            <span>Feb 17, 2026</span>
+            <span>·</span>
+            <span>8 min read</span>
+          </div>
+          <div class="hero-img p1">
+            <div class="img-placeholder">🏛️</div>
+          </div>
+        </div>
+
+        <!-- ═══ SIDEBAR TRENDING ═══ -->
+        <aside class="sidebar-section">
+          <div class="sidebar-head">Trending on CIVIX</div>
+
+          <div class="trending-item">
+            <div class="trending-num">01</div>
+            <div class="trending-content">
+              <h4>Maharashtra Floods: 40,000 Evacuated as IMD Issues Red Alert for Coastal Districts</h4>
+              <div class="trending-author">Neha Kulkarni · 4 min read</div>
+            </div>
+          </div>
+
+          <div class="trending-item">
+            <div class="trending-num">02</div>
+            <div class="trending-content">
+              <h4>Gujarat Unveils ₹34,000 Crore Solar Park — Asia's Largest Renewable Energy Hub</h4>
+              <div class="trending-author">Dhruv Shah · 6 min read</div>
+            </div>
+          </div>
+
+          <div class="trending-item">
+            <div class="trending-num">03</div>
+            <div class="trending-content">
+              <h4>IPL 2026 Mega Auction: Mumbai Indians Retain Rohit Sharma, Full Squad List Revealed</h4>
+              <div class="trending-author">Amit Kulkarni · 5 min read</div>
+            </div>
+          </div>
+
+          <div class="trending-item">
+            <div class="trending-num">04</div>
+            <div class="trending-content">
+              <h4>Pune-Mumbai Hyperloop Gets Final Green Light, 25-Min Commute by 2027</h4>
+              <div class="trending-author">Kavya Mehta · 7 min read</div>
+            </div>
+          </div>
+
+          <div class="trending-item">
+            <div class="trending-num">05</div>
+            <div class="trending-content">
+              <h4>Rajasthan Announces Free Electricity Up to 100 Units for All Households</h4>
+              <div class="trending-author">Sunita Agarwal · 4 min read</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ═══ LATEST STORIES ═══ -->
+    <div class="section-divider">
+      <h2 class="section-title">Latest Stories</h2>
+      <div class="section-line"></div>
+      <a class="see-all">See all →</a>
+    </div>
+
+    <section class="articles-grid fade-in">
+      <article class="article-card">
+        <div class="card-img p2">
+          <div class="img-placeholder" style="font-size:50px;">🌿</div>
+        </div>
+        <span class="card-tag">Energy · Gujarat</span>
+        <h3 class="card-title">Gujarat's Surya Shakti Phase-3: How 8 GW of Solar Capacity Will Transform India's Green
+          Energy Landscape</h3>
+        <p class="card-excerpt">The state government's ambitious renewable energy expansion plan could power 6 million
+          homes and reduce carbon emissions by 12 million tons annually.</p>
+        <div class="card-meta">
+          <span class="card-author">Dhruv Shah</span>
+          <span class="card-read-time">6 min read</span>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img p3">
+          <div class="img-placeholder" style="font-size:50px;">🏏</div>
+        </div>
+        <span class="card-tag">Sports · Mumbai</span>
+        <h3 class="card-title">Inside Mumbai Indians' IPL 2026 Strategy: Breaking Down the ₹85 Crore Auction Spend</h3>
+        <p class="card-excerpt">From retaining Rohit Sharma to strategic acquisitions of young talent, MI's management
+          reveals their blueprint for the upcoming season.</p>
+        <div class="card-meta">
+          <span class="card-author">Amit Kulkarni</span>
+          <span class="card-read-time">5 min read</span>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img p4">
+          <div class="img-placeholder" style="font-size:50px;">💊</div>
+        </div>
+        <span class="card-tag">Health · Delhi</span>
+        <h3 class="card-title">AIIMS Delhi's Breakthrough ₹50 Dengue Test Kit Could Save Thousands of Lives in Rural
+          India</h3>
+        <p class="card-excerpt">With 98% accuracy and rapid 15-minute results, this innovation addresses a critical gap
+          in affordable diagnostic infrastructure.</p>
+        <div class="card-meta">
+          <span class="card-author">Dr. Rajeev Menon</span>
+          <span class="card-read-time">7 min read</span>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img p5">
+          <div class="img-placeholder" style="font-size:50px;">🏗️</div>
+        </div>
+        <span class="card-tag">Infrastructure · Maharashtra</span>
+        <h3 class="card-title">The Engineering Marvel Behind India's First Hyperloop: A Deep Dive into the Pune-Mumbai
+          Corridor</h3>
+        <p class="card-excerpt">Exploring the technology, challenges, and environmental considerations of the 140 km
+          high-speed transportation project.</p>
+        <div class="card-meta">
+          <span class="card-author">Kavya Mehta</span>
+          <span class="card-read-time">9 min read</span>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img p6">
+          <div class="img-placeholder" style="font-size:50px;">💻</div>
+        </div>
+        <span class="card-tag">Technology · Bengaluru</span>
+        <h3 class="card-title">Bengaluru Launches India's First AI-Powered Traffic Management System, Promises 40%
+          Congestion Reduction</h3>
+        <p class="card-excerpt">Using machine learning and real-time data analytics, the smart city initiative aims to
+          revolutionize urban mobility.</p>
+        <div class="card-meta">
+          <span class="card-author">Rohan Iyer</span>
+          <span class="card-read-time">6 min read</span>
+        </div>
+      </article>
+
+      <article class="article-card">
+        <div class="card-img p1">
+          <div class="img-placeholder" style="font-size:50px;">⚖️</div>
+        </div>
+        <span class="card-tag">Crime · Uttar Pradesh</span>
+        <h3 class="card-title">Agra Honour Killing Case: 14 Arrested, High Court Orders SIT Investigation</h3>
+        <p class="card-excerpt">The tragic incident has reignited debate over caste-based violence and the effectiveness
+          of existing legal protections.</p>
+        <div class="card-meta">
+          <span class="card-author">Priya Sharma</span>
+          <span class="card-read-time">5 min read</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═══ CITIZEN JOURNALISM BANNER ═══ -->
+    <div class="citizen-banner">
+      <div class="citizen-icon">📸</div>
+      <div class="citizen-content">
+        <h3 class="citizen-title">Become a Citizen Journalist</h3>
+        <p class="citizen-desc">Your story matters. Submit local news, photos, and reports from your community. We
+          verify and publish within 24 hours.</p>
+      </div>
+      <button class="citizen-btn">Submit Your Report →</button>
+    </div>
+
+    <!-- ═══ STATE POLITICS ═══ -->
+    <div class="section-divider">
+      <h2 class="section-title">State Politics</h2>
+      <div class="section-line"></div>
+      <a class="see-all">See all →</a>
+    </div>
+
+    <section class="two-col-section">
+      <div class="main-content">
+        <div class="story-list">
+          <article class="story-item">
+            <div class="story-img p4">
+              <div class="img-placeholder" style="font-size:40px;">🏛️</div>
+            </div>
+            <div class="story-info">
+              <span class="story-tag">Politics · Uttar Pradesh</span>
+              <h3 class="story-title">Yogi Government Announces ₹12,000 Crore Infrastructure Mega Blitz Across Eastern
+                UP</h3>
+              <p class="story-excerpt">Over 48 new highway projects, 12 irrigation schemes, and 3 medical colleges are
+                set to transform Purvanchal region under the state budget's flagship development initiative.</p>
+              <div class="story-meta">Priya Sharma · 7 min read</div>
+            </div>
+          </article>
+
+          <article class="story-item">
+            <div class="story-img p2">
+              <div class="img-placeholder" style="font-size:40px;">🌾</div>
+            </div>
+            <div class="story-info">
+              <span class="story-tag">Politics · Madhya Pradesh</span>
+              <h3 class="story-title">MP Government Expands Kisan Samman Scheme to Cover 8 Lakh More Marginal Farmers
+              </h3>
+              <p class="story-excerpt">The enhanced PM-KISAN supplement will provide an additional ₹6,000 annually to
+                small and marginal farmers in drought-prone regions.</p>
+              <div class="story-meta">Rahul Verma · 5 min read</div>
+            </div>
+          </article>
+
+          <article class="story-item">
+            <div class="story-img p6">
+              <div class="img-placeholder" style="font-size:40px;">⚖️</div>
+            </div>
+            <div class="story-info">
+              <span class="story-tag">Politics · Telangana</span>
+              <h3 class="story-title">Telangana: Congress Government Faces No-Confidence Motion After 3 MLAs Cross-Vote
+              </h3>
+              <p class="story-excerpt">Political drama unfolds in Hyderabad as the ruling party scrambles to rally
+                numbers ahead of the floor test scheduled for Thursday.</p>
+              <div class="story-meta">K. Rao Reddy · 8 min read</div>
+            </div>
+          </article>
+
+          <article class="story-item">
+            <div class="story-img p5">
+              <div class="img-placeholder" style="font-size:40px;">🏢</div>
+            </div>
+            <div class="story-info">
+              <span class="story-tag">Governance · Maharashtra</span>
+              <h3 class="story-title">Maharashtra CM Launches 'One Lakh Jobs' Scheme Targeting Youth in Tier-2 Cities
+              </h3>
+              <p class="story-excerpt">The initiative focuses on creating sustainable employment opportunities in
+                manufacturing, services, and technology sectors across 15 smaller cities.</p>
+              <div class="story-meta">Neha Kulkarni · 6 min read</div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <aside class="sidebar-section">
+        <div class="sidebar-head">Must Reads</div>
+
+        <div class="trending-item">
+          <div class="trending-content">
+            <h4>Why India's Flood Management Still Fails Despite Early Warning Systems</h4>
+            <div class="trending-author">Editorial Board · 10 min read</div>
+          </div>
+        </div>
+
+        <div class="trending-item">
+          <div class="trending-content">
+            <h4>Inside the Political Machinery: How State Parties Are Adapting to Digital Campaigns</h4>
+            <div class="trending-author">Vikram Desai · 12 min read</div>
+          </div>
+        </div>
+
+        <div class="trending-item">
+          <div class="trending-content">
+            <h4>The Real Cost of Free Electricity: Rajasthan's Policy Under Economic Scrutiny</h4>
+            <div class="trending-author">Anjali Kapoor · 8 min read</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <!-- ═══ OPINION ═══ -->
+    <div class="section-divider">
+      <h2 class="section-title">Opinion & Analysis</h2>
+      <div class="section-line"></div>
+      <a class="see-all">See all →</a>
+    </div>
+
+    <section class="opinion-grid">
+      <article class="opinion-card">
+        <div class="opinion-label">Opinion</div>
+        <h3 class="opinion-title">India's Reservation Debate Keeps Missing the Real Problem: Quality of Education</h3>
+        <p class="opinion-excerpt">While we argue about who gets admission, we ignore that the institutions themselves
+          are crumbling. Reservation is a band-aid solution when what we need is radical reform in how we fund and run
+          our public education system.</p>
+        <div class="opinion-author-box">
+          <div class="opinion-avatar">AK</div>
+          <div class="opinion-author-info">
+            <div class="opinion-author-name">Prof. Anita Krishnan</div>
+            <div class="opinion-author-role">Education Policy Analyst</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="opinion-card">
+        <div class="opinion-label">Analysis</div>
+        <h3 class="opinion-title">The Silent Revolution: How Tier-2 Cities Are Building India's Next Startup Economy
+        </h3>
+        <p class="opinion-excerpt">Forget Bengaluru and Mumbai. Cities like Indore, Coimbatore, and Visakhapatnam are
+          quietly incubating the next wave of billion-dollar companies, and they're doing it with a fraction of the
+          capital.</p>
+        <div class="opinion-author-box">
+          <div class="opinion-avatar">RS</div>
+          <div class="opinion-author-info">
+            <div class="opinion-author-name">Rohit Sabharwal</div>
+            <div class="opinion-author-role">Venture Capital Investor</div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ═══ NEWSLETTER ═══ -->
+    <section class="newsletter-section">
+      <div class="newsletter-inner">
+        <div class="newsletter-icon">📬</div>
+        <h2 class="newsletter-title">Get the best of CIVIX</h2>
+        <p class="newsletter-desc">Join 2.4 million readers who start their day with hyper-local news, analysis, and
+          stories that matter to your community.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email address">
+          <button type="submit">Subscribe</button>
+        </form>
+        <p style="font-size:12px;color:var(--gray-600);margin-top:12px;">Free forever. Unsubscribe anytime.</p>
+      </div>
+    </section>
+
+    <!-- ═══ TAGS ═══ -->
+    <div class="section-divider">
+      <h2 class="section-title">Explore Topics</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <section class="tags-section">
+      <div class="tags-grid">
+        <span class="tag-pill">State Politics</span>
+        <span class="tag-pill">Climate & Environment</span>
+        <span class="tag-pill">Public Health</span>
+        <span class="tag-pill">Infrastructure</span>
+        <span class="tag-pill">Technology</span>
+        <span class="tag-pill">Education Policy</span>
+        <span class="tag-pill">Urban Development</span>
+        <span class="tag-pill">Agriculture</span>
+        <span class="tag-pill">Crime & Justice</span>
+        <span class="tag-pill">Arts & Culture</span>
+        <span class="tag-pill">Sports</span>
+        <span class="tag-pill">Business & Economy</span>
+        <span class="tag-pill">Elections 2026</span>
+        <span class="tag-pill">Citizen Journalism</span>
+        <span class="tag-pill">Opinion</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">CIVIX</div>
+          <p class="footer-desc">Hyper-local news and in-depth journalism covering every state and city in India. From
+            breaking news to investigative reports, we bring you stories that matter to your community.</p>
+          <div class="footer-social">
+            <div class="social-icon">𝕏</div>
+            <div class="social-icon">f</div>
+            <div class="social-icon">in</div>
+            <div class="social-icon">▶</div>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Explore</h5>
+          <a href="#">Politics</a>
+          <a href="#">Business</a>
+          <a href="#">Technology</a>
+          <a href="#">Culture</a>
+          <a href="#">Opinion</a>
+          <a href="#">Videos</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Cities</h5>
+          <a href="#">Mumbai</a>
+          <a href="#">Delhi</a>
+          <a href="#">Bengaluru</a>
+          <a href="#">Ahmedabad</a>
+          <a href="#">Pune</a>
+          <a href="#">All Cities</a>
+        </div>
+
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="#">About</a>
+          <a href="#">Careers</a>
+          <a href="#">Advertise</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 CIVIX Media. Crafted with care for India's communities.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Location chip interaction
+    document.querySelectorAll('.loc-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.loc-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    // Smooth fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.article-card, .story-item, .opinion-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Newsletter form
+    document.querySelector('.newsletter-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Thanks for subscribing! Check your email to confirm.');
+    });
+  </script>
+
+</body>
+
+</html>

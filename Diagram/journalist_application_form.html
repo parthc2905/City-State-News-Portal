@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply as Journalist — CIVIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --yellow: #fbbf24;
+    --yellow-light: #fef3c7;
+    --red: #dc2626;
+    --blue: #0066cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ═══ HEADER ═══ */
+  .top-nav {
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-back {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ═══ CONTAINER ═══ */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* ═══ PAGE HEADER ═══ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .page-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 24px;
+  }
+
+  .page-title {
+    font-family: 'Spectral', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ═══ PROGRESS STEPS ═══ */
+  .progress-steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .step {
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+    position: relative;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin: 0 auto 8px;
+    transition: all 0.3s;
+  }
+
+  .step.active .step-number {
+    background: var(--green);
+    color: white;
+  }
+
+  .step.completed .step-number {
+    background: var(--green);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+
+  .step.active .step-label {
+    color: var(--black);
+    font-weight: 600;
+  }
+
+  /* ═══ CARD ═══ */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .card-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-top: 6px;
+  }
+
+  /* ═══ FORM ═══ */
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+  }
+
+  .required {
+    color: var(--red);
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .form-help {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-top: 6px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ═══ FILE UPLOAD ═══ */
+  .file-upload {
+    border: 2px dashed var(--gray-300);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .file-upload:hover {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .file-upload.has-file {
+    border-color: var(--green);
+    border-style: solid;
+    background: var(--green-light);
+  }
+
+  .upload-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .upload-text {
+    font-size: 14px;
+    color: var(--gray-700);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .upload-hint {
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .file-name {
+    font-size: 13px;
+    color: var(--green-dark);
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-300);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-100);
+  }
+
+  /* ═══ INFO BOX ═══ */
+  .info-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .info-box-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #1e40af;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-box-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .info-box-list li {
+    font-size: 14px;
+    color: #1e40af;
+    padding: 6px 0;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .info-box-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+
+  /* ═══ SECTION HIDDEN ═══ */
+  .section {
+    display: none;
+  }
+
+  .section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+      gap: 4px;
+    }
+
+    .step-label {
+      font-size: 11px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 
+═══════════════════════════════════════════════════════════════
+JOURNALIST APPLICATION FORM
+Collects all details shown in journalist_pending.html
+═══════════════════════════════════════════════════════════════
+-->
+
+<!-- HEADER -->
+<header class="top-nav">
+  <div class="nav-inner">
+    <a href="civix_final.html" class="logo">CIVIX</a>
+    <a href="civix_final.html" class="nav-back">← Back to Home</a>
+  </div>
+</header>
+
+<div class="container">
+  
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-icon">📝</div>
+    <h1 class="page-title">Apply as Journalist</h1>
+    <p class="page-subtitle">Join CIVIX's network of citizen journalists and contribute to hyper-local news coverage across India.</p>
+  </div>
+
+  <!-- PROGRESS STEPS -->
+  <div class="progress-steps">
+    <div class="step active" id="step1">
+      <div class="step-number">1</div>
+      <div class="step-label">Personal Info</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-number">2</div>
+      <div class="step-label">Experience</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-number">3</div>
+      <div class="step-label">Documents</div>
+    </div>
+  </div>
+
+  <form id="journalistForm" onsubmit="handleSubmit(event)">
+    
+    <!-- ═══ SECTION 1: PERSONAL INFORMATION ═══ -->
+    <div class="section active" id="section1">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Personal Information</h3>
+          <p class="card-description">Basic details about yourself</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name <span class="required">*</span></label>
+            <input type="text" class="form-input" name="firstName" required placeholder="Rajesh">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name <span class="required">*</span></label>
+            <input type="text" class="form-input" name="lastName" required placeholder="Kumar">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address <span class="required">*</span></label>
+            <input type="email" class="form-input" name="email" required placeholder="rajesh.kumar@example.com">
+            <p class="form-help">We'll send application updates to this email</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number <span class="required">*</span></label>
+            <input type="tel" class="form-input" name="phone" required placeholder="+91 98765 43210">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">State <span class="required">*</span></label>
+            <select class="form-select" name="state" required>
+              <option value="">Select State</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City <span class="required">*</span></label>
+            <select class="form-select" name="city" required>
+              <option value="">Select City</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Pune">Pune</option>
+              <option value="Ahmedabad">Ahmedabad</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Delhi">Delhi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" onclick="nextSection(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ═══ SECTION 2: EXPERIENCE & DETAILS ═══ -->
+    <div class="section" id="section2">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Journalism Experience</h3>
+          <p class="card-description">Tell us about your experience and expertise</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Years of Experience <span class="required">*</span></label>
+          <select class="form-select" name="experience" required>
+            <option value="">Select Experience Level</option>
+            <option value="0-1">0-1 Years (Beginner)</option>
+            <option value="1-3">1-3 Years</option>
+            <option value="3-5">3-5 Years</option>
+            <option value="5+">5+ Years</option>
+            <option value="10+">10+ Years (Expert)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Area of Specialization <span class="required">*</span></label>
+          <input type="text" class="form-input" name="specialization" required placeholder="e.g., Urban Development, Civic Issues, Politics">
+          <p class="form-help">What topics do you primarily cover?</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Press Card Number (if available)</label>
+          <input type="text" class="form-input" name="pressCard" placeholder="e.g., PIB/2024/12345">
+          <p class="form-help">Leave blank if you don't have one</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Previous Publications</label>
+          <textarea class="form-textarea" name="publications" placeholder="List news organizations or publications you've written for (e.g., Times of India, Local News Network, etc.)"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Why do you want to join CIVIX? <span class="required">*</span></label>
+          <textarea class="form-textarea" name="motivation" required placeholder="Tell us about your passion for hyper-local journalism and what you hope to contribute..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="prevSection(1)">← Back</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ═══ SECTION 3: DOCUMENTS ═══ -->
+    <div class="section" id="section3">
+      
+      <div class="info-box">
+        <div class="info-box-title">📋 Required Documents</div>
+        <ul class="info-box-list">
+          <li>Government-issued ID (Aadhaar, Passport, Driver's License)</li>
+          <li>Press Accreditation Card (if available)</li>
+          <li>Portfolio of published articles (PDF or ZIP)</li>
+          <li>Letter of Recommendation (optional but recommended)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Documents</h3>
+          <p class="card-description">All documents should be in PDF, JPG, or ZIP format (max 10MB each)</p>
+        </div>
+
+        <!-- Aadhaar/ID -->
+        <div class="form-group">
+          <label class="form-label">Government ID (Aadhaar Card) <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('aadhaar').click()" id="aadhaar-upload">
+            <div class="upload-icon">🆔</div>
+            <div class="upload-text">Click to upload Aadhaar Card</div>
+            <div class="upload-hint">PDF, JPG or PNG (max 10MB)</div>
+            <div class="file-name" id="aadhaar-name"></div>
+          </div>
+          <input type="file" id="aadhaar" class="file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('aadhaar')" required>
+        </div>
+
+        <!-- Press Card -->
+        <div class="form-group">
+          <label class="form-label">Press Accreditation Card</label>
+          <div class="file-upload" onclick="document.getElementById('presscard').click()" id="presscard-upload">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">Click to upload Press Card</div>
+            <div class="upload-hint">PDF, JPG or PNG (max 10MB) - Optional</div>
+            <div class="file-name" id="presscard-name"></div>
+          </div>
+          <input type="file" id="presscard" class="file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('presscard')">
+        </div>
+
+        <!-- Portfolio -->
+        <div class="form-group">
+          <label class="form-label">Portfolio (Published Articles) <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('portfolio').click()" id="portfolio-upload">
+            <div class="upload-icon">📰</div>
+            <div class="upload-text">Click to upload Portfolio</div>
+            <div class="upload-hint">PDF or ZIP file containing 5-10 articles (max 10MB)</div>
+            <div class="file-name" id="portfolio-name"></div>
+          </div>
+          <input type="file" id="portfolio" class="file-input" accept=".pdf,.zip" onchange="handleFileUpload('portfolio')" required>
+        </div>
+
+        <!-- Recommendation -->
+        <div class="form-group">
+          <label class="form-label">Letter of Recommendation</label>
+          <div class="file-upload" onclick="document.getElementById('recommendation').click()" id="recommendation-upload">
+            <div class="upload-icon">✉️</div>
+            <div class="upload-text">Click to upload Recommendation Letter</div>
+            <div class="upload-hint">PDF format (max 10MB) - Optional</div>
+            <div class="file-name" id="recommendation-name"></div>
+          </div>
+          <input type="file" id="recommendation" class="file-input" accept=".pdf" onchange="handleFileUpload('recommendation')">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="prevSection(2)">← Back</button>
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+// Section navigation
+function nextSection(sectionNum) {
+  // Hide all sections
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'completed'));
+  
+  // Show target section
+  document.getElementById('section' + sectionNum).classList.add('active');
+  document.getElementById('step' + sectionNum).classList.add('active');
+  
+  // Mark previous steps as completed
+  for (let i = 1; i < sectionNum; i++) {
+    document.getElementById('step' + i).classList.add('completed');
+  }
+  
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSection(sectionNum) {
+  nextSection(sectionNum);
+}
+
+// File upload handler
+function handleFileUpload(inputId) {
+  const input = document.getElementById(inputId);
+  const uploadDiv = document.getElementById(inputId + '-upload');
+  const nameDiv = document.getElementById(inputId + '-name');
+  
+  if (input.files.length > 0) {
+    const file = input.files[0];
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2); // MB
+    
+    // Check file size
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      input.value = '';
+      return;
+    }
+    
+    // Update UI
+    uploadDiv.classList.add('has-file');
+    nameDiv.textContent = `✓ ${file.name} (${fileSize} MB)`;
+  }
+}
+
+// Form submission
+function handleSubmit(event) {
+  event.preventDefault();
+  
+  // Get form data
+  const formData = new FormData(event.target);
+  
+  // In real implementation, send to server via AJAX
+  console.log('Form submitted:', Object.fromEntries(formData));
+  
+  // Show success message
+  alert('✓ Application Submitted Successfully!\n\nYour journalist application has been received. You\'ll be redirected to the pending approval page.\n\nApplication ID: #JRN-2026-00847');
+  
+  // Redirect to pending page
+  window.location.href = 'journalist_pending.html';
+}
+</script>
+
+</body>
+</html>

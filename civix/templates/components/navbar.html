@@ -1,0 +1,49 @@
+<header class="top-nav">
+    <div class="nav-inner">
+        <a href="#" class="logo">CIVIX</a>
+        <nav class="nav-links">
+            <a href="#">Politics</a>
+            <a href="#">Business</a>
+            <a href="#">Culture</a>
+            <a href="#">Technology</a>
+            <div class="nav-dropdown">
+                <button class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+                    Opinion
+                    <span class="dropdown-chevron">▼</span>
+                </button>
+                <ul class="nav-dropdown-menu">
+                    <li><a href="#">Opinion</a></li>
+                    <li><a href="#">Opinion</a></li>
+                    <!-- Add more categories here in future -->
+                </ul>
+            </div>
+        </nav>
+        <div class="nav-actions">
+            {% if request.user.is_authenticated and not request.user.is_admin %}
+                <div class="profile-dropdown">
+                    <button class="profile-avatar-btn" aria-expanded="false" aria-haspopup="true" title="Profile menu">
+                        <span class="profile-avatar">{{ request.user.email|first|upper }}</span>
+                    </button>
+                    <div class="profile-dropdown-menu">
+                        <div class="profile-dropdown-header">
+                            <span class="profile-dropdown-avatar">{{ request.user.email|first|upper }}</span>
+                            <div class="profile-dropdown-info">
+                                <strong>Profile</strong>
+                                <span>{{ request.user.email }}</span>
+                            </div>
+                        </div>
+                        <div class="profile-dropdown-divider"></div>
+                        <a href="#" class="profile-dropdown-item">My Profile</a>
+                        <a href="#" class="profile-dropdown-item">Settings</a>
+                        <a href="#" class="profile-dropdown-item">Saved Articles</a>
+                        <div class="profile-dropdown-divider"></div>
+                        <a href="{% url 'logout' %}" class="profile-dropdown-item profile-dropdown-logout">Log out</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn-secondary">Sign in</a>
+            {% endif %}
+            <button class="btn-primary">Subscribe</button>  
+        </div>
+    </div>
+</header>

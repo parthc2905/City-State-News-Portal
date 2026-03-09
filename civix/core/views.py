@@ -7,29 +7,37 @@ from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
 
+
+def homePage(request):
+    return render(request, 'base/base.html')
+
 # signup view for user registration
 def userSignupView(request):
     active_tab = "signup"
 
     if request.method == 'POST':
-        print(request.POST)
         form = UserSignupForm(request.POST)
-        # if "signup_submit" in request.POST:
-        #     active_tab = "signup"
-        # elif "signin_submit" in request.POST:
-        #     active_tab = "signin"
-
+    
         if form.is_valid():
+
             #email send
             email = form.cleaned_data['email']
             send_mail(subject="welcome to find my newspaper",message="Thank you for registering with CIVIX.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
-            form.save()
-            return redirect('login') # for now error will be shown
+            
+            user = form.save(commit=False)
+            # ADD approval status for reader to not_required in db while sigup
+            if user.role == 'reader':
+                user.approval_status = 'not_required'
+
+            user.save()
+
+            # It Will return to login urls
+            return redirect('login') 
         else:
-            return render(request,'core/signupsignin.html',{'form':form ,"active_tab": active_tab })
+            return render(request,'auth/signupsignin.html',{'form':form ,"active_tab": active_tab })
     else:
         form = UserSignupForm()
-        return render(request, 'core/signupsignin.html', {'form': form, "active_tab": active_tab})
+        return render(request, 'auth/signupsignin.html', {'form': form, "active_tab": active_tab})
 
 
 # login view for user authentication
@@ -50,21 +58,30 @@ def userLoginView(request):
                     return redirect('admin_dashboard') # Replace with your admin dashboard URL name
                 elif user.role == 'reader':
                     # print(user)
-                    return redirect('reader_dashboard') # Replace with your reader dashboard URL name
+                    return redirect('home') # Replace with your reader dashboard URL name
+                elif user.role == 'journalist':
+                    return redirect('journalist_dashboard')
+                elif user.role == 'advertiser':
+                    return redirect('advertiser_dashboard')
             else:
-                return render(request,'core/signupsignin.html',{'form':form,"active_tab": active_tab}) 
+                return render(request,'auth/signupsignin.html',{'form':form,"active_tab": active_tab}) 
     else:
         form = UserLoginForm()
-        return render(request, 'core/signupsignin.html', {'form': form ,"active_tab": active_tab})   
+        return render(request, 'auth/signupsignin.html', {'form': form ,"active_tab": active_tab})   
 
+
+def logoutView(request):
+    logout(request)
+    return redirect('home')
 
 # @login_required(login_url='login')
-@role_required(allowed_roles=["admin"])
-def adminDashboardView(request):
-    return render(request, 'core/admin/admin_dashboard.html')
+# @role_required(allowed_roles=["admin"])
+def adminPanelDashboardView(request):
+    return render(request, 'adminPanel/adminPanelDashboard.html')
 
 
 # @login_required(login_url='login')
 @role_required(allowed_roles=["reader"])
 def readerDashboardView(request):
     return render(request, 'core/reader/reader_dashboard.html')
+

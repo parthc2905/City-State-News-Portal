@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply as Advertiser — CIVIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --yellow: #fbbf24;
+    --yellow-light: #fef3c7;
+    --red: #dc2626;
+    --blue: #0066cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ═══ HEADER ═══ */
+  .top-nav {
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-back {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ═══ CONTAINER ═══ */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* ═══ PAGE HEADER ═══ */
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .page-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 24px;
+  }
+
+  .page-title {
+    font-family: 'Spectral', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 12px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+    color: var(--gray-600);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ═══ PROGRESS STEPS ═══ */
+  .progress-steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .step {
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+    position: relative;
+  }
+
+  .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    margin: 0 auto 8px;
+    transition: all 0.3s;
+  }
+
+  .step.active .step-number {
+    background: var(--green);
+    color: white;
+  }
+
+  .step.completed .step-number {
+    background: var(--green);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 13px;
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+
+  .step.active .step-label {
+    color: var(--black);
+    font-weight: 600;
+  }
+
+  /* ═══ CARD ═══ */
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 
+      0 0 0 1px rgba(0,0,0,0.03),
+      0 2px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--black);
+  }
+
+  .card-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-top: 6px;
+  }
+
+  /* ═══ FORM ═══ */
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 8px;
+  }
+
+  .required {
+    color: var(--red);
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px var(--green-light);
+  }
+
+  .form-textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .form-help {
+    font-size: 13px;
+    color: var(--gray-500);
+    margin-top: 6px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* ═══ CHECKBOX GROUP ═══ */
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .checkbox-item label {
+    font-size: 14px;
+    color: var(--gray-700);
+    cursor: pointer;
+  }
+
+  /* ═══ FILE UPLOAD ═══ */
+  .file-upload {
+    border: 2px dashed var(--gray-300);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .file-upload:hover {
+    border-color: var(--green);
+    background: var(--green-light);
+  }
+
+  .file-upload.has-file {
+    border-color: var(--green);
+    border-style: solid;
+    background: var(--green-light);
+  }
+
+  .upload-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .upload-text {
+    font-size: 14px;
+    color: var(--gray-700);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .upload-hint {
+    font-size: 12px;
+    color: var(--gray-500);
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  .file-name {
+    font-size: 13px;
+    color: var(--green-dark);
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 1.5px solid var(--gray-300);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-100);
+  }
+
+  /* ═══ INFO BOX ═══ */
+  .info-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #93c5fd;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .info-box-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: #1e40af;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-box-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .info-box-list li {
+    font-size: 14px;
+    color: #1e40af;
+    padding: 6px 0;
+    padding-left: 24px;
+    position: relative;
+  }
+
+  .info-box-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+
+  /* ═══ SECTION HIDDEN ═══ */
+  .section {
+    display: none;
+  }
+
+  .section.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 768px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+      gap: 4px;
+    }
+
+    .step-label {
+      font-size: 11px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 
+═══════════════════════════════════════════════════════════════
+ADVERTISER APPLICATION FORM
+Collects all details shown in advertiser_pending.html
+═══════════════════════════════════════════════════════════════
+-->
+
+<!-- HEADER -->
+<header class="top-nav">
+  <div class="nav-inner">
+    <a href="civix_final.html" class="logo">CIVIX</a>
+    <a href="civix_final.html" class="nav-back">← Back to Home</a>
+  </div>
+</header>
+
+<div class="container">
+  
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-icon">📢</div>
+    <h1 class="page-title">Apply as Advertiser</h1>
+    <p class="page-subtitle">Reach millions of engaged readers across India's cities with CIVIX's hyper-local advertising platform.</p>
+  </div>
+
+  <!-- PROGRESS STEPS -->
+  <div class="progress-steps">
+    <div class="step active" id="step1">
+      <div class="step-number">1</div>
+      <div class="step-label">Company Info</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-number">2</div>
+      <div class="step-label">Campaign Details</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-number">3</div>
+      <div class="step-label">Documents</div>
+    </div>
+  </div>
+
+  <form id="advertiserForm" onsubmit="handleSubmit(event)">
+    
+    <!-- ═══ SECTION 1: COMPANY INFORMATION ═══ -->
+    <div class="section active" id="section1">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Company Information</h3>
+          <p class="card-description">Tell us about your business</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Company Name <span class="required">*</span></label>
+          <input type="text" class="form-input" name="companyName" required placeholder="TechVision Solutions Pvt Ltd">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Business Type <span class="required">*</span></label>
+            <select class="form-select" name="businessType" required>
+              <option value="">Select Business Type</option>
+              <option value="Technology / SaaS">Technology / SaaS</option>
+              <option value="E-commerce">E-commerce</option>
+              <option value="Real Estate">Real Estate</option>
+              <option value="Healthcare">Healthcare</option>
+              <option value="Education">Education</option>
+              <option value="Food & Beverage">Food & Beverage</option>
+              <option value="Retail">Retail</option>
+              <option value="Automotive">Automotive</option>
+              <option value="Financial Services">Financial Services</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Company Size <span class="required">*</span></label>
+            <select class="form-select" name="companySize" required>
+              <option value="">Select Company Size</option>
+              <option value="1-10">1-10 employees</option>
+              <option value="11-50">11-50 employees</option>
+              <option value="51-200">51-200 employees</option>
+              <option value="201-500">201-500 employees</option>
+              <option value="500+">500+ employees</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Contact Person Name <span class="required">*</span></label>
+            <input type="text" class="form-input" name="contactName" required placeholder="Amit Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Designation <span class="required">*</span></label>
+            <input type="text" class="form-input" name="designation" required placeholder="Marketing Manager">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address <span class="required">*</span></label>
+            <input type="email" class="form-input" name="email" required placeholder="contact@techvision.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number <span class="required">*</span></label>
+            <input type="tel" class="form-input" name="phone" required placeholder="+91 98765 43210">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Company Website</label>
+          <input type="url" class="form-input" name="website" placeholder="https://www.techvision.com">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">GST Number <span class="required">*</span></label>
+          <input type="text" class="form-input" name="gstNumber" required placeholder="29ABCDE1234F1Z5">
+          <p class="form-help">15-digit GST identification number</p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-primary" onclick="nextSection(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ═══ SECTION 2: CAMPAIGN DETAILS ═══ -->
+    <div class="section" id="section2">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Advertising Requirements</h3>
+          <p class="card-description">Help us understand your advertising needs</p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Monthly Budget Range <span class="required">*</span></label>
+            <select class="form-select" name="budget" required>
+              <option value="">Select Budget Range</option>
+              <option value="10000-25000">₹10,000 - ₹25,000</option>
+              <option value="25000-50000">₹25,000 - ₹50,000</option>
+              <option value="50000-100000">₹50,000 - ₹1,00,000</option>
+              <option value="100000-250000">₹1,00,000 - ₹2,50,000</option>
+              <option value="250000+">₹2,50,000+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Campaign Duration <span class="required">*</span></label>
+            <select class="form-select" name="duration" required>
+              <option value="">Select Duration</option>
+              <option value="1">1 Month</option>
+              <option value="3">3 Months</option>
+              <option value="6">6 Months</option>
+              <option value="12">12 Months</option>
+              <option value="ongoing">Ongoing</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Target Cities <span class="required">*</span></label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="mumbai" name="targetCities" value="Mumbai">
+              <label for="mumbai">Mumbai</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="delhi" name="targetCities" value="Delhi">
+              <label for="delhi">Delhi</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="bengaluru" name="targetCities" value="Bengaluru">
+              <label for="bengaluru">Bengaluru</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="pune" name="targetCities" value="Pune">
+              <label for="pune">Pune</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="ahmedabad" name="targetCities" value="Ahmedabad">
+              <label for="ahmedabad">Ahmedabad</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="hyderabad" name="targetCities" value="Hyderabad">
+              <label for="hyderabad">Hyderabad</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="chennai" name="targetCities" value="Chennai">
+              <label for="chennai">Chennai</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="kolkata" name="targetCities" value="Kolkata">
+              <label for="kolkata">Kolkata</label>
+            </div>
+          </div>
+          <p class="form-help">Select all cities where you want to run ads</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ad Format Preference</label>
+          <div class="checkbox-group">
+            <div class="checkbox-item">
+              <input type="checkbox" id="banner" name="adFormat" value="Banner Ads">
+              <label for="banner">Banner Ads</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="sponsored" name="adFormat" value="Sponsored Content">
+              <label for="sponsored">Sponsored Content</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="native" name="adFormat" value="Native Ads">
+              <label for="native">Native Ads</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="video" name="adFormat" value="Video Ads">
+              <label for="video">Video Ads</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Campaign Objectives <span class="required">*</span></label>
+          <textarea class="form-textarea" name="objectives" required placeholder="Describe your marketing goals and what you want to achieve with CIVIX advertising..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="prevSection(1)">← Back</button>
+        <button type="button" class="btn btn-primary" onclick="nextSection(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ═══ SECTION 3: DOCUMENTS ═══ -->
+    <div class="section" id="section3">
+      
+      <div class="info-box">
+        <div class="info-box-title">📋 Required Documents</div>
+        <ul class="info-box-list">
+          <li>Company Registration Certificate</li>
+          <li>GST Registration Certificate</li>
+          <li>PAN Card (Company)</li>
+          <li>Cancelled Cheque / Bank Account Details</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Upload Documents</h3>
+          <p class="card-description">All documents should be in PDF format (max 10MB each)</p>
+        </div>
+
+        <!-- Company Registration -->
+        <div class="form-group">
+          <label class="form-label">Company Registration Certificate <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('registration').click()" id="registration-upload">
+            <div class="upload-icon">🏢</div>
+            <div class="upload-text">Click to upload Registration Certificate</div>
+            <div class="upload-hint">PDF format (max 10MB)</div>
+            <div class="file-name" id="registration-name"></div>
+          </div>
+          <input type="file" id="registration" class="file-input" accept=".pdf" onchange="handleFileUpload('registration')" required>
+        </div>
+
+        <!-- GST Certificate -->
+        <div class="form-group">
+          <label class="form-label">GST Registration Certificate <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('gst').click()" id="gst-upload">
+            <div class="upload-icon">💼</div>
+            <div class="upload-text">Click to upload GST Certificate</div>
+            <div class="upload-hint">PDF format (max 10MB)</div>
+            <div class="file-name" id="gst-name"></div>
+          </div>
+          <input type="file" id="gst" class="file-input" accept=".pdf" onchange="handleFileUpload('gst')" required>
+        </div>
+
+        <!-- PAN Card -->
+        <div class="form-group">
+          <label class="form-label">PAN Card (Company) <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('pan').click()" id="pan-upload">
+            <div class="upload-icon">📋</div>
+            <div class="upload-text">Click to upload PAN Card</div>
+            <div class="upload-hint">PDF format (max 10MB)</div>
+            <div class="file-name" id="pan-name"></div>
+          </div>
+          <input type="file" id="pan" class="file-input" accept=".pdf" onchange="handleFileUpload('pan')" required>
+        </div>
+
+        <!-- Bank Details -->
+        <div class="form-group">
+          <label class="form-label">Bank Account Details <span class="required">*</span></label>
+          <div class="file-upload" onclick="document.getElementById('bank').click()" id="bank-upload">
+            <div class="upload-icon">🏦</div>
+            <div class="upload-text">Click to upload Bank Details</div>
+            <div class="upload-hint">Cancelled cheque or bank statement (PDF, max 10MB)</div>
+            <div class="file-name" id="bank-name"></div>
+          </div>
+          <input type="file" id="bank" class="file-input" accept=".pdf" onchange="handleFileUpload('bank')" required>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="prevSection(2)">← Back</button>
+        <button type="submit" class="btn btn-primary">Submit Application</button>
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+<script>
+// Section navigation
+function nextSection(sectionNum) {
+  // Hide all sections
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'completed'));
+  
+  // Show target section
+  document.getElementById('section' + sectionNum).classList.add('active');
+  document.getElementById('step' + sectionNum).classList.add('active');
+  
+  // Mark previous steps as completed
+  for (let i = 1; i < sectionNum; i++) {
+    document.getElementById('step' + i).classList.add('completed');
+  }
+  
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevSection(sectionNum) {
+  nextSection(sectionNum);
+}
+
+// File upload handler
+function handleFileUpload(inputId) {
+  const input = document.getElementById(inputId);
+  const uploadDiv = document.getElementById(inputId + '-upload');
+  const nameDiv = document.getElementById(inputId + '-name');
+  
+  if (input.files.length > 0) {
+    const file = input.files[0];
+    const fileSize = (file.size / (1024 * 1024)).toFixed(2); // MB
+    
+    // Check file size
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      input.value = '';
+      return;
+    }
+    
+    // Update UI
+    uploadDiv.classList.add('has-file');
+    nameDiv.textContent = `✓ ${file.name} (${fileSize} MB)`;
+  }
+}
+
+// Form submission
+function handleSubmit(event) {
+  event.preventDefault();
+  
+  // Get form data
+  const formData = new FormData(event.target);
+  
+  // Validate at least one target city
+  const targetCities = formData.getAll('targetCities');
+  if (targetCities.length === 0) {
+    alert('Please select at least one target city');
+    nextSection(2); // Go back to section 2
+    return;
+  }
+  
+  // In real implementation, send to server via AJAX
+  console.log('Form submitted:', Object.fromEntries(formData));
+  console.log('Target Cities:', targetCities);
+  
+  // Show success message
+  alert('✓ Application Submitted Successfully!\n\nYour advertiser application has been received. Our business team will review it within 1-2 business days.\n\nApplication ID: #ADV-2026-00234');
+  
+  // Redirect to pending page
+  window.location.href = 'advertiser_pending.html';
+}
+</script>
+
+</body>
+</html>

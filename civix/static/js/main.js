@@ -1,4 +1,37 @@
 
+// Nav dropdowns (Opinion, Profile)
+document.querySelectorAll('.nav-dropdown-trigger, .profile-avatar-btn').forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dropdown = trigger.closest('.nav-dropdown, .profile-dropdown');
+        const isOpen = dropdown.classList.contains('open');
+
+        // Close all other dropdowns
+        document.querySelectorAll('.nav-dropdown.open, .profile-dropdown.open').forEach(d => {
+            if (d !== dropdown) {
+                d.classList.remove('open');
+                d.querySelector('[aria-expanded]')?.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        dropdown.classList.toggle('open', !isOpen);
+        trigger.setAttribute('aria-expanded', !isOpen);
+    });
+});
+
+// Prevent dropdown menus from closing when clicking inside
+document.querySelectorAll('.nav-dropdown-menu, .profile-dropdown-menu').forEach(menu => {
+    menu.addEventListener('click', (e) => e.stopPropagation());
+});
+
+// Close dropdowns when clicking outside
+document.addEventListener('click', () => {
+    document.querySelectorAll('.nav-dropdown.open, .profile-dropdown.open').forEach(dropdown => {
+        dropdown.classList.remove('open');
+        dropdown.querySelector('[aria-expanded]')?.setAttribute('aria-expanded', 'false');
+    });
+});
+
 // Location chip interaction
 document.querySelectorAll('.loc-chip').forEach(chip => {
     chip.addEventListener('click', () => {

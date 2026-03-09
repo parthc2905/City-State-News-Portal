@@ -1,0 +1,426 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVIX — Hyper-local News for Every Indian City</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Archivo+Black&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+    <!-- ═══ HEADER ═══ -->
+    {% include 'components/navbar.html' %}
+
+    <!-- ═══ LOCATION BAR ═══ -->
+    {% include 'components/locationBar.html' %}
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <div class="container">
+
+        <!-- ═══ HERO SECTION ═══ -->
+        <section class="hero-section">
+            <div class="hero-grid">
+                <div class="hero-main">
+                    <div class="hero-tag">
+                        <div class="dot"></div>
+                        Breaking News
+                    </div>
+                    <h1 class="hero-title">Supreme Court's Historic Ruling Extends OBC Reservations Across State
+                        Universities
+                        Nationwide</h1>
+                    <p class="hero-excerpt">In a landmark 5–2 majority verdict, India's apex court has upheld the
+                        constitutional
+                        validity of extending Other Backward Class reservations in state-funded higher education
+                        institutions,
+                        potentially affecting over 2.3 crore students across 18 states in the upcoming academic year.
+                    </p>
+                    <div class="hero-meta">
+                        <div class="author-info">
+                            <div class="author-avatar">PK</div>
+                            <div>
+                                <div class="author-name">Priya Krishnan</div>
+                                <div style="font-size:12px;color:var(--gray-500);">Senior Legal Correspondent</div>
+                            </div>
+                        </div>
+                        <span>·</span>
+                        <span>Feb 17, 2026</span>
+                        <span>·</span>
+                        <span>8 min read</span>
+                    </div>
+                    <div class="hero-img p1">
+                        <div class="img-placeholder">🏛️</div>
+                    </div>
+                </div>
+
+                <!-- ═══ SIDEBAR TRENDING ═══ -->
+                <aside class="sidebar-section">
+                    <div class="sidebar-head">Trending on CIVIX</div>
+
+                    <div class="trending-item">
+                        <div class="trending-num">01</div>
+                        <div class="trending-content">
+                            <h4>Maharashtra Floods: 40,000 Evacuated as IMD Issues Red Alert for Coastal Districts</h4>
+                            <div class="trending-author">Neha Kulkarni · 4 min read</div>
+                        </div>
+                    </div>
+
+                    <div class="trending-item">
+                        <div class="trending-num">02</div>
+                        <div class="trending-content">
+                            <h4>Gujarat Unveils ₹34,000 Crore Solar Park — Asia's Largest Renewable Energy Hub</h4>
+                            <div class="trending-author">Dhruv Shah · 6 min read</div>
+                        </div>
+                    </div>
+
+                    <div class="trending-item">
+                        <div class="trending-num">03</div>
+                        <div class="trending-content">
+                            <h4>IPL 2026 Mega Auction: Mumbai Indians Retain Rohit Sharma, Full Squad List Revealed</h4>
+                            <div class="trending-author">Amit Kulkarni · 5 min read</div>
+                        </div>
+                    </div>
+
+                    <div class="trending-item">
+                        <div class="trending-num">04</div>
+                        <div class="trending-content">
+                            <h4>Pune-Mumbai Hyperloop Gets Final Green Light, 25-Min Commute by 2027</h4>
+                            <div class="trending-author">Kavya Mehta · 7 min read</div>
+                        </div>
+                    </div>
+
+                    <div class="trending-item">
+                        <div class="trending-num">05</div>
+                        <div class="trending-content">
+                            <h4>Rajasthan Announces Free Electricity Up to 100 Units for All Households</h4>
+                            <div class="trending-author">Sunita Agarwal · 4 min read</div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ═══ LATEST STORIES ═══ -->
+        <div class="section-divider">
+            <h2 class="section-title">Latest Stories</h2>
+            <div class="section-line"></div>
+            <a class="see-all">See all →</a>
+        </div>
+
+        <section class="articles-grid fade-in">
+            <article class="article-card">
+                <div class="card-img p2">
+                    <div class="img-placeholder" style="font-size:50px;">🌿</div>
+                </div>
+                <span class="card-tag">Energy · Gujarat</span>
+                <h3 class="card-title">Gujarat's Surya Shakti Phase-3: How 8 GW of Solar Capacity Will Transform India's
+                    Green
+                    Energy Landscape</h3>
+                <p class="card-excerpt">The state government's ambitious renewable energy expansion plan could power 6
+                    million
+                    homes and reduce carbon emissions by 12 million tons annually.</p>
+                <div class="card-meta">
+                    <span class="card-author">Dhruv Shah</span>
+                    <span class="card-read-time">6 min read</span>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="card-img p3">
+                    <div class="img-placeholder" style="font-size:50px;">🏏</div>
+                </div>
+                <span class="card-tag">Sports · Mumbai</span>
+                <h3 class="card-title">Inside Mumbai Indians' IPL 2026 Strategy: Breaking Down the ₹85 Crore Auction
+                    Spend</h3>
+                <p class="card-excerpt">From retaining Rohit Sharma to strategic acquisitions of young talent, MI's
+                    management
+                    reveals their blueprint for the upcoming season.</p>
+                <div class="card-meta">
+                    <span class="card-author">Amit Kulkarni</span>
+                    <span class="card-read-time">5 min read</span>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="card-img p4">
+                    <div class="img-placeholder" style="font-size:50px;">💊</div>
+                </div>
+                <span class="card-tag">Health · Delhi</span>
+                <h3 class="card-title">AIIMS Delhi's Breakthrough ₹50 Dengue Test Kit Could Save Thousands of Lives in
+                    Rural
+                    India</h3>
+                <p class="card-excerpt">With 98% accuracy and rapid 15-minute results, this innovation addresses a
+                    critical gap
+                    in affordable diagnostic infrastructure.</p>
+                <div class="card-meta">
+                    <span class="card-author">Dr. Rajeev Menon</span>
+                    <span class="card-read-time">7 min read</span>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="card-img p5">
+                    <div class="img-placeholder" style="font-size:50px;">🏗️</div>
+                </div>
+                <span class="card-tag">Infrastructure · Maharashtra</span>
+                <h3 class="card-title">The Engineering Marvel Behind India's First Hyperloop: A Deep Dive into the
+                    Pune-Mumbai
+                    Corridor</h3>
+                <p class="card-excerpt">Exploring the technology, challenges, and environmental considerations of the
+                    140 km
+                    high-speed transportation project.</p>
+                <div class="card-meta">
+                    <span class="card-author">Kavya Mehta</span>
+                    <span class="card-read-time">9 min read</span>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="card-img p6">
+                    <div class="img-placeholder" style="font-size:50px;">💻</div>
+                </div>
+                <span class="card-tag">Technology · Bengaluru</span>
+                <h3 class="card-title">Bengaluru Launches India's First AI-Powered Traffic Management System, Promises
+                    40%
+                    Congestion Reduction</h3>
+                <p class="card-excerpt">Using machine learning and real-time data analytics, the smart city initiative
+                    aims to
+                    revolutionize urban mobility.</p>
+                <div class="card-meta">
+                    <span class="card-author">Rohan Iyer</span>
+                    <span class="card-read-time">6 min read</span>
+                </div>
+            </article>
+
+            <article class="article-card">
+                <div class="card-img p1">
+                    <div class="img-placeholder" style="font-size:50px;">⚖️</div>
+                </div>
+                <span class="card-tag">Crime · Uttar Pradesh</span>
+                <h3 class="card-title">Agra Honour Killing Case: 14 Arrested, High Court Orders SIT Investigation</h3>
+                <p class="card-excerpt">The tragic incident has reignited debate over caste-based violence and the
+                    effectiveness
+                    of existing legal protections.</p>
+                <div class="card-meta">
+                    <span class="card-author">Priya Sharma</span>
+                    <span class="card-read-time">5 min read</span>
+                </div>
+            </article>
+        </section>
+
+        <!-- ═══ CITIZEN JOURNALISM BANNER ═══ -->
+        <div class="citizen-banner">
+            <div class="citizen-icon">📸</div>
+            <div class="citizen-content">
+                <h3 class="citizen-title">Become a Citizen Journalist</h3>
+                <p class="citizen-desc">Your story matters. Submit local news, photos, and reports from your community.
+                    We
+                    verify and publish within 24 hours.</p>
+            </div>
+            <button class="citizen-btn">Submit Your Report →</button>
+        </div>
+
+        <!-- ═══ STATE POLITICS ═══ -->
+        <div class="section-divider">
+            <h2 class="section-title">State Politics</h2>
+            <div class="section-line"></div>
+            <a class="see-all">See all →</a>
+        </div>
+
+        <section class="two-col-section">
+            <div class="main-content">
+                <div class="story-list">
+                    <article class="story-item">
+                        <div class="story-img p4">
+                            <div class="img-placeholder" style="font-size:40px;">🏛️</div>
+                        </div>
+                        <div class="story-info">
+                            <span class="story-tag">Politics · Uttar Pradesh</span>
+                            <h3 class="story-title">Yogi Government Announces ₹12,000 Crore Infrastructure Mega Blitz
+                                Across Eastern
+                                UP</h3>
+                            <p class="story-excerpt">Over 48 new highway projects, 12 irrigation schemes, and 3 medical
+                                colleges are
+                                set to transform Purvanchal region under the state budget's flagship development
+                                initiative.</p>
+                            <div class="story-meta">Priya Sharma · 7 min read</div>
+                        </div>
+                    </article>
+
+                    <article class="story-item">
+                        <div class="story-img p2">
+                            <div class="img-placeholder" style="font-size:40px;">🌾</div>
+                        </div>
+                        <div class="story-info">
+                            <span class="story-tag">Politics · Madhya Pradesh</span>
+                            <h3 class="story-title">MP Government Expands Kisan Samman Scheme to Cover 8 Lakh More
+                                Marginal Farmers
+                            </h3>
+                            <p class="story-excerpt">The enhanced PM-KISAN supplement will provide an additional ₹6,000
+                                annually to
+                                small and marginal farmers in drought-prone regions.</p>
+                            <div class="story-meta">Rahul Verma · 5 min read</div>
+                        </div>
+                    </article>
+
+                    <article class="story-item">
+                        <div class="story-img p6">
+                            <div class="img-placeholder" style="font-size:40px;">⚖️</div>
+                        </div>
+                        <div class="story-info">
+                            <span class="story-tag">Politics · Telangana</span>
+                            <h3 class="story-title">Telangana: Congress Government Faces No-Confidence Motion After 3
+                                MLAs Cross-Vote
+                            </h3>
+                            <p class="story-excerpt">Political drama unfolds in Hyderabad as the ruling party scrambles
+                                to rally
+                                numbers ahead of the floor test scheduled for Thursday.</p>
+                            <div class="story-meta">K. Rao Reddy · 8 min read</div>
+                        </div>
+                    </article>
+
+                    <article class="story-item">
+                        <div class="story-img p5">
+                            <div class="img-placeholder" style="font-size:40px;">🏢</div>
+                        </div>
+                        <div class="story-info">
+                            <span class="story-tag">Governance · Maharashtra</span>
+                            <h3 class="story-title">Maharashtra CM Launches 'One Lakh Jobs' Scheme Targeting Youth in
+                                Tier-2 Cities
+                            </h3>
+                            <p class="story-excerpt">The initiative focuses on creating sustainable employment
+                                opportunities in
+                                manufacturing, services, and technology sectors across 15 smaller cities.</p>
+                            <div class="story-meta">Neha Kulkarni · 6 min read</div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <aside class="sidebar-section">
+                <div class="sidebar-head">Must Reads</div>
+
+                <div class="trending-item">
+                    <div class="trending-content">
+                        <h4>Why India's Flood Management Still Fails Despite Early Warning Systems</h4>
+                        <div class="trending-author">Editorial Board · 10 min read</div>
+                    </div>
+                </div>
+
+                <div class="trending-item">
+                    <div class="trending-content">
+                        <h4>Inside the Political Machinery: How State Parties Are Adapting to Digital Campaigns</h4>
+                        <div class="trending-author">Vikram Desai · 12 min read</div>
+                    </div>
+                </div>
+
+                <div class="trending-item">
+                    <div class="trending-content">
+                        <h4>The Real Cost of Free Electricity: Rajasthan's Policy Under Economic Scrutiny</h4>
+                        <div class="trending-author">Anjali Kapoor · 8 min read</div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <!-- ═══ OPINION ═══ -->
+        <div class="section-divider">
+            <h2 class="section-title">Opinion & Analysis</h2>
+            <div class="section-line"></div>
+            <a class="see-all">See all →</a>
+        </div>
+
+        <section class="opinion-grid">
+            <article class="opinion-card">
+                <div class="opinion-label">Opinion</div>
+                <h3 class="opinion-title">India's Reservation Debate Keeps Missing the Real Problem: Quality of
+                    Education</h3>
+                <p class="opinion-excerpt">While we argue about who gets admission, we ignore that the institutions
+                    themselves
+                    are crumbling. Reservation is a band-aid solution when what we need is radical reform in how we fund
+                    and run
+                    our public education system.</p>
+                <div class="opinion-author-box">
+                    <div class="opinion-avatar">AK</div>
+                    <div class="opinion-author-info">
+                        <div class="opinion-author-name">Prof. Anita Krishnan</div>
+                        <div class="opinion-author-role">Education Policy Analyst</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="opinion-card">
+                <div class="opinion-label">Analysis</div>
+                <h3 class="opinion-title">The Silent Revolution: How Tier-2 Cities Are Building India's Next Startup
+                    Economy
+                </h3>
+                <p class="opinion-excerpt">Forget Bengaluru and Mumbai. Cities like Indore, Coimbatore, and
+                    Visakhapatnam are
+                    quietly incubating the next wave of billion-dollar companies, and they're doing it with a fraction
+                    of the
+                    capital.</p>
+                <div class="opinion-author-box">
+                    <div class="opinion-avatar">RS</div>
+                    <div class="opinion-author-info">
+                        <div class="opinion-author-name">Rohit Sabharwal</div>
+                        <div class="opinion-author-role">Venture Capital Investor</div>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- ═══ NEWSLETTER ═══ -->
+        <section class="newsletter-section">
+            <div class="newsletter-inner">
+                <div class="newsletter-icon">📬</div>
+                <h2 class="newsletter-title">Get the best of CIVIX</h2>
+                <p class="newsletter-desc">Join 2.4 million readers who start their day with hyper-local news, analysis,
+                    and
+                    stories that matter to your community.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email address">
+                    <button type="submit">Subscribe</button>
+                </form>
+                <p style="font-size:12px;color:var(--gray-600);margin-top:12px;">Free forever. Unsubscribe anytime.</p>
+            </div>
+        </section>
+
+        <!-- ═══ TAGS ═══ -->
+        <div class="section-divider">
+            <h2 class="section-title">Explore Topics</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <section class="tags-section">
+            <div class="tags-grid">
+                <span class="tag-pill">State Politics</span>
+                <span class="tag-pill">Climate & Environment</span>
+                <span class="tag-pill">Public Health</span>
+                <span class="tag-pill">Infrastructure</span>
+                <span class="tag-pill">Technology</span>
+                <span class="tag-pill">Education Policy</span>
+                <span class="tag-pill">Urban Development</span>
+                <span class="tag-pill">Agriculture</span>
+                <span class="tag-pill">Crime & Justice</span>
+                <span class="tag-pill">Arts & Culture</span>
+                <span class="tag-pill">Sports</span>
+                <span class="tag-pill">Business & Economy</span>
+                <span class="tag-pill">Elections 2026</span>
+                <span class="tag-pill">Citizen Journalism</span>
+                <span class="tag-pill">Opinion</span>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    {% include 'components/footer.html' %}
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>
