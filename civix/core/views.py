@@ -1,12 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from .forms import UserSignupForm, UserLoginForm
+from .models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
-
+from django.db.models import Q
 
 def homePage(request):
     return render(request, 'base/base.html')
@@ -77,11 +78,46 @@ def logoutView(request):
 # @login_required(login_url='login')
 # @role_required(allowed_roles=["admin"])
 def adminPanelDashboardView(request):
-    return render(request, 'adminPanel/adminPanelDashboard.html')
+    return redirect('admin_panel_applications')
+
+
+def adminPanelApplicationsView(request):
+    query = request.GET.get("q")
+
+
+    if query:
+        users = User.objects.filter(role__in=["journalist", "advertiser"])
+        users = users.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        )
+        users = users.order_by("-id")
+    else:
+        users = User.objects.filter(role__in=['journalist', 'advertiser']).order_by('id')
+
+
+
+    return render(request, 'adminPanel/adminPanelApplications.html', {'users':users})
+
+
+def adminPanelApplicationsApproval(request,id):
+    user = get_object_or_404(User,id=id)
+    user.approval_status = "approved"
+    user.save()
+    return redirect('admin_panel_applications')
+
+
+def adminPanelApplicationsReject(request,id):
+    user = get_object_or_404(User,id=id)
+    user.approval_status = "rejected"
+    user.save()
+    return redirect('admin_panel_applications')
 
 
 # @login_required(login_url='login')
-@role_required(allowed_roles=["reader"])
+# @role_required(allowed_roles=["reader"])
 def readerDashboardView(request):
     return render(request, 'core/reader/reader_dashboard.html')
 
+ 

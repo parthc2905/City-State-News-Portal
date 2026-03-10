@@ -96,22 +96,6 @@ function closeModal(event) {
     }
 }
 
-function approveApplication(name) {
-    if (confirm(`Approve application for ${name}?`)) {
-        alert(`✓ Application approved for ${name}`);
-        // Reload or update table
-    }
-}
-
-function rejectApplication(name) {
-    if (confirm(`Reject application for ${name}?`)) {
-        const reason = prompt('Enter rejection reason:');
-        if (reason) {
-            alert(`✕ Application rejected for ${name}\nReason: ${reason}`);
-            // Reload or update table
-        }
-    }
-}
 
 function approveFromModal() {
     if (currentApplication) {
