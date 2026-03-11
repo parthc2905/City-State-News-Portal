@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.admin_counts', # this will take care of pending counts in admin Panel
             ],
         },
     },
@@ -131,4 +132,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'chauhanp2905@gmail.com'
-EMAIL_HOST_PASSWORD = 'qhva wosb eflo lxwa'  # Use App Password for Gmail   
+EMAIL_HOST_PASSWORD = 'ihxl yycz sqns zmwh'  # Use App Password for Gmail   

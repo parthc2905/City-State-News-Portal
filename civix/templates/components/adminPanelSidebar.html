@@ -2,15 +2,19 @@
     <div class="sidebar-section">
         <div class="sidebar-title">Main</div>
         <div class="sidebar-menu">
-            <div class="menu-item">
-                <span>📊</span>
-                Dashboard
-            </div>
-            <div class="menu-item active">
-                <span>👥</span>
-                Applications
-                <span class="menu-badge">12</span>
-            </div>
+            <a href="{% url 'admin_panel_dashboard' %}" style="text-decoration: none;">
+                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_dashboard' %}active{% endif %}">
+                    <span>📊</span>
+                    Dashboard
+                </div>
+            </a>
+            <a href="{% url 'admin_panel_applications' %}" style="text-decoration: none;">
+                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_applications' %}active{% endif %}">
+                    <span>👥</span>
+                    Applications
+                    {% if pending_applications > 0 %}<span class="menu-badge">{{ pending_applications }}</span>{% endif %}
+                </div>
+            </a>
             <div class="menu-item">
                 <span>📰</span>
                 Articles
@@ -25,18 +29,24 @@
     <div class="sidebar-section">
         <div class="sidebar-title">Users</div>
         <div class="sidebar-menu">
-            <div class="menu-item">
-                <span>📝</span>
-                Journalists
-            </div>
-            <div class="menu-item">
-                <span>📢</span>
-                Advertisers
-            </div>
-            <div class="menu-item">
-                <span>👤</span>
-                Readers
-            </div>
+            <a href="{% url 'admin_panel_journalists' %}" style="text-decoration: none;">
+                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_journalists' %}active{% endif %}">
+                    <span>📝</span>
+                    Journalists
+                </div>
+            </a>
+            <a href="{% url 'admin_panel_advertisers' %}" style="text-decoration: none;">
+                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_advertisers' %}active{% endif %}">
+                    <span>📢</span>
+                    Advertisers
+                </div>
+            </a>
+            <a href="{% url 'admin_panel_readers' %}" style="text-decoration: none;">
+                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_readers' %}active{% endif %}">
+                    <span>👤</span>
+                    Readers
+                </div>
+            </a>
         </div>
     </div>
 

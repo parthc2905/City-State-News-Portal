@@ -35,11 +35,9 @@
   }
 
   /* ═══ LAYOUT ═══ */
-  .dashboard-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 100vh;
-  }
+ .dashboard-layout {
+  min-height: 100vh;
+}
 
   /* ═══ SIDEBAR ═══ */
   .sidebar {
@@ -146,6 +144,7 @@
   /* ═══ MAIN CONTENT ═══ */
   .main-content {
     margin-left: 260px;
+    width: calc(100% - 260px);
     min-height: 100vh;
   }
 
@@ -156,7 +155,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    sticky: top;
+
     z-index: 100;
   }
 
@@ -174,8 +173,9 @@
   }
 
   .container {
-    padding: 32px 40px;
-    max-width: 1200px;
+    width:100%;
+    max-width:900px;
+    margin:auto;
   }
 
   /* ═══ EDITOR CARD ═══ */
@@ -184,6 +184,9 @@
     border-radius: 12px;
     box-shadow: 0 0 0 1px rgba(0,0,0,0.03), 0 2px 4px rgba(0,0,0,0.04);
     margin-bottom: 24px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .editor-header {
@@ -484,6 +487,24 @@
   .mobile-overlay.active {
     display: block;
   }
+  @media (min-width:1024px) and (max-width:1192px){
+
+  .main-content{
+    margin-left:260px;
+    width:auto;
+  }
+
+  .container{
+    max-width:800px;
+    margin:auto;
+    padding:28px;
+  }
+
+  .editor-card{
+    max-width:100%;
+  }
+
+}
 
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 1024px) {
@@ -502,7 +523,8 @@
     }
 
     .main-content {
-      margin-left: 0;
+      margin-left:0;
+      width:100%;
     }
 
     .dashboard-layout {
@@ -592,115 +614,179 @@
     }
   }
 
-  @media (max-width: 768px) {
-    .form-row {
-      grid-template-columns: 1fr;
-    }
+ 
+@media (max-width:768px){
 
-    .top-actions .btn span {
-      display: none;
-    }
-
-    .top-actions .btn {
-      padding: 10px 12px;
-    }
-
-    .tags-container {
-      padding: 6px 8px;
-    }
-
-    .tag {
-      font-size: 12px;
-      padding: 4px 8px;
-    }
-
-    .tag-input {
-      font-size: 13px;
-    }
-
-    .image-upload.has-image {
-      height: 250px;
-    }
+  .main-content{
+    margin-left:0;
+    width:100%;
   }
 
+  .container{
+    padding:20px 16px;
+    max-width:100%;
+  }
+
+  .top-bar{
+    padding:12px 16px;
+    width:100%;
+  }
+
+  .floating-bar{
+    left:0;
+    right:0;
+    width:100%;
+    padding:12px 16px;
+  }
+
+  .editor-card{
+    width:100%;
+  }
+
+  .form-row{
+    grid-template-columns:1fr;
+  }
+
+  .top-actions .btn span{
+    display:none;
+  }
+
+  .top-actions .btn{
+    padding:10px 12px;
+  }
+
+  .tags-container{
+    padding:6px 8px;
+  }
+
+  .tag{
+    font-size:12px;
+    padding:4px 8px;
+  }
+
+  .tag-input{
+    font-size:13px;
+  }
+
+  .image-upload.has-image{
+    height:250px;
+  }
+
+  .stats-bar{
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+}
+
   @media (max-width: 480px) {
-    .top-bar {
-      padding: 12px 16px;
-    }
+    .main-content{
+    margin-left:0;
+    width:100%;
+  }
 
-    .container {
-      padding: 16px;
-    }
+  .container{
+    padding:16px 12px;
+    max-width:100%;
+  }
 
-    .page-title {
-      font-size: 18px;
-    }
+  .top-bar{
+    padding:12px;
+    width:100%;
+  }
 
-    .editor-header,
-    .editor-body {
-      padding: 16px;
-    }
+  .page-title{
+    font-size:18px;
+  }
 
-    .form-input.large {
-      font-size: 20px;
-      padding: 12px;
-    }
+  .editor-header,
+  .editor-body{
+    padding:16px;
+  }
 
-    .form-label {
-      font-size: 13px;
-    }
+  .editor-card{
+    border-radius:10px;
+    width:100%;
+  }
 
-    .form-input,
-    .form-select,
-    .form-textarea {
-      font-size: 14px;
-      padding: 10px 12px;
-    }
+  .form-label{
+    font-size:13px;
+  }
 
-    .form-textarea {
-      min-height: 250px;
-      font-size: 15px;
-    }
+  .form-input,
+  .form-select,
+  .form-textarea{
+    font-size:14px;
+    padding:10px 12px;
+  }
 
-    .stats-bar {
-      padding: 10px 12px;
-      gap: 8px;
-    }
+  .form-input.large{
+    font-size:20px;
+    padding:12px;
+  }
 
-    .stat-item {
-      font-size: 11px;
-    }
+  .form-textarea{
+    min-height:220px;
+    font-size:15px;
+  }
 
-    .floating-bar {
-      padding: 12px 16px;
-    }
+  .image-upload{
+    padding:20px 14px;
+  }
 
-    .btn {
-      padding: 10px 16px;
-      font-size: 14px;
-    }
+  .image-upload.has-image{
+    height:220px;
+  }
 
-    .image-upload {
-      padding: 24px 16px;
-    }
+  .upload-icon{
+    font-size:34px;
+  }
 
-    .upload-icon {
-      font-size: 36px;
-      margin-bottom: 12px;
-    }
+  .upload-text{
+    font-size:14px;
+  }
 
-    .upload-text {
-      font-size: 14px;
-    }
+  .upload-hint{
+    font-size:12px;
+  }
 
-    .upload-hint {
-      font-size: 12px;
-    }
+  .stats-bar{
+    padding:10px;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .stat-item{
+    font-size:11px;
+  }
+
+  .floating-bar{
+    left:0;
+    right:0;
+    width:100%;
+    padding:12px;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .floating-bar > div{
+    width:100%;
+  }
+
+  .floating-bar .btn{
+    width:100%;
+  }
+
+  .btn{
+    padding:10px 14px;
+    font-size:14px;
+  }
+
   }
 </style>
 </head>
 <body>
-
+  
 <!-- 
 ═══════════════════════════════════════════════════════════════
 JOURNALIST DASHBOARD - WRITE ARTICLE PAGE

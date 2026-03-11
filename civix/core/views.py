@@ -61,7 +61,7 @@ def userLoginView(request):
                     # print(user)
                     return redirect('home') # Replace with your reader dashboard URL name
                 elif user.role == 'journalist':
-                    return redirect('journalist_dashboard')
+                    return redirect('home')
                 elif user.role == 'advertiser':
                     return redirect('advertiser_dashboard')
             else:
@@ -113,6 +113,59 @@ def adminPanelApplicationsReject(request,id):
     user.approval_status = "rejected"
     user.save()
     return redirect('admin_panel_applications')
+
+
+def adminPanelJournalistsView(request):
+    query = request.GET.get("q")
+
+
+    if query:
+        users = User.objects.filter(role__in=["journalist"])
+        users = users.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        )
+        users = users.order_by("-id")
+    else:
+        users = User.objects.filter(role__in=['journalist']).order_by('id')
+
+    return render(request, 'adminPanel/adminPanelJournalists.html', {'users':users})
+
+def adminPanelAdvertisersView(request):
+    query = request.GET.get("q")
+
+
+    if query:
+        users = User.objects.filter(role__in=["advertiser"])
+        users = users.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        )
+        users = users.order_by("-id")
+    else:
+        users = User.objects.filter(role__in=['advertiser']).order_by('id')
+
+    return render(request, 'adminPanel/adminPanelAdvertisers.html', {'users':users})
+
+
+def adminPanelReadersView(request):
+    query = request.GET.get("q")
+
+
+    if query:
+        users = User.objects.filter(role__in=["reader"])
+        users = users.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query)
+        )
+        users = users.order_by("-id")
+    else:
+        users = User.objects.filter(role__in=['reader']).order_by('id')
+
+    return render(request, 'adminPanel/adminPanelReaders.html', {'users':users})
 
 
 # @login_required(login_url='login')
