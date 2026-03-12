@@ -20,4 +20,6 @@ from django.urls import path,include
 urlpatterns = [
     path('superadmin/', admin.site.urls),
     path('core/', include('core.urls')), # include the urls of our authentication core app
+    path('location/', include('location.urls')), # include the urls of our location app
+    path('news/', include('news.urls')), # include the urls of our news app
 ]

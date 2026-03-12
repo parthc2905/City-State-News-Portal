@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from django.shortcuts import redirect
+
 urlpatterns = [
     path('', views.homePage, name='home'),
     path('signup/', views.userSignupView, name='signup'), 

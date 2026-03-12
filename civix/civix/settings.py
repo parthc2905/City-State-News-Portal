@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core', # our authentication app --> All authentication related code will be in this app like signup, login, logout, password reset, etc.
-
+    'location', # For city and state handling
+    'news' # news articles, comments, reports, etc
 ]
 
 MIDDLEWARE = [
@@ -125,6 +126,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+MEDIA_URL="/Media/"
+MEDIA_ROOT = os.path.join(BASE_DIR,"Media")
+
 AUTH_USER_MODEL = 'core.User' # tell django to use our custom user model instead of the default one
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

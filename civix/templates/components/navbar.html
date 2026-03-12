@@ -34,8 +34,18 @@
                         </div>
                         <div class="profile-dropdown-divider"></div>
                         <a href="#" class="profile-dropdown-item">My Profile</a>
-                        <a href="#" class="profile-dropdown-item">Settings</a>
+                        {% if request.user.role == 'journalist' %}
+                        <a href="#" class="profile-dropdown-item">
+                            <span class="dropdown-icon">✍️</span>
+                            Write Article
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <span class="dropdown-icon">📝</span>
+                            My Articles
+                        </a>
+                        {% endif %}
                         <a href="#" class="profile-dropdown-item">Saved Articles</a>
+                        <a href="#" class="profile-dropdown-item">Settings</a>
                         <div class="profile-dropdown-divider"></div>
                         <a href="{% url 'logout' %}" class="profile-dropdown-item profile-dropdown-logout">Log out</a>
                     </div>
