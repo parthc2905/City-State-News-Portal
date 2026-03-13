@@ -1,0 +1,167 @@
+{% extends 'journalist/journalistDashboard.html' %}
+
+{% block content %}
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Write New Article</h1>
+    </div>
+    <div class="top-actions">
+        <button class="btn btn-ghost" onclick="saveDraft()">
+            <span>💾</span> <span>Save Draft</span>
+        </button>
+        <!-- <button class="btn btn-secondary" onclick="previewArticle()">
+          <span>👁️</span> <span>Preview</span>
+        </button> -->
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <form id="articleForm" method="POST" action="{% url 'journalist_write_article' %}" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        <!-- ARTICLE TITLE -->
+        <div class="editor-card">
+            <div class="editor-body">
+                <div class="form-group">
+                    <label class="form-label">Article Title <span class="required">*</span></label>
+                    {{ articleForm.title }}
+                    <p class="form-help">Keep it clear, compelling, and under 150 characters</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FEATURED IMAGE -->
+        <div class="editor-card">
+            <div class="editor-header">
+                <h3 style="font-size: 18px; font-weight: 700;">Featured Image</h3>
+            </div>
+            <div class="editor-body">
+                <div class="image-upload" id="imageUpload" onclick="document.getElementById('featuredImage').click()">
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">Click to upload featured image</div>
+                    <div class="upload-hint">Recommended: 1200x630px, JPG or PNG, max 5MB</div>
+                    <img id="imagePreview" class="image-preview" style="display: none;">
+                    <button type="button" class="image-remove" onclick="removeImage(event)">✕</button>
+                </div>
+                {{ articleMedia.file }}
+            </div>
+        </div>
+
+        <!-- ARTICLE DETAILS -->
+        <div class="editor-card">
+            <div class="editor-header">
+                <h3 style="font-size: 18px; font-weight: 700;">Article Details</h3>
+            </div>
+            <div class="editor-body">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Category <span class="required">*</span></label>
+                        {{ articleForm.category_id }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">City <span class="required">*</span></label>
+                        {{ articleForm.city_id }}
+                    </div>
+                </div>
+
+                <!-- <div class="form-group">
+                    <label class="form-label">Tags</label>
+                    <div class="tags-container" id="tagsContainer"
+                        onclick="document.getElementById('tagInput').focus()">
+                        <input type="text" id="tagInput" class="tag-input" placeholder="Add tags (press Enter)..."
+                            onkeydown="handleTagInput(event)">
+                    </div>
+                    <p class="form-help">Add relevant tags to help readers find your article</p>
+                </div> -->
+
+            </div>
+        </div>
+
+        <!-- ARTICLE CONTENT -->
+        <div class="editor-card">
+            <div class="editor-header">
+                <h3 style="font-size: 18px; font-weight: 700;">Article Content</h3>
+            </div>
+            <div class="editor-body">
+
+                <div class="form-group">
+                    <label class="form-label">Excerpt <span class="required">*</span></label>
+                    {{ articleForm.excerpt }}
+                    <p class="form-help">This appears in article previews and social media shares</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Article Body <span class="required">*</span></label>
+                    {{ articleForm.content }}
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span>📝 Words:</span>
+                        <span class="stat-value" id="wordCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🔤 Characters:</span>
+                        <span class="stat-value" id="charCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>⏱️ Read time:</span>
+                        <span class="stat-value" id="readTime">0 min</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PUBLISHING OPTIONS -->
+        <div class="editor-card">
+            <div class="editor-header">
+                <h3 style="font-size: 18px; font-weight: 700;">Publishing Options</h3>
+            </div>
+            <div class="editor-body">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Publish Status</label>
+                        {{ articleForm.publication_status }}
+                        <!-- <option value="review">Submit for Review</option> -->
+                        <!-- <option value="scheduled">Schedule for Later</option> -->
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Visibility</label>
+                        {{ articleForm.visibility }}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<!-- FLOATING ACTION BAR -->
+<div class="floating-bar">
+    <div style="display: flex; gap: 12px; align-items: center;">
+        <span style="font-size: 13px; color: var(--gray-600);">
+            <span style="font-weight: 600; color: var(--green);">●</span> Auto-saved 2 min ago
+        </span>
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" type="button" onclick="confirmCancel()">Cancel</button>
+        <button class="btn btn-primary" type="button" onclick="if(confirm('Are you sure you want to publish this article?')) { isSubmitting = true; document.getElementById('articleForm').requestSubmit(); }">
+            📤 Publish Article
+        </button>
+    </div>
+</div>
+
+
+{% endblock content %}

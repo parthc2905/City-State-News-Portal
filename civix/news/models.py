@@ -1,13 +1,14 @@
 from django.db import models
 from location.models import State, City
+from django.utils.text import slugify
 from django.conf import settings
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=100, null=False, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    category_name = models.CharField(max_length=100, null=True, unique=True)
+    slug = models.SlugField(unique=True,null=True)
 
     class Meta:
-        db_table = "Category"
+        db_table = "category"
 
     def __str__(self):
         return self.category_name
@@ -20,27 +21,48 @@ class News_article(models.Model):
     excerpt = models.TextField(max_length=300)
     content = models.TextField(null=False)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
-    state_id = models.ForeignKey(State, on_delete=models.CASCADE)
     city_id = models.ForeignKey(City, on_delete=models.CASCADE)
     author_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     choice = (("pending", "pending"), ("approved", "approved"), ("rejected", "rejected"))
-    status = models.CharField(max_length=20, choices=choice, null=False)
-    is_draft = models.BooleanField(default=True)
+    status = models.CharField(max_length=20, choices=choice, null=False, default='approved')
     VISIBILITY_CHOICES = [
     ("public", "Public"),
     ("private", "Private"),
     ("subscriber", "Subscribers Only"),
     ]
-
     visibility = models.CharField(
         max_length=20,
         choices=VISIBILITY_CHOICES,
         default="public"
     )
+    PUBLICATION_STATUS = (
+    ("draft", "Save as Draft"),
+    ("published", "Publish immediately"),
+    )   
+    publication_status = models.CharField(
+        max_length=10,
+        choices=PUBLICATION_STATUS,
+        default="draft"
+    )
     is_breaking = models.BooleanField(default=False)
     views_count = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     published_at = models.DateTimeField(null=True)
+
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)[:60]
+            slug = base_slug
+            counter = 1
+
+            while News_article.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = "news_article"
@@ -53,7 +75,7 @@ class ArticleMedia(models.Model):
     MEDIA_TYPES = [
         ('image', 'Image') ## in future videos
     ]
-    media_type = models.CharField(max_length=10, choices=MEDIA_TYPES)  # e.g., 'image', 'video'
+    media_type = models.CharField(max_length=10, choices=MEDIA_TYPES, default="image")  # e.g., 'image', 'video'
     file = models.FileField(upload_to='newsArticleMedia/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

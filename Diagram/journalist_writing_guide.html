@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing Guide — Journalist Dashboard — CIVIX</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --yellow: #fbbf24;
+    --blue: #0066cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ═══ LAYOUT ═══ */
+  .dashboard-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ═══ SIDEBAR (Same as previous pages) ═══ */
+  .sidebar {
+    background: var(--white);
+    border-right: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    width: 260px;
+    overflow-y: auto;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+    display: block;
+  }
+
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--green-light);
+    border-radius: 6px;
+    margin-top: 12px;
+  }
+
+  .user-badge-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green-dark);
+  }
+
+  .sidebar-nav {
+    padding: 20px 12px;
+    flex: 1;
+  }
+
+  .nav-section {
+    margin-bottom: 24px;
+  }
+
+  .nav-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: var(--gray-700);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .nav-item:hover {
+    background: var(--gray-100);
+  }
+
+  .nav-item.active {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 600;
+  }
+
+  .nav-icon {
+    font-size: 18px;
+    width: 20px;
+    text-align: center;
+  }
+
+  .sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid var(--gray-200);
+  }
+
+  /* ═══ MAIN CONTENT ═══ */
+  .main-content {
+    margin-left: 260px;
+    min-height: 100vh;
+  }
+
+  .top-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    padding: 16px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .page-title {
+    font-family: 'Spectral', serif;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  /* ═══ GUIDE CONTENT ═══ */
+  .guide-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  .guide-hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: white;
+    border-radius: 16px;
+    margin-bottom: 48px;
+  }
+
+  .guide-hero-icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+  }
+
+  .guide-hero-title {
+    font-family: 'Spectral', serif;
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .guide-hero-subtitle {
+    font-size: 18px;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ═══ TABLE OF CONTENTS ═══ */
+  .toc {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 40px;
+  }
+
+  .toc-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+
+  .toc-list {
+    list-style: none;
+  }
+
+  .toc-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  .toc-item:last-child {
+    border-bottom: none;
+  }
+
+  .toc-link {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toc-link:hover {
+    color: var(--green-dark);
+  }
+
+  /* ═══ GUIDE SECTION ═══ */
+  .guide-section {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 40px;
+    margin-bottom: 32px;
+  }
+
+  .section-number {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Spectral', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .section-intro {
+    font-size: 16px;
+    color: var(--gray-600);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .subsection-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 32px 0 16px;
+    color: var(--black);
+  }
+
+  .guide-text {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--gray-700);
+    margin-bottom: 16px;
+  }
+
+  /* ═══ TIPS & DO/DON'T ═══ */
+  .tip-box {
+    background: var(--green-light);
+    border-left: 4px solid var(--green);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .tip-title {
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tip-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray-700);
+  }
+
+  .do-dont-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 24px 0;
+  }
+
+  .do-box, .dont-box {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .do-box {
+    background: #ecfdf5;
+    border: 2px solid #10b981;
+  }
+
+  .dont-box {
+    background: #fef2f2;
+    border: 2px solid #ef4444;
+  }
+
+  .do-title, .dont-title {
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .do-title {
+    color: #065f46;
+  }
+
+  .dont-title {
+    color: #991b1b;
+  }
+
+  .do-list, .dont-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .do-list li, .dont-list li {
+    padding: 8px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .do-list li::before {
+    content: '✓ ';
+    color: #10b981;
+    font-weight: bold;
+  }
+
+  .dont-list li::before {
+    content: '✕ ';
+    color: #ef4444;
+    font-weight: bold;
+  }
+
+  /* ═══ EXAMPLE BOX ═══ */
+  .example-box {
+    background: #eff6ff;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .example-label {
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 12px;
+  }
+
+  .example-text {
+    font-family: 'Spectral', serif;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--gray-700);
+  }
+
+  /* ═══ CHECKLIST ═══ */
+  .checklist {
+    background: var(--gray-100);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .checklist-title {
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .checklist-items {
+    list-style: none;
+  }
+
+  .checklist-items li {
+    padding: 10px;
+    background: var(--white);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--green);
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ═══ MOBILE ═══ */
+  .mobile-menu-btn {
+    display: none;
+    width: 40px;
+    height: 40px;
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
+
+  .mobile-overlay.active {
+    display: block;
+  }
+
+  @media (max-width: 1024px) {
+    .mobile-menu-btn {
+      display: flex;
+    }
+
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+      z-index: 1000;
+      position: fixed;
+    }
+
+    .sidebar.active {
+      transform: translateX(0);
+    }
+
+    .main-content {
+      margin-left: 0;
+    }
+
+    .do-dont-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .guide-container {
+      padding: 20px;
+    }
+
+    .guide-section {
+      padding: 24px 20px;
+    }
+
+    .guide-hero {
+      padding: 40px 20px;
+    }
+
+    .guide-hero-title {
+      font-size: 32px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 
+═══════════════════════════════════════════════════════════════
+WRITING GUIDE PAGE
+Journalistic best practices and tips for CIVIX journalists
+═══════════════════════════════════════════════════════════════
+-->
+
+<div class="dashboard-layout">
+  
+  <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+  
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="civix_final.html" class="logo">CIVIX</a>
+      <div class="user-badge">
+        <span class="user-badge-icon">📝</span>
+        <span class="user-badge-text">Journalist</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-title">Post</div>
+        <a href="journalist_dashboard_1773226760.html" class="nav-item">
+          <span class="nav-icon">✍️</span>
+          Write Article
+        </a>
+        <a href="journalist_my_articles.html" class="nav-item">
+          <span class="nav-icon">📰</span>
+          My Articles
+        </a>
+        <a href="journalist_analytics.html" class="nav-item">
+          <span class="nav-icon">📊</span>
+          Analytics
+        </a>
+        <a href="civix_profile.html" class="nav-item">
+          <span class="nav-icon">👤</span>
+          Profile
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">Quick Actions</div>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">💾</span>
+          Drafts
+        </a>
+        <a href="#" class="nav-item">
+          <span class="nav-icon">🔖</span>
+          Saved
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-title">Support</div>
+        <a href="#" class="nav-item active">
+          <span class="nav-icon">💡</span>
+          Writing Guide
+        </a>
+        <a href="journalist_help_center.html" class="nav-item">
+          <span class="nav-icon">💬</span>
+          Help Center
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="civix_final.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        Back to Home
+      </a>
+      <a href="#" class="nav-item" onclick="logout()">
+        <span class="nav-icon">🚪</span>
+        Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <div class="top-bar">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Writing Guide</h1>
+      </div>
+    </div>
+
+    <div class="guide-container">
+
+      <!-- HERO -->
+      <div class="guide-hero">
+        <div class="guide-hero-icon">💡</div>
+        <h1 class="guide-hero-title">CIVIX Writing Guide</h1>
+        <p class="guide-hero-subtitle">Master the art of hyper-local journalism with our comprehensive guide to writing impactful, accurate, and engaging news stories.</p>
+      </div>
+
+      <!-- TABLE OF CONTENTS -->
+      <div class="toc">
+        <h2 class="toc-title">📋 What You'll Learn</h2>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#section1" class="toc-link">1. The CIVIX Journalism Standards</a></li>
+          <li class="toc-item"><a href="#section2" class="toc-link">2. Writing Clear Headlines</a></li>
+          <li class="toc-item"><a href="#section3" class="toc-link">3. Structure Your Article</a></li>
+          <li class="toc-item"><a href="#section4" class="toc-link">4. Fact-Checking & Sources</a></li>
+          <li class="toc-item"><a href="#section5" class="toc-link">5. Style & Tone Guidelines</a></li>
+          <li class="toc-item"><a href="#section6" class="toc-link">6. Before You Publish</a></li>
+        </ul>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="guide-section" id="section1">
+        <div class="section-number">1</div>
+        <h2 class="section-title">The CIVIX Journalism Standards</h2>
+        <p class="section-intro">At CIVIX, we're committed to ethical, accurate, and impactful hyper-local journalism. Every article must meet these core principles.</p>
+
+        <h3 class="subsection-title">Core Principles</h3>
+        <p class="guide-text">Our journalism is guided by three fundamental values:</p>
+
+        <div class="tip-box">
+          <div class="tip-title">✓ Accuracy First</div>
+          <div class="tip-text">Every fact must be verified. Every quote must be accurate. Every source must be credible. If you're not 100% certain, don't publish it.</div>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-title">🎯 Local Impact</div>
+          <div class="tip-text">Focus on stories that directly affect your city's residents. How does this news change their daily lives? Why should they care?</div>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-title">⚖️ Fair & Balanced</div>
+          <div class="tip-text">Present multiple perspectives. Give all relevant parties a chance to respond. Avoid bias and let readers form their own opinions.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 2 -->
+      <div class="guide-section" id="section2">
+        <div class="section-number">2</div>
+        <h2 class="section-title">Writing Clear Headlines</h2>
+        <p class="section-intro">Your headline is the first (and sometimes only) thing readers see. Make it count.</p>
+
+        <h3 class="subsection-title">Headline Best Practices</h3>
+
+        <div class="do-dont-grid">
+          <div class="do-box">
+            <div class="do-title">✓ DO</div>
+            <ul class="do-list">
+              <li>Be specific and descriptive</li>
+              <li>Use active voice</li>
+              <li>Include key facts</li>
+              <li>Keep it under 70 characters</li>
+              <li>Answer: Who, What, Where, When</li>
+            </ul>
+          </div>
+
+          <div class="dont-box">
+            <div class="dont-title">✕ DON'T</div>
+            <ul class="dont-list">
+              <li>Use clickbait or sensationalism</li>
+              <li>Include opinion in headlines</li>
+              <li>Use ALL CAPS</li>
+              <li>Make promises you can't deliver</li>
+              <li>Use jargon or acronyms</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="example-box">
+          <div class="example-label">✓ Good Example:</div>
+          <div class="example-text">"Mumbai Metro Line 3 Opens March 15, Cutting Commute Times by 40 Minutes"</div>
+        </div>
+
+        <div class="example-box" style="background: #fef2f2;">
+          <div class="example-label" style="color: #991b1b;">✕ Bad Example:</div>
+          <div class="example-text" style="color: #991b1b;">"You Won't Believe What's Happening to Mumbai Traffic!"</div>
+        </div>
+      </div>
+
+      <!-- SECTION 3 -->
+      <div class="guide-section" id="section3">
+        <div class="section-number">3</div>
+        <h2 class="section-title">Structure Your Article</h2>
+        <p class="section-intro">Follow the inverted pyramid: most important information first, supporting details after.</p>
+
+        <h3 class="subsection-title">The Perfect Article Structure</h3>
+
+        <p class="guide-text"><strong>1. Lead Paragraph (First 2-3 sentences)</strong><br>
+        Answer the 5 W's: Who, What, Where, When, Why (and How). This should be a complete summary of the story.</p>
+
+        <p class="guide-text"><strong>2. Supporting Details (Next 2-4 paragraphs)</strong><br>
+        Expand on the lead with crucial facts, quotes, and context. Include the most newsworthy information here.</p>
+
+        <p class="guide-text"><strong>3. Background Information (Middle section)</strong><br>
+        Provide context: history, related events, why this matters now. Help readers understand the bigger picture.</p>
+
+        <p class="guide-text"><strong>4. Additional Details (Later paragraphs)</strong><br>
+        Include secondary quotes, statistics, expert opinions, and less critical information.</p>
+
+        <p class="guide-text"><strong>5. Conclusion (Final paragraph)</strong><br>
+        End with forward-looking information: what happens next, future implications, or a powerful closing quote.</p>
+
+        <div class="tip-box">
+          <div class="tip-title">💡 Pro Tip: The Coffee Test</div>
+          <div class="tip-text">If a reader spills coffee on your article after the first paragraph, they should still understand the complete story. That's how strong your lead should be.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 4 -->
+      <div class="guide-section" id="section4">
+        <div class="section-number">4</div>
+        <h2 class="section-title">Fact-Checking & Sources</h2>
+        <p class="section-intro">Accuracy is non-negotiable. Every fact must be verified, every source must be credible.</p>
+
+        <h3 class="subsection-title">Source Requirements</h3>
+
+        <p class="guide-text"><strong>Minimum Requirements:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li>Breaking news: At least 2 independent sources</li>
+          <li>Investigative pieces: 3+ sources, with documentation</li>
+          <li>Opinion pieces: Clearly labeled as opinion</li>
+          <li>Statistics: Link to original data source</li>
+        </ul>
+
+        <h3 class="subsection-title">Credible Sources</h3>
+
+        <div class="do-dont-grid">
+          <div class="do-box">
+            <div class="do-title">✓ Reliable Sources</div>
+            <ul class="do-list">
+              <li>Government officials (named)</li>
+              <li>Subject matter experts</li>
+              <li>Official documents</li>
+              <li>Eyewitnesses (verified)</li>
+              <li>Academic research</li>
+              <li>Press releases (verified)</li>
+            </ul>
+          </div>
+
+          <div class="dont-box">
+            <div class="dont-title">✕ Questionable Sources</div>
+            <ul class="dont-list">
+              <li>Anonymous social media posts</li>
+              <li>Unverified rumors</li>
+              <li>Biased advocacy groups</li>
+              <li>Wikipedia (use as starting point only)</li>
+              <li>Screenshots without verification</li>
+              <li>"People say..." or "Many believe..."</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <div class="checklist-title">✓ Fact-Checking Checklist</div>
+          <ul class="checklist-items">
+            <li><div class="checkbox"></div> All names spelled correctly</li>
+            <li><div class="checkbox"></div> All titles and positions accurate</li>
+            <li><div class="checkbox"></div> All dates and times verified</li>
+            <li><div class="checkbox"></div> All statistics from original sources</li>
+            <li><div class="checkbox"></div> All quotes accurate and in context</li>
+            <li><div class="checkbox"></div> All locations correct</li>
+            <li><div class="checkbox"></div> All phone numbers and websites working</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- SECTION 5 -->
+      <div class="guide-section" id="section5">
+        <div class="section-number">5</div>
+        <h2 class="section-title">Style & Tone Guidelines</h2>
+        <p class="section-intro">Write clearly, concisely, and objectively. Your job is to inform, not to impress.</p>
+
+        <h3 class="subsection-title">Writing Style Rules</h3>
+
+        <p class="guide-text"><strong>Voice & Tense:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li>Use active voice: "The mayor announced" not "It was announced by the mayor"</li>
+          <li>Write in past tense for news events</li>
+          <li>Use present tense only for general truths or ongoing situations</li>
+        </ul>
+
+        <p class="guide-text"><strong>Sentence Structure:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li>One idea per sentence</li>
+          <li>Average 15-20 words per sentence</li>
+          <li>Vary sentence length for readability</li>
+          <li>Avoid complex compound sentences</li>
+        </ul>
+
+        <p class="guide-text"><strong>Word Choice:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+          <li>Use simple, concrete words</li>
+          <li>Avoid jargon and technical terms (or explain them)</li>
+          <li>Be specific: "increased by 15%" not "increased significantly"</li>
+          <li>Avoid clichés and idioms</li>
+        </ul>
+
+        <div class="tip-box">
+          <div class="tip-title">📝 The 8th-Grade Rule</div>
+          <div class="tip-text">Write for an 8th-grade reading level. This doesn't mean dumbing down—it means clear, accessible writing that anyone can understand.</div>
+        </div>
+      </div>
+
+      <!-- SECTION 6 -->
+      <div class="guide-section" id="section6">
+        <div class="section-number">6</div>
+        <h2 class="section-title">Before You Publish</h2>
+        <p class="section-intro">Use this final checklist before submitting your article for review.</p>
+
+        <div class="checklist">
+          <div class="checklist-title">✓ Pre-Publication Checklist</div>
+          <ul class="checklist-items">
+            <li><div class="checkbox"></div> Headline is clear, accurate, under 70 characters</li>
+            <li><div class="checkbox"></div> Lead paragraph answers 5 W's</li>
+            <li><div class="checkbox"></div> All facts verified with sources</li>
+            <li><div class="checkbox"></div> At least 2 independent sources cited</li>
+            <li><div class="checkbox"></div> All quotes accurate and attributed</li>
+            <li><div class="checkbox"></div> Article is balanced and fair</li>
+            <li><div class="checkbox"></div> Grammar and spelling checked</li>
+            <li><div class="checkbox"></div> No personal opinions included</li>
+            <li><div class="checkbox"></div> Featured image added (1200x630px)</li>
+            <li><div class="checkbox"></div> Proper category and tags selected</li>
+            <li><div class="checkbox"></div> Excerpt written (2-3 sentences)</li>
+            <li><div class="checkbox"></div> Read aloud for flow and clarity</li>
+          </ul>
+        </div>
+
+        <div class="tip-box">
+          <div class="tip-title">🎯 Final Tip: Sleep On It</div>
+          <div class="tip-text">If possible, write your article, save it as a draft, and review it the next day with fresh eyes. You'll catch errors and improve clarity.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script>
+function toggleMobileMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('mobileOverlay');
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
+  document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+}
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 1024) {
+    document.getElementById('sidebar').classList.remove('active');
+    document.getElementById('mobileOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+});
+
+function logout() {
+  if (confirm('Are you sure you want to sign out?')) {
+    window.location.href = 'civix_final.html';
+  }
+}
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc-link').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
