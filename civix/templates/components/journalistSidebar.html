@@ -10,22 +10,18 @@
     <nav class="sidebar-nav">
         <div class="nav-section">
             <div class="nav-title">Post</div>
-            <a href="#" class="nav-item active">
+            <a href="{% url 'journalist_write_article' %}" class="nav-item {% if request.resolver_match.url_name == 'journalist_write_article' %}active{% endif %}">
                 <span class="nav-icon">✍️</span>
                 Write Article
             </a>
-            <a href="journalist_articles.html" class="nav-item">
+            <a href="{% url 'journalist_my_articles' %}" class="nav-item {% if request.resolver_match.url_name == 'journalist_my_articles' %}active{% endif %}">
                 <span class="nav-icon">📰</span>
                 My Articles
             </a>
-            <a href="journalist_analytics.html" class="nav-item">
+            <!-- <a href="journalist_analytics.html" class="nav-item">
                 <span class="nav-icon">📊</span>
                 Analytics
-            </a>
-            <a href="civix_profile.html" class="nav-item">
-                <span class="nav-icon">👤</span>
-                Profile
-            </a>
+            </a> -->
         </div>
 
         <div class="nav-section">
@@ -37,6 +33,18 @@
             <a href="#" class="nav-item">
                 <span class="nav-icon">🔖</span>
                 Saved
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Settings</div>
+            <a href="{% url 'journalist_profile' %}" class="nav-item">
+                <span class="nav-icon">👤</span>
+                Profile
+            </a>
+            <a href="{% url 'journalist_general' %}" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                General
             </a>
         </div>
 

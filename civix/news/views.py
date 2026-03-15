@@ -25,3 +25,25 @@ def journalistWriteArticleView(request):
         article = ArticleWriteForm()
         articleMedia = ArticleMediaForm()
     return render(request, 'journalist/journalistWriteArticle.html',{"articleForm" : article , 'articleMedia' : articleMedia})
+
+
+def journalistMyArticlesView(request):
+    if request.method == "POST":
+        pass
+    else:
+        pass
+    return render(request, 'journalist/journalistMyArticles.html')
+
+def journalistProfileView(request):
+    if request.method == "POST":
+        pass
+    else:
+        pass
+    return render(request, 'journalist/journalistProfile.html')
+
+def journalistGeneralView(request):
+    if request.method == "POST":
+        pass
+    else:
+        pass
+    return render(request, 'journalist/journalistGeneral.html')

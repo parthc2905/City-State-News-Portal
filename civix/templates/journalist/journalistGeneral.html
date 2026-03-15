@@ -1,0 +1,95 @@
+{% extends 'journalist/journalistDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>General — CIVIX</title>
+{% endblock title %}
+
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
+{% endblock page_css %}
+
+
+{% block content %}
+<div class="container">
+    <!-- ACCOUNT PREFERENCES -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Notification Preferences</h3>
+            <p class="card-description">Manage how you receive updates from CIVIX</p>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4>Email Notifications</h4>
+                <p>Receive email updates about new articles in your city</p>
+            </div>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4>Breaking News Alerts</h4>
+                <p>Get instant notifications for breaking news</p>
+            </div>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4>Weekly Newsletter</h4>
+                <p>Receive a weekly digest of top stories</p>
+            </div>
+            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+        </div>
+
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <h4>Article Recommendations</h4>
+                <p>Get personalized content suggestions</p>
+            </div>
+            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+        </div>
+    </div>
+
+    <!-- PRIVACY & SECURITY -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Privacy & Security</h3>
+            <p class="card-description">Manage your account security settings</p>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Change Password</label>
+            <input type="password" class="form-input" placeholder="Enter new password">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-input" placeholder="Confirm new password">
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-primary">Update Password</button>
+        </div>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title" style="color: var(--red);">Danger Zone</h3>
+            <p class="card-description">Irreversible account actions</p>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'js/journalistProfile.js' %}"></script>
+{% endblock page_js %}

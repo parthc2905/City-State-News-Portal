@@ -1,0 +1,251 @@
+{% extends 'journalist/journalistDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>My Articles — Journalist Dashboard — CIVIX</title>
+{% endblock title %}
+
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
+{% endblock page_css %}
+
+
+{% block content %}
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">My Articles</h1>
+    </div>
+    <div class="top-actions">
+        <!-- <button class="btn btn-primary" onclick="window.location.href='journalist_dashboard_1773226760.html'">
+            ✍️ Write New Article
+        </button> -->
+        <a href="{% url 'journalist_write_article' %}" class="btn btn-primary" >
+            ✍️ Write New Article
+        </a>
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Articles</span>
+                <span class="stat-icon">📰</span>
+            </div>
+            <div class="stat-value">24</div>
+            <div class="stat-change positive">+3 this month</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Published</span>
+                <span class="stat-icon">✓</span>
+            </div>
+            <div class="stat-value">18</div>
+            <div class="stat-change">75% of total</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Drafts</span>
+                <span class="stat-icon">💾</span>
+            </div>
+            <div class="stat-value">4</div>
+            <div class="stat-change">Awaiting completion</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">In Review</span>
+                <span class="stat-icon">⏱️</span>
+            </div>
+            <div class="stat-value">2</div>
+            <div class="stat-change">Pending approval</div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search articles..." id="searchInput"
+                oninput="filterArticles()">
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Status:</span>
+            <select class="filter-select" id="statusFilter" onchange="filterArticles()">
+                <option value="all">All Articles</option>
+                <option value="published">Published</option>
+                <option value="draft">Drafts</option>
+                <option value="review">In Review</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Category:</span>
+            <select class="filter-select" id="categoryFilter" onchange="filterArticles()">
+                <option value="all">All Categories</option>
+                <option value="politics">Politics</option>
+                <option value="business">Business</option>
+                <option value="technology">Technology</option>
+                <option value="culture">Culture</option>
+                <option value="sports">Sports</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Sort by:</span>
+            <select class="filter-select" id="sortFilter" onchange="filterArticles()">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="views">Most Viewed</option>
+                <option value="title">Title A-Z</option>
+            </select>
+        </div>
+
+    </div>
+
+    <!-- ARTICLES LIST -->
+    <div class="articles-section" id="articlesList">
+
+        <!-- Article 1 - Published -->
+        <div class="article-item" data-status="published" data-category="politics"
+            data-title="Mumbai's New Metro Line Opens Next Month">
+            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge published">✓ Published</span>
+                </div>
+                <h3 class="article-title">Mumbai's New Metro Line Opens Next Month</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 March 10, 2026</span>
+                    <span class="meta-item">👁️ 12,450 views</span>
+                    <span class="meta-item">💬 89 comments</span>
+                    <span class="meta-item">🏷️ Politics</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(1)">👁️</button>
+                <button class="action-btn edit" title="Edit" onclick="editArticle(1)">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(1)">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Article 2 - Draft -->
+        <div class="article-item" data-status="draft" data-category="technology"
+            data-title="Smart City Initiative: Ahmedabad's Digital Transformation">
+            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge draft">💾 Draft</span>
+                </div>
+                <h3 class="article-title">Smart City Initiative: Ahmedabad's Digital Transformation</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 Last edited: March 8, 2026</span>
+                    <span class="meta-item">🏷️ Technology</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(2)">👁️</button>
+                <button class="action-btn edit" title="Edit" onclick="editArticle(2)">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(2)">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Article 3 - In Review -->
+        <div class="article-item" data-status="review" data-category="business"
+            data-title="Local Startups Secure ₹50 Crore in Funding">
+            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge review">⏱️ In Review</span>
+                </div>
+                <h3 class="article-title">Local Startups Secure ₹50 Crore in Funding</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 Submitted: March 7, 2026</span>
+                    <span class="meta-item">🏷️ Business</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(3)">👁️</button>
+                <button class="action-btn edit" title="Edit (disabled)" disabled
+                    style="opacity: 0.5; cursor: not-allowed;">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(3)">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Article 4 - Published -->
+        <div class="article-item" data-status="published" data-category="culture"
+            data-title="Pune's Street Art Scene Gains International Recognition">
+            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge published">✓ Published</span>
+                </div>
+                <h3 class="article-title">Pune's Street Art Scene Gains International Recognition</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 March 5, 2026</span>
+                    <span class="meta-item">👁️ 8,920 views</span>
+                    <span class="meta-item">💬 45 comments</span>
+                    <span class="meta-item">🏷️ Culture</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(4)">👁️</button>
+                <button class="action-btn edit" title="Edit" onclick="editArticle(4)">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(4)">🗑️</button>
+            </div>
+        </div>
+
+        <!-- Article 5 - Rejected -->
+        <div class="article-item" data-status="rejected" data-category="sports"
+            data-title="Cricket Tournament Brings Community Together">
+            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge rejected">✕ Rejected</span>
+                </div>
+                <h3 class="article-title">Cricket Tournament Brings Community Together</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 Rejected: March 3, 2026</span>
+                    <span class="meta-item">🏷️ Sports</span>
+                    <span class="meta-item" style="color: var(--red);">Reason: Needs more sources</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(5)">👁️</button>
+                <button class="action-btn edit" title="Revise & Resubmit" onclick="editArticle(5)">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(5)">🗑️</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'js/journalistMyArticles.js' %}"></script>
+{% endblock page_js %}

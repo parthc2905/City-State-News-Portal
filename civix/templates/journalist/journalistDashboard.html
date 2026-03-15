@@ -5,12 +5,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Write Article — Journalist Dashboard — CIVIX</title>
+    {% block title %}
+
+    {% endblock title %}
     <link
         href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/journalistDashboard.css' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% block page_css %}
+
+    {% endblock page_css %}
 </head>
 
 <body>
@@ -32,6 +37,9 @@
 
     </div>
     <script src="{% static 'js/journalistDashboard.js' %}"></script>
+    {% block page_js %}
+        
+    {% endblock page_js %}
 </body>
 
 </html>

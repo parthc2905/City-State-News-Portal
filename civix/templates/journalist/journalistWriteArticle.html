@@ -1,5 +1,9 @@
 {% extends 'journalist/journalistDashboard.html' %}
 
+{% block title %}
+<title>Write Article — Journalist Dashboard — CIVIX</title>
+{% endblock title %}
+
 {% block content %}
 
 <!-- TOP BAR -->
@@ -157,7 +161,8 @@
     </div>
     <div style="display: flex; gap: 12px;">
         <button class="btn btn-secondary" type="button" onclick="confirmCancel()">Cancel</button>
-        <button class="btn btn-primary" type="button" onclick="if(confirm('Are you sure you want to publish this article?')) { isSubmitting = true; document.getElementById('articleForm').requestSubmit(); }">
+        <button class="btn btn-primary" type="button"
+            onclick="if(confirm('Are you sure you want to publish this article?')) { isSubmitting = true; document.getElementById('articleForm').requestSubmit(); }">
             📤 Publish Article
         </button>
     </div>

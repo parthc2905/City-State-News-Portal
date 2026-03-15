@@ -37,23 +37,24 @@
   }
 
   /* ═══ LAYOUT ═══ */
-  .dashboard-layout {
-    display: grid;
-    grid-template-columns: 260px 1fr;
-    min-height: 100vh;
-  }
+  .dashboard-layout{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:100vh;
+}
 
-  /* ═══ SIDEBAR ═══ */
-  .sidebar {
-    background: var(--white);
-    border-right: 1px solid var(--gray-200);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    width: 260px;
-    overflow-y: auto;
-  }
+/* sidebar */
+.sidebar{
+  background:var(--white);
+  border-right:1px solid var(--gray-200);
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  position:sticky;
+  top:0;
+  overflow-y:auto;
+}
+
 
   .sidebar-header {
     padding: 24px 20px;
@@ -145,10 +146,10 @@
     border-top: 1px solid var(--gray-200);
   }
 
-  /* ═══ MAIN CONTENT ═══ */
-  .main-content {
-    margin-left: 260px;
-    min-height: 100vh;
+  /* main content */
+  .main-content{
+    min-height:100vh;
+    width:100%;
   }
 
   .top-bar {
@@ -161,6 +162,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
+    width:100%;
+    box-sizing:border-box;
   }
 
   .page-title {
@@ -183,10 +186,10 @@
 
   /* ═══ STATS CARDS ═══ */
   .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    margin-bottom: 32px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom: 24px;
   }
 
   .stat-card {
@@ -238,9 +241,9 @@
     padding: 20px 24px;
     margin-bottom: 24px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 16px;
-    flex-wrap: wrap;
   }
 
   .filter-group {
@@ -308,7 +311,8 @@
     border-bottom: 1px solid var(--gray-200);
     padding: 24px;
     display: grid;
-    grid-template-columns: 100px 1fr auto;
+    grid-template-columns:120px 1fr auto;
+    align-items:center;
     gap: 20px;
     align-items: center;
     transition: all 0.2s;
@@ -520,88 +524,83 @@
   }
 
   /* ═══ RESPONSIVE ═══ */
-  @media (max-width: 1024px) {
-    .mobile-menu-btn {
-      display: flex;
-    }
+  @media (max-width:1024px){
 
-    .sidebar {
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1000;
-    }
+.sidebar{
+  position:fixed;
+  left:0;
+  top:0;
+  width:260px;
+  transform:translateX(-100%);
+  transition:transform .3s ease;
+  z-index:1000;
+}
 
-    .sidebar.active {
-      transform: translateX(0);
-    }
+.sidebar.active{
+  transform:translateX(0);
+}
 
-    .main-content {
-      margin-left: 0;
-    }
+.dashboard-layout{
+  grid-template-columns:1fr;
+}
 
-    .dashboard-layout {
-      grid-template-columns: 1fr;
-    }
+.stats-grid{
+  grid-template-columns:repeat(2,1fr);
+}
 
-    .stats-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+}
 
-    .article-item {
-      grid-template-columns: 80px 1fr;
-      gap: 16px;
-    }
 
-    .article-actions {
-      grid-column: 2;
-      justify-content: flex-start;
-      margin-top: 12px;
-    }
-  }
+  @media (max-width:768px){
 
-  @media (max-width: 768px) {
-    .container {
-      padding: 20px;
-    }
+.container{
+  padding:20px;
+}
 
-    .top-bar {
-      padding: 12px 20px;
-    }
+.top-bar{
+  padding:12px 20px;
+}
 
-    .stats-grid {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
+.stats-grid{
+  grid-template-columns:1fr;
+}
 
-    .filters-bar {
-      padding: 16px;
-    }
+.article-item{
+  grid-template-columns:1fr;
+}
 
-    .filter-group,
-    .search-box {
-      width: 100%;
-    }
+.article-thumbnail{
+  width:100%;
+  height:200px;
+}
 
-    .filter-select {
-      width: 100%;
-    }
+}
 
-    .article-item {
-      grid-template-columns: 1fr;
-      padding: 16px;
-    }
+@media (max-width:480px){
 
-    .article-thumbnail {
-      width: 100%;
-      height: 200px;
-    }
+.filters-bar{
+  flex-direction:column;
+  align-items:stretch;
+}
 
-    .article-meta {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-  }
+.search-box{
+  min-width:100%;
+}
+
+.filter-select{
+  width:100%;
+}
+
+.top-actions .btn{
+  font-size:13px;
+  padding:8px 12px;
+}
+
+.page-title{
+  font-size:20px;
+}
+
+}
 </style>
 </head>
 <body>
@@ -912,31 +911,7 @@ Shows all articles written by journalist with filters and actions
 </div>
 
 <script>
-// Mobile menu toggle
-function toggleMobileMenu() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('mobileOverlay');
-  
-  sidebar.classList.toggle('active');
-  overlay.classList.toggle('active');
-  
-  if (sidebar.classList.contains('active')) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
-}
 
-// Close mobile menu on resize
-window.addEventListener('resize', () => {
-  if (window.innerWidth > 1024) {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('mobileOverlay');
-    sidebar.classList.remove('active');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-});
 
 // Filter articles
 function filterArticles() {
@@ -1022,12 +997,7 @@ function deleteArticle(id) {
   }
 }
 
-// Logout
-function logout() {
-  if (confirm('Are you sure you want to sign out?')) {
-    window.location.href = 'civix_final.html';
-  }
-}
+
 </script>
 
 </body>

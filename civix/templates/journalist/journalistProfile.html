@@ -1,0 +1,143 @@
+{% extends 'journalist/journalistDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>Profile — CIVIX</title>
+{% endblock title %}
+
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
+{% endblock page_css %}
+
+
+{% block content %}
+
+<!-- <div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">My Profile</h1>
+    </div>
+</div> -->
+
+<div class="container">
+
+    <!-- ALERT -->
+    <div class="alert alert-success" id="successAlert">
+        ✓ Profile updated successfully!
+    </div>
+
+    <!-- PROFILE OVERVIEW CARD -->
+    <div class="card">
+        <div class="profile-header">
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <div class="avatar" id="avatarPreview">RK</div>
+                    <label for="avatarInput" class="avatar-upload">📷</label>
+                    <input type="file" id="avatarInput" class="upload-input" accept="image/*"
+                        onchange="previewAvatar(event)">
+                </div>
+                <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">Change
+                    Photo</button>
+            </div>
+
+            <div class="profile-info">
+                <h2 class="profile-name">Rajesh Kumar</h2>
+                <p class="profile-email">rajesh.kumar@example.com</p>
+                <div class="profile-badges">
+                    <span class="badge badge-verified">✓ Verified</span>
+                    <span class="badge badge-journalist">📝 Journalist</span>
+                    <span class="badge badge-member">Member since Feb 2024</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-value">47</div>
+                <div class="stat-label">Articles Published</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">12.4K</div>
+                <div class="stat-label">Total Readers</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value">342</div>
+                <div class="stat-label">Followers</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Personal Information</h3>
+            <p class="card-description">Update your personal details and contact information</p>
+        </div>
+
+        <form onsubmit="handleProfileUpdate(event)">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-input" value="Rajesh" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-input" value="Kumar" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" value="rajesh.kumar@example.com" required>
+                    <p class="form-help">Your email will be kept private</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" value="+91 98765 43210" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bio</label>
+                <textarea class="form-textarea"
+                    placeholder="Tell us about yourself...">Investigative journalist covering urban development and civic issues in Mumbai. Passionate about hyperlocal reporting and community engagement.</textarea>
+                <p class="form-help">Write a short introduction about yourself (max 200 characters)</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <select class="form-select" required>
+                        <option value="maharashtra" selected>Maharashtra</option>
+                        <option value="gujarat">Gujarat</option>
+                        <option value="karnataka">Karnataka</option>
+                        <option value="delhi">Delhi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <select class="form-select" required>
+                        <option value="mumbai" selected>Mumbai</option>
+                        <option value="pune">Pune</option>
+                        <option value="nashik">Nashik</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'js/journalistProfile.js' %}"></script>
+{% endblock page_js %}

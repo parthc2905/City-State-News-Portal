@@ -117,17 +117,40 @@ function removeImage(event) {
 
 // Word count
 function updateWordCount() {
-    const title = document.querySelector('[name="title"]').value;
-    const content = document.querySelector('[name="content"]').value;
-    const text = title + ' ' + content;
+    const contentEl = document.querySelector('[name="content"]');
+    if (!contentEl) return;
+
+    // Only count the article body content (not title/excerpt)
+    const text = contentEl.value || '';
 
     const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
     const chars = text.length;
     const readTime = Math.ceil(words / 200); // Average reading speed
 
-    document.getElementById('wordCount').textContent = words;
-    document.getElementById('charCount').textContent = chars;
-    document.getElementById('readTime').textContent = readTime + ' min';
+    const wordCountEl = document.getElementById('wordCount');
+    const charCountEl = document.getElementById('charCount');
+    const readTimeEl = document.getElementById('readTime');
+
+    if (wordCountEl) wordCountEl.textContent = words;
+    if (charCountEl) charCountEl.textContent = chars;
+    if (readTimeEl) readTimeEl.textContent = readTime + ' min';
+}
+
+// Wire up live word/char/read-time updates
+function initWordCount() {
+    const contentEl = document.querySelector('[name="content"]');
+    if (contentEl) {
+        contentEl.addEventListener('input', updateWordCount);
+    }
+
+    // Ensure the counts reflect any existing content on page load
+    updateWordCount();
+}
+
+if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', initWordCount);
+} else {
+    initWordCount();
 }
 
 // Save draft
