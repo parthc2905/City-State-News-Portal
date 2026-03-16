@@ -138,6 +138,7 @@
   /* ═══ MAIN CONTENT ═══ */
   .main-content {
     margin-left: 260px;
+    width: calc(100% - 260px);
     min-height: 100vh;
   }
 
@@ -145,8 +146,13 @@
     background: var(--white);
     border-bottom: 1px solid var(--gray-200);
     padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     position: sticky;
     top: 0;
+    z-index: 100;
+    width: 100%;
     z-index: 100;
   }
 
@@ -158,9 +164,9 @@
 
   /* ═══ GUIDE CONTENT ═══ */
   .guide-container {
-    max-width: 900px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 40px;
+    padding: 40px 24px;
   }
 
   .guide-hero {

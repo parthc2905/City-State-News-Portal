@@ -23,7 +23,7 @@
         <!-- <button class="btn btn-primary" onclick="window.location.href='journalist_dashboard_1773226760.html'">
             ✍️ Write New Article
         </button> -->
-        <a href="{% url 'journalist_write_article' %}" class="btn btn-primary" >
+        <a href="{% url 'journalist_write_article' %}" class="btn btn-primary">
             ✍️ Write New Article
         </a>
     </div>
@@ -46,7 +46,7 @@
         <div class="stat-card">
             <div class="stat-header">
                 <span class="stat-label">Published</span>
-                <span class="stat-icon">✓</span>
+                <span class="stat-icon">✅</span>
             </div>
             <div class="stat-value">18</div>
             <div class="stat-change">75% of total</div>
@@ -116,6 +116,51 @@
 
     <!-- ARTICLES LIST -->
     <div class="articles-section" id="articlesList">
+
+        <!-- Article cards -->
+        {% for article in articles %}
+        <div class="article-item">
+            {% with media=article.media.all|first %}
+                {% if media and media.file %}
+                    <img src="{{ media.file.url }}" alt="{{ article.title }}" class="article-thumbnail">
+                {% else %}
+                    <img src="/Media/defaultMedia/newspaper-folded.png" alt="Article" class="article-thumbnail">
+                {% endif %}
+            {% endwith %}
+
+            <div class="article-content">
+                <div class="article-header">
+                    {% if article.status == 'approved' %}
+                    <span class="status-badge published">✅ Published</span>
+                    {% elif article.status == 'rejected' %}
+                    <span class="status-badge rejected">✕ Rejected</span>
+                    {% elif article.status == 'pending' %}
+                    <span class="status-badge review">⏱️ In Review</span>
+                    {% else %}
+                    <span class="status-badge draft">💾 Draft</span>
+                    {% endif %}
+                </div>
+                <h3 class="article-title">{{ article.title }}</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 {{ article.created_at|date:"F j, Y" }}</span>
+                    {% if article.views_count > 1 %}
+                        <span class="meta-item">👁️ {{ article.views_count }}</span>
+                    {% endif %}
+                    {# Replace 89 with real count when available #}
+                    {% if article.comments_count|default:0 > 1 %}
+                        <span class="meta-item">💬 {{ article.comments_count }} comments</span>
+                    {% endif %}
+                    <span class="meta-item">🏷️ {{ article.category_id.category_name }}</span>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="Preview" onclick="previewArticle(1)">👁️</button>
+                <button class="action-btn edit" title="Edit" onclick="editArticle(1)">✏️</button>
+                <button class="action-btn delete" title="Delete" onclick="deleteArticle(1)">🗑️</button>
+            </div>
+        </div>
+        {% endfor %}
 
         <!-- Article 1 - Published -->
         <div class="article-item" data-status="published" data-category="politics"

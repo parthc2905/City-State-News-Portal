@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
-from .models import News_article, ArticleMedia, Category
-from location.models import City
 from .forms import ArticleMediaForm, ArticleWriteForm
+from .models import News_article
+from django.db.models import Q
+
 
 # Create your views here.
 def journalistDashboardView(request):
@@ -28,11 +29,12 @@ def journalistWriteArticleView(request):
 
 
 def journalistMyArticlesView(request):
-    if request.method == "POST":
-        pass
-    else:
-        pass
-    return render(request, 'journalist/journalistMyArticles.html')
+    articles = (
+        News_article.objects
+        .filter(author_id=request.user)
+        .prefetch_related("media")
+    )
+    return render(request, 'journalist/journalistMyArticles.html', {"articles": articles})
 
 def journalistProfileView(request):
     if request.method == "POST":
@@ -40,6 +42,9 @@ def journalistProfileView(request):
     else:
         pass
     return render(request, 'journalist/journalistProfile.html')
+
+def journalistWritingGuideView(request):
+    return render(request, 'journalist/journalistWritingGuide.html')
 
 def journalistGeneralView(request):
     if request.method == "POST":

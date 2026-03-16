@@ -1,0 +1,267 @@
+{% extends 'journalist/journalistDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>Writing Guide — Journalist Dashboard — CIVIX</title>
+{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistWritingGuide.css' %}">
+{% endblock page_css %}
+
+{% block content %}
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Writing Guide</h1>
+    </div>
+</div>
+
+<!-- GUIDE CONTENT -->
+<div class="guide-container">
+
+    <!-- HERO -->
+    <div class="guide-hero">
+        <div class="guide-hero-icon">💡</div>
+        <h1 class="guide-hero-title">CIVIX Writing Guide</h1>
+        <p class="guide-hero-subtitle">Master the art of hyper-local journalism with our comprehensive guide to writing impactful, accurate, and engaging news stories.</p>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="toc">
+        <h2 class="toc-title">📋 What You'll Learn</h2>
+        <ul class="toc-list">
+            <li class="toc-item"><a href="#section1" class="toc-link">1. The CIVIX Journalism Standards</a></li>
+            <li class="toc-item"><a href="#section2" class="toc-link">2. Writing Clear Headlines</a></li>
+            <li class="toc-item"><a href="#section3" class="toc-link">3. Structure Your Article</a></li>
+            <li class="toc-item"><a href="#section4" class="toc-link">4. Fact-Checking & Sources</a></li>
+            <li class="toc-item"><a href="#section5" class="toc-link">5. Style & Tone Guidelines</a></li>
+            <li class="toc-item"><a href="#section6" class="toc-link">6. Before You Publish</a></li>
+        </ul>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="guide-section" id="section1">
+        <div class="section-number">1</div>
+        <h2 class="section-title">The CIVIX Journalism Standards</h2>
+        <p class="section-intro">At CIVIX, we're committed to ethical, accurate, and impactful hyper-local journalism. Every article must meet these core principles.</p>
+
+        <h3 class="subsection-title">Core Principles</h3>
+        <p class="guide-text">Our journalism is guided by three fundamental values:</p>
+
+        <div class="tip-box">
+            <div class="tip-title">✓ Accuracy First</div>
+            <div class="tip-text">Every fact must be verified. Every quote must be accurate. Every source must be credible. If you're not 100% certain, don't publish it.</div>
+        </div>
+
+        <div class="tip-box">
+            <div class="tip-title">🎯 Local Impact</div>
+            <div class="tip-text">Focus on stories that directly affect your city's residents. How does this news change their daily lives? Why should they care?</div>
+        </div>
+
+        <div class="tip-box">
+            <div class="tip-title">⚖️ Fair &amp; Balanced</div>
+            <div class="tip-text">Present multiple perspectives. Give all relevant parties a chance to respond. Avoid bias and let readers form their own opinions.</div>
+        </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="guide-section" id="section2">
+        <div class="section-number">2</div>
+        <h2 class="section-title">Writing Clear Headlines</h2>
+        <p class="section-intro">Your headline is the first (and sometimes only) thing readers see. Make it count.</p>
+
+        <h3 class="subsection-title">Headline Best Practices</h3>
+
+        <div class="do-dont-grid">
+            <div class="do-box">
+                <div class="do-title">✅ Do</div>
+                <ul class="do-list">
+                    <li>Use specific numbers, names, and locations.</li>
+                    <li>Keep it concise and actionable.</li>
+                    <li>Reflect the story's main point without being vague.</li>
+                    <li>Use strong, active verbs.</li>
+                </ul>
+            </div>
+
+            <div class="dont-box">
+                <div class="dont-title">🚫 Don't</div>
+                <ul class="dont-list">
+                    <li>Use clickbait or sensational language.</li>
+                    <li>Make promises the story doesn't deliver.</li>
+                    <li>Write in all caps or use excessive punctuation.</li>
+                    <li>Be so vague that the reader can't tell what the story is about.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="example-box">
+            <div class="example-label">✓ Good Example:</div>
+            <div class="example-text">"Mumbai Metro Line 3 Opens March 15, Cutting Commute Times by 40 Minutes"</div>
+        </div>
+
+        <div class="example-box" style="background: #fef2f2;">
+            <div class="example-label" style="color: #991b1b;">✕ Bad Example:</div>
+            <div class="example-text" style="color: #991b1b;">"You Won't Believe What's Happening to Mumbai Traffic!"</div>
+        </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="guide-section" id="section3">
+        <div class="section-number">3</div>
+        <h2 class="section-title">Structure Your Article</h2>
+        <p class="section-intro">Follow the inverted pyramid: most important information first, supporting details after.</p>
+
+        <h3 class="subsection-title">The Perfect Article Structure</h3>
+
+        <p class="guide-text"><strong>1. Lead Paragraph (First 2-3 sentences)</strong><br>
+        Answer the 5 W's: Who, What, Where, When, Why (and How). This should be a complete summary of the story.</p>
+
+        <p class="guide-text"><strong>2. Supporting Details (Next 2-4 paragraphs)</strong><br>
+        Expand on the lead with crucial facts, quotes, and context. Include the most newsworthy information here.</p>
+
+        <p class="guide-text"><strong>3. Background Information (Middle section)</strong><br>
+        Provide context: history, related events, why this matters now. Help readers understand the bigger picture.</p>
+
+        <p class="guide-text"><strong>4. Additional Details (Later paragraphs)</strong><br>
+        Include secondary quotes, statistics, expert opinions, and less critical information.</p>
+
+        <p class="guide-text"><strong>5. Conclusion (Final paragraph)</strong><br>
+        End with forward-looking information: what happens next, future implications, or a powerful closing quote.</p>
+
+        <div class="tip-box">
+            <div class="tip-title">💡 Pro Tip: The Coffee Test</div>
+            <div class="tip-text">If a reader spills coffee on your article after the first paragraph, they should still understand the complete story. That's how strong your lead should be.</div>
+        </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="guide-section" id="section4">
+        <div class="section-number">4</div>
+        <h2 class="section-title">Fact-Checking &amp; Sources</h2>
+        <p class="section-intro">Accuracy is non-negotiable. Every fact must be verified, every source must be credible.</p>
+
+        <h3 class="subsection-title">Source Requirements</h3>
+
+        <p class="guide-text"><strong>Minimum Requirements:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+            <li>Breaking news: At least 2 independent sources</li>
+            <li>Investigative pieces: 3+ sources, with documentation</li>
+            <li>Opinion pieces: Clearly labeled as opinion</li>
+            <li>Statistics: Link to original data source</li>
+        </ul>
+
+        <h3 class="subsection-title">Credible Sources</h3>
+
+        <div class="do-dont-grid">
+            <div class="do-box">
+                <div class="do-title">✅ Do</div>
+                <ul class="do-list">
+                    <li>Use official documents, reports, or public records when possible.</li>
+                    <li>Quote named sources; avoid anonymous sources unless necessary.</li>
+                    <li>Link to data sources and studies whenever available.</li>
+                    <li>Double-check names, dates, and statistics before publishing.</li>
+                </ul>
+            </div>
+
+            <div class="dont-box">
+                <div class="dont-title">🚫 Don't</div>
+                <ul class="dont-list">
+                    <li>Rely on social media posts without verification.</li>
+                    <li>Use unverified rumors, hearsay, or gossip.</li>
+                    <li>Exclude key voices to push an agenda.</li>
+                    <li>Ignore obvious factual errors just to meet a deadline.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="checklist">
+            <div class="checklist-title">✓ Fact-Checking Checklist</div>
+            <ul class="checklist-items">
+                <li><span class="checkbox"></span> Have I confirmed the primary fact with two independent sources?</li>
+                <li><span class="checkbox"></span> Are all names, titles, and dates correct?</li>
+                <li><span class="checkbox"></span> Have I linked to the original data or report?</li>
+                <li><span class="checkbox"></span> Did I provide a fair opportunity for response?</li>
+                <li><span class="checkbox"></span> Is the language neutral and unbiased?</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="guide-section" id="section5">
+        <div class="section-number">5</div>
+        <h2 class="section-title">Style &amp; Tone Guidelines</h2>
+        <p class="section-intro">Write clearly, concisely, and objectively. Your job is to inform, not to impress.</p>
+
+        <h3 class="subsection-title">Writing Style Rules</h3>
+
+        <p class="guide-text"><strong>Voice &amp; Tense:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+            <li>Use active voice: "The mayor announced" not "It was announced by the mayor"</li>
+            <li>Write in past tense for news events</li>
+            <li>Use present tense only for general truths or ongoing situations</li>
+        </ul>
+
+        <p class="guide-text"><strong>Sentence Structure:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+            <li>One idea per sentence</li>
+            <li>Average 15-20 words per sentence</li>
+            <li>Vary sentence length for readability</li>
+            <li>Avoid complex compound sentences</li>
+        </ul>
+
+        <p class="guide-text"><strong>Word Choice:</strong></p>
+        <ul style="margin-left: 24px; margin-bottom: 16px; line-height: 1.8;">
+            <li>Use clear, everyday language; avoid jargon</li>
+            <li>Prefer precise words over broad adjectives</li>
+            <li>Avoid loaded or emotionally charged vocabulary</li>
+        </ul>
+
+        <div class="tip-box">
+            <div class="tip-title">✍️ Pro Tip</div>
+            <div class="tip-text">Read your draft aloud. If you stumble, simplify the sentence.</div>
+        </div>
+    </div>
+
+    <!-- SECTION 6 -->
+    <div class="guide-section" id="section6">
+        <div class="section-number">6</div>
+        <h2 class="section-title">Before You Publish</h2>
+        <p class="section-intro">Use this final checklist before submitting your article for review.</p>
+
+        <div class="checklist">
+            <div class="checklist-title">✓ Final Checklist</div>
+            <ul class="checklist-items">
+                <li><span class="checkbox"></span> Is the headline accurate and clear?</li>
+                <li><span class="checkbox"></span> Does the lead answer the 5 W's?</li>
+                <li><span class="checkbox"></span> Are all sources cited and verified?</li>
+                <li><span class="checkbox"></span> Have you spell-checked and proofread?</li>
+                <li><span class="checkbox"></span> Did you check for bias or assumptions?</li>
+            </ul>
+        </div>
+
+        <div class="tip-box">
+            <div class="tip-title">✅ Ready to Publish</div>
+            <div class="tip-text">Once you've checked everything above, you're ready to submit your draft for review.</div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock content %}
+
+{% block page_js %}
+<script>
+    document.querySelectorAll('.toc-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.querySelector(link.getAttribute('href'));
+            if (!target) return;
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
+{% endblock page_js %}
