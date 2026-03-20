@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai's New Metro Line Opens Next Month — CIVIX</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --black: #0a0a0a;
+            --gray-900: #1a1a1a;
+            --gray-800: #2d2d2d;
+            --gray-700: #4a4a4a;
+            --gray-600: #6b6b6b;
+            --gray-500: #8b8b8b;
+            --gray-400: #b3b3b3;
+            --gray-300: #d1d1d1;
+            --gray-200: #e8e8e8;
+            --gray-100: #f4f4f4;
+            --white: #ffffff;
+            --green: #1a8917;
+            --green-dark: #156d12;
+            --green-light: #e8f5e8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.6;
+        }
+
+        /* ═══ HEADER ═══ */
+        .top-nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', cursive;
+            font-size: 28px;
+            letter-spacing: 3px;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* ═══ ARTICLE CONTAINER ═══ */
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* ═══ ARTICLE HEADER ═══ */
+        .article-header {
+            margin-bottom: 32px;
+        }
+
+        .article-meta-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .category-badge {
+            background: var(--green);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item {
+            font-size: 14px;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .article-title {
+            font-family: 'Spectral', serif;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            color: var(--black);
+        }
+
+        .article-excerpt {
+            font-size: 20px;
+            color: var(--gray-700);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .article-byline {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 0;
+            border-top: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gray-300);
+        }
+
+        .author-info {
+            flex: 1;
+        }
+
+        .author-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .publish-date {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        /* ═══ FEATURED IMAGE ═══ */
+        .featured-image {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 32px 0;
+        }
+
+        .image-caption {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-style: italic;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        /* ═══ ARTICLE CONTENT ═══ */
+        .article-content {
+            font-family: 'Spectral', serif;
+            font-size: 19px;
+            line-height: 1.8;
+            color: var(--gray-900);
+        }
+
+        .article-content p {
+            margin-bottom: 24px;
+        }
+
+        .article-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 48px 0 20px;
+            color: var(--black);
+        }
+
+        .article-content h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 36px 0 16px;
+            color: var(--black);
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid var(--green);
+            padding: 20px 24px;
+            background: var(--gray-100);
+            margin: 32px 0;
+            font-style: italic;
+            font-size: 21px;
+            color: var(--gray-800);
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 24px 0 24px 32px;
+        }
+
+        .article-content li {
+            margin-bottom: 12px;
+        }
+
+        .article-content a {
+            color: var(--green);
+            text-decoration: underline;
+        }
+
+        .article-content a:hover {
+            color: var(--green-dark);
+        }
+
+        .article-content strong {
+            font-weight: 700;
+            color: var(--black);
+        }
+
+        /* ═══ ARTICLE FOOTER ═══ */
+        .article-footer {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid var(--gray-200);
+        }
+
+        .tags-section {
+            margin-bottom: 32px;
+        }
+
+        .tags-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: 12px;
+        }
+
+        .tags-list {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--gray-200);
+            color: var(--gray-800);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .tag:hover {
+            background: var(--gray-300);
+        }
+
+        /* ═══ SHARE BUTTONS ═══ */
+        .share-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 24px;
+            background: var(--gray-100);
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .share-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray-700);
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+
+        .share-btn.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .share-btn.facebook {
+            background: #1877f2;
+            color: white;
+        }
+
+        .share-btn.whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .share-btn.linkedin {
+            background: #0a66c2;
+            color: white;
+        }
+
+        .share-btn.copy {
+            background: var(--gray-300);
+            color: var(--gray-800);
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* ═══ RELATED ARTICLES ═══ */
+        .related-section {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid var(--gray-200);
+        }
+
+        .related-title {
+            font-family: 'Spectral', serif;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .related-card {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .related-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: var(--gray-200);
+            margin-bottom: 12px;
+        }
+
+        .related-card-title {
+            font-family: 'Spectral', serif;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--black);
+            margin-bottom: 8px;
+        }
+
+        .related-card:hover .related-card-title {
+            color: var(--green);
+        }
+
+        .related-meta {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        /* ═══ BUTTONS ═══ */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-100);
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 36px;
+            }
+
+            .article-excerpt {
+                font-size: 18px;
+            }
+
+            .article-content {
+                font-size: 17px;
+            }
+
+            .article-content h2 {
+                font-size: 28px;
+            }
+
+            .article-content h3 {
+                font-size: 22px;
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .share-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-inner {
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="top-nav">
+        <div class="nav-inner">
+            <a href="civix_final.html" class="logo">CIVIX</a>
+            <div class="nav-actions">
+                <button class="btn btn-secondary" onclick="window.close()">✕ Close Preview</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ARTICLE -->
+    <article class="article-container">
+
+        <!-- HEADER -->
+        <header class="article-header">
+            <div class="article-meta-top">
+                <span class="category-badge">Politics</span>
+                <span class="meta-item">📍 Mumbai</span>
+                <span class="meta-item">⏱️ 5 min read</span>
+            </div>
+
+            <h1 class="article-title">Mumbai's New Metro Line Opens Next Month</h1>
+
+            <p class="article-excerpt">
+                The long-awaited Metro Line 3 connecting South Mumbai to the suburbs will begin operations on April 15,
+                cutting average commute times by 40 minutes.
+            </p>
+
+            <div class="article-byline">
+                <img src="https://i.pravatar.cc/48?img=1" alt="Author" class="author-avatar">
+                <div class="author-info">
+                    <div class="author-name">Rajesh Kumar</div>
+                    <div class="publish-date">Published on March 10, 2026 at 10:30 AM</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- FEATURED IMAGE -->
+        <figure>
+            <img src="https://via.placeholder.com/800x450" alt="Mumbai Metro" class="featured-image">
+            <figcaption class="image-caption">The new Metro Line 3 station at Bandra-Kurla Complex. Photo: MMRDA
+            </figcaption>
+        </figure>
+
+        <!-- CONTENT -->
+        <div class="article-content">
+            <p>
+                Mumbai residents will soon have a faster way to navigate the city's notorious traffic. The Mumbai Metro
+                Rail Corporation (MMRC) announced today that Metro Line 3, also known as the Aqua Line, will begin
+                commercial operations on April 15, 2026.
+            </p>
+
+            <p>
+                The 33.5-kilometer underground corridor will connect Cuffe Parade in South Mumbai to the Seepz business
+                district in the northern suburbs, with 27 stations along the route. The project, which cost ₹23,136
+                crore, has been in development since 2016.
+            </p>
+
+            <h2>Transforming Daily Commutes</h2>
+
+            <p>
+                "This is a game-changer for Mumbai's public transportation," said Ashwini Bhide, Managing Director of
+                MMRC. "Commuters who currently spend 90 minutes traveling from Cuffe Parade to SEEPZ will now complete
+                the journey in just 50 minutes."
+            </p>
+
+            <blockquote>
+                "I've been waiting for this for years. My daily commute from Worli to Andheri takes almost two hours
+                during peak time. This metro line will cut that in half."
+                <br>— Priya Desai, daily commuter
+            </blockquote>
+
+            <p>
+                The metro will operate from 5:30 AM to 11:30 PM daily, with trains arriving every 3-4 minutes during
+                peak hours and every 8-10 minutes during off-peak times. Each train can accommodate approximately 1,500
+                passengers.
+            </p>
+
+            <h2>Key Features and Stations</h2>
+
+            <p>The Metro Line 3 includes several notable features:</p>
+
+            <ul>
+                <li><strong>Fully underground:</strong> India's first fully underground metro line</li>
+                <li><strong>Modern trains:</strong> Air-conditioned coaches with digital displays and CCTV</li>
+                <li><strong>Accessibility:</strong> All stations equipped with elevators and facilities for
+                    differently-abled passengers</li>
+                <li><strong>Integration:</strong> Seamless connectivity with existing metro lines and suburban railway
+                    stations</li>
+            </ul>
+
+            <p>
+                Major stations along the route include Bandra-Kurla Complex, Dharavi, Dadar, Siddhivinayak Temple, and
+                Churchgate. The BKC station, one of the largest on the network, will serve as a major interchange point.
+            </p>
+
+            <h2>Environmental Impact</h2>
+
+            <p>
+                According to MMRC estimates, the new line is expected to reduce vehicular traffic by approximately
+                350,000 trips per day, significantly lowering carbon emissions in the city. The metro will be powered by
+                renewable energy, with solar panels installed at depot facilities.
+            </p>
+
+            <p>
+                "This project aligns with Mumbai's commitment to sustainable urban development," said Municipal
+                Commissioner Iqbal Singh Chahal. "We expect a 15% reduction in traffic congestion in the affected
+                corridors within the first year of operation."
+            </p>
+
+            <h2>Ticket Pricing and Passes</h2>
+
+            <p>
+                Fares will range from ₹10 to ₹50 depending on the distance traveled. Monthly and quarterly passes will
+                be available at discounted rates. Students and senior citizens will receive a 50% discount on fares.
+            </p>
+
+            <p>
+                MMRC has also announced the launch of a mobile app for ticket booking and real-time train tracking,
+                expected to go live on April 1, two weeks before the metro's inauguration.
+            </p>
+
+            <h2>Looking Ahead</h2>
+
+            <p>
+                With Line 3 nearing completion, Mumbai Metro is already planning expansions. Line 4
+                (Wadala-Kasarvadavali) and Line 5 (Thane-Kalyan) are currently under construction, with projected
+                completion dates in 2027 and 2028 respectively.
+            </p>
+
+            <p>
+                The city aims to have a comprehensive metro network covering over 150 kilometers by 2030, transforming
+                Mumbai into one of India's best-connected cities.
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="article-footer">
+
+            <!-- TAGS -->
+            <div class="tags-section">
+                <div class="tags-label">Tags:</div>
+                <div class="tags-list">
+                    <a href="#" class="tag">Mumbai Metro</a>
+                    <a href="#" class="tag">Public Transport</a>
+                    <a href="#" class="tag">Infrastructure</a>
+                    <a href="#" class="tag">Urban Development</a>
+                    <a href="#" class="tag">Aqua Line</a>
+                </div>
+            </div>
+
+            <!-- SHARE -->
+            <div class="share-section">
+                <span class="share-label">Share this article:</span>
+                <div class="share-buttons">
+                    <button class="share-btn twitter" onclick="shareOn('twitter')" title="Share on Twitter">𝕏</button>
+                    <button class="share-btn facebook" onclick="shareOn('facebook')"
+                        title="Share on Facebook">f</button>
+                    <button class="share-btn whatsapp" onclick="shareOn('whatsapp')"
+                        title="Share on WhatsApp">💬</button>
+                    <button class="share-btn linkedin" onclick="shareOn('linkedin')"
+                        title="Share on LinkedIn">in</button>
+                    <button class="share-btn copy" onclick="copyLink()" title="Copy link">🔗</button>
+                </div>
+            </div>
+
+            <!-- RELATED ARTICLES -->
+            <div class="related-section">
+                <h2 class="related-title">Related Articles</h2>
+                <div class="related-grid">
+
+                    <a href="#" class="related-card">
+                        <img src="https://via.placeholder.com/300x160" alt="Related" class="related-image">
+                        <h3 class="related-card-title">Pune Metro Line 2 Construction Ahead of Schedule</h3>
+                        <div class="related-meta">March 8, 2026 • 4 min read</div>
+                    </a>
+
+                    <a href="#" class="related-card">
+                        <img src="https://via.placeholder.com/300x160" alt="Related" class="related-image">
+                        <h3 class="related-card-title">Mumbai's Air Quality Improves with New Green Initiatives</h3>
+                        <div class="related-meta">March 5, 2026 • 6 min read</div>
+                    </a>
+
+                    <a href="#" class="related-card">
+                        <img src="https://via.placeholder.com/300x160" alt="Related" class="related-image">
+                        <h3 class="related-card-title">Smart Traffic Management System Reduces Congestion by 20%</h3>
+                        <div class="related-meta">March 3, 2026 • 5 min read</div>
+                    </a>
+
+                </div>
+            </div>
+
+        </footer>
+
+    </article>
+
+    <script>
+        // Share functions
+        function shareOn(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.querySelector('.article-title').textContent);
+
+            let shareUrl = '';
+
+            switch (platform) {
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    break;
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'whatsapp':
+                    shareUrl = `https://wa.me/?text=${title}%20${url}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+            }
+
+            if (shareUrl) {
+                window.open(shareUrl, '_blank', 'width=600,height=400');
+            }
+        }
+
+        // Copy link
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('✓ Link copied to clipboard!');
+            });
+        }
+
+        // Read time calculation
+        function calculateReadTime() {
+            const text = document.querySelector('.article-content').textContent;
+            const words = text.trim().split(/\s+/).length;
+            const readTime = Math.ceil(words / 200); // Average reading speed: 200 words/min
+
+            const readTimeEl = document.querySelector('.article-meta-top .meta-item:last-child');
+            if (readTimeEl) {
+                readTimeEl.textContent = `⏱️ ${readTime} min read`;
+            }
+        }
+
+        // Calculate on load
+        calculateReadTime();
+    </script>
+
+</body>
+
+</html>

@@ -61,27 +61,20 @@ function filterByStatus(status) {
     filterArticles();
 }
 
-// Preview article
-function previewArticle(id) {
-    alert(`Opening preview for article #${id}...\n\nThis will open a full-screen preview of your article as it will appear to readers.`);
-    // In real implementation: window.open('/article/preview/' + id, '_blank');
+// Preview article in popup window
+function previewArticle(url) {
+    const width = 1000;
+    const height = 700;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    window.open(
+        url,
+        'articlePreview',
+        `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`
+    );
 }
 
-// Edit article
-function editArticle(id) {
-    if (confirm(`Edit article #${id}?\n\nYou'll be redirected to the article editor.`)) {
-        window.location.href = 'journalist_dashboard_1773226760.html?edit=' + id;
-    }
-}
 
-// Delete article
-function deleteArticle(id) {
-    if (confirm(`Delete article #${id}?\n\nThis action cannot be undone. Are you sure?`)) {
-        alert('Article deleted successfully!');
-        // In real implementation: send DELETE request to server
-        // Then remove the article from DOM
-    }
-}
 
 
 

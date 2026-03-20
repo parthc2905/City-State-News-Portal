@@ -1,0 +1,284 @@
+:root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+    line-height: 1.6;
+}
+
+/* ═══ HEADER ═══ */
+.top-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* ═══ ARTICLE CONTAINER ═══ */
+.article-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* ═══ ARTICLE HEADER ═══ */
+.article-header {
+    margin-bottom: 32px;
+}
+
+.article-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.category-badge {
+    background: var(--green);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meta-item {
+    font-size: 14px;
+    color: var(--gray-600);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.article-title {
+    font-family: 'Spectral', serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    color: var(--black);
+}
+
+.article-excerpt {
+    font-size: 20px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+.article-byline {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--gray-200);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gray-300);
+    object-fit: cover;
+}
+
+.author-info {
+    flex: 1;
+}
+
+.author-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--black);
+    margin-bottom: 2px;
+}
+
+.publish-date {
+    font-size: 13px;
+    color: var(--gray-600);
+}
+
+/* ═══ FEATURED IMAGE ═══ */
+.featured-image {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 32px 0;
+}
+
+/* ═══ ARTICLE CONTENT ═══ */
+.article-content {
+    font-family: 'Spectral', serif;
+    font-size: 19px;
+    line-height: 1.8;
+    color: var(--gray-900);
+}
+
+.article-content p {
+    margin-bottom: 24px;
+}
+
+.article-content h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 48px 0 20px;
+    color: var(--black);
+}
+
+.article-content h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 36px 0 16px;
+    color: var(--black);
+}
+
+.article-content blockquote {
+    border-left: 4px solid var(--green);
+    padding: 20px 24px;
+    background: var(--gray-100);
+    margin: 32px 0;
+    font-style: italic;
+    font-size: 21px;
+    color: var(--gray-800);
+}
+
+.article-content ul,
+.article-content ol {
+    margin: 24px 0 24px 32px;
+}
+
+.article-content li {
+    margin-bottom: 12px;
+}
+
+.article-content a {
+    color: var(--green);
+    text-decoration: underline;
+}
+
+.article-content a:hover {
+    color: var(--green-dark);
+}
+
+.article-content strong {
+    font-weight: 700;
+    color: var(--black);
+}
+
+.article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 24px 0;
+}
+
+/* ═══ BUTTONS ═══ */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--green);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--green-dark);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-100);
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+    .article-title {
+        font-size: 36px;
+    }
+
+    .article-excerpt {
+        font-size: 18px;
+    }
+
+    .article-content {
+        font-size: 17px;
+    }
+
+    .article-content h2 {
+        font-size: 28px;
+    }
+
+    .article-content h3 {
+        font-size: 22px;
+    }
+
+    .nav-inner {
+        padding: 12px 20px;
+    }
+}

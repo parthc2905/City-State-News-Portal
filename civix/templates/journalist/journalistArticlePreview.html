@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} — Preview — CIVIX</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/journalistArticlePreview.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="top-nav">
+        <div class="nav-inner">
+            <a href="{% url 'journalist_my_articles' %}" class="logo">CIVIX</a>
+            <div class="nav-actions">
+                <button class="btn btn-secondary" onclick="window.close()">✕ Close Preview</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ARTICLE -->
+    <article class="article-container">
+
+        <!-- HEADER -->
+        <header class="article-header">
+            <div class="article-meta-top">
+                <span class="category-badge">{{ article.category_id.category_name }}</span>
+                <span class="meta-item">📍 {{ article.city_id.city_name }}</span>
+                <span class="meta-item" id="readTime">⏱️ — min read</span>
+            </div>
+
+            <h1 class="article-title">{{ article.title }}</h1>
+
+            <p class="article-excerpt">
+                {{ article.excerpt }}
+            </p>
+
+            <div class="article-byline">
+                {% if article.author_id.profile_image %}
+                <img src="{{ article.author_id.profile_image }}" alt="Author" class="author-avatar">
+                {% else %}
+                <div class="author-avatar"></div>
+                {% endif %}
+                <div class="author-info">
+                    <div class="author-name">{{ article.author_id.first_name }} {{ article.author_id.last_name }}</div>
+                    <div class="publish-date">
+                        {% if article.published_at %}
+                        Published on {{ article.published_at|date:"F j, Y" }} at {{ article.published_at|date:"g:i A" }}
+                        {% else %}
+                        Created on {{ article.created_at|date:"F j, Y" }} at {{ article.created_at|date:"g:i A" }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- FEATURED IMAGE -->
+        {% with media=article.media.all|first %}
+        {% if media and media.file %}
+        <figure>
+            <img src="{{ media.file.url }}" alt="{{ article.title }}" class="featured-image">
+        </figure>
+        {% endif %}
+        {% endwith %}
+
+        <!-- CONTENT -->
+        <div class="article-content">
+            {{ article.content|safe }}
+        </div>
+
+    </article>
+
+    <script>
+        // Read time calculation
+        function calculateReadTime() {
+            const text = document.querySelector('.article-content').textContent;
+            const words = text.trim().split(/\s+/).length;
+            const readTime = Math.ceil(words / 200);
+            const readTimeEl = document.getElementById('readTime');
+            if (readTimeEl) {
+                readTimeEl.textContent = `⏱️ ${readTime} min read`;
+            }
+        }
+        calculateReadTime();
+    </script>
+
+</body>
+
+</html>

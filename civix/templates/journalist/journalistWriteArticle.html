@@ -10,7 +10,9 @@
 <div class="top-bar">
     <div style="display: flex; align-items: center; gap: 16px;">
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-        <h1 class="page-title">Write New Article</h1>
+        <h1 class="page-title">
+            {% if editing %}Edit Article{% else %}Write New Article{% endif %}
+        </h1>
     </div>
     <div class="top-actions">
         <button class="btn btn-ghost" onclick="saveDraft()">
@@ -25,7 +27,7 @@
 <!-- CONTAINER -->
 <div class="container">
 
-    <form id="articleForm" method="POST" action="{% url 'journalist_write_article' %}" enctype="multipart/form-data">
+    <form id="articleForm" method="POST" action="{% if editing %}{% url 'journalist_edit_article' article_obj.id %}{% else %}{% url 'journalist_write_article' %}{% endif %}" enctype="multipart/form-data">
 
         {% csrf_token %}
         <!-- ARTICLE TITLE -->
@@ -162,8 +164,8 @@
     <div style="display: flex; gap: 12px;">
         <button class="btn btn-secondary" type="button" onclick="confirmCancel()">Cancel</button>
         <button class="btn btn-primary" type="button"
-            onclick="if(confirm('Are you sure you want to publish this article?')) { isSubmitting = true; document.getElementById('articleForm').requestSubmit(); }">
-            📤 Publish Article
+            onclick="if(confirm('Are you sure you want to save these changes?')) { isSubmitting = true; document.getElementById('articleForm').requestSubmit(); }">
+            {% if editing %}💾 Update Article{% else %}📤 Publish Article{% endif %}
         </button>
     </div>
 </div>

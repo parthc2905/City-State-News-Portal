@@ -20,9 +20,6 @@
         <h1 class="page-title">My Articles</h1>
     </div>
     <div class="top-actions">
-        <!-- <button class="btn btn-primary" onclick="window.location.href='journalist_dashboard_1773226760.html'">
-            ✍️ Write New Article
-        </button> -->
         <a href="{% url 'journalist_write_article' %}" class="btn btn-primary">
             ✍️ Write New Article
         </a>
@@ -39,8 +36,14 @@
                 <span class="stat-label">Total Articles</span>
                 <span class="stat-icon">📰</span>
             </div>
-            <div class="stat-value">24</div>
-            <div class="stat-change positive">+3 this month</div>
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-change positive">
+                {% if stats.new_this_month > 0 %}
+                +{{ stats.new_this_month }} this month
+                {% else %}
+                No new articles this month
+                {% endif %}
+            </div>
         </div>
 
         <div class="stat-card">
@@ -48,8 +51,8 @@
                 <span class="stat-label">Published</span>
                 <span class="stat-icon">✅</span>
             </div>
-            <div class="stat-value">18</div>
-            <div class="stat-change">75% of total</div>
+            <div class="stat-value">{{ stats.published }}</div>
+            <div class="stat-change">{{ stats.percent_published }}% of total</div>
         </div>
 
         <div class="stat-card">
@@ -57,7 +60,7 @@
                 <span class="stat-label">Drafts</span>
                 <span class="stat-icon">💾</span>
             </div>
-            <div class="stat-value">4</div>
+            <div class="stat-value">{{ stats.drafts }}</div>
             <div class="stat-change">Awaiting completion</div>
         </div>
 
@@ -66,53 +69,58 @@
                 <span class="stat-label">In Review</span>
                 <span class="stat-icon">⏱️</span>
             </div>
-            <div class="stat-value">2</div>
+            <div class="stat-value">{{ stats.in_review }}</div>
             <div class="stat-change">Pending approval</div>
         </div>
     </div>
 
     <!-- FILTERS -->
-    <div class="filters-bar">
+    <form method="GET" action="{% url 'journalist_my_articles' %}" class="filters-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" placeholder="Search articles..." id="searchInput"
-                oninput="filterArticles()">
+            <input type="text" class="search-input" name="q" placeholder="Search articles... (press Enter)" id="searchInput"
+                value="{{ current.q }}">
         </div>
 
         <div class="filter-group">
             <span class="filter-label">Status:</span>
-            <select class="filter-select" id="statusFilter" onchange="filterArticles()">
-                <option value="all">All Articles</option>
-                <option value="published">Published</option>
-                <option value="draft">Drafts</option>
-                <option value="review">In Review</option>
-                <option value="rejected">Rejected</option>
+            <select class="filter-select" name="status" id="statusFilter" onchange="this.form.submit()">
+                <option value="all" {% if current.status == 'all' %}selected{% endif %}>All Articles</option>
+                <option value="published" {% if current.status == 'published' %}selected{% endif %}>Published</option>
+                <option value="draft" {% if current.status == 'draft' %}selected{% endif %}>Drafts</option>
+                <option value="review" {% if current.status == 'review' %}selected{% endif %}>In Review</option>
+                <option value="rejected" {% if current.status == 'rejected' %}selected{% endif %}>Rejected</option>
             </select>
         </div>
 
         <div class="filter-group">
             <span class="filter-label">Category:</span>
-            <select class="filter-select" id="categoryFilter" onchange="filterArticles()">
-                <option value="all">All Categories</option>
-                <option value="politics">Politics</option>
-                <option value="business">Business</option>
-                <option value="technology">Technology</option>
-                <option value="culture">Culture</option>
-                <option value="sports">Sports</option>
+            <select class="filter-select" name="category" id="categoryFilter" onchange="this.form.submit()">
+                <option value="all" {% if current.category == 'all' %}selected{% endif %}>All Categories</option>
+                {% for cat in user_categories %}
+                <option value="{{ cat.category_name }}" {% if current.category == cat.category_name %}selected{% endif %}>{{ cat.category_name }}</option>
+                {% endfor %}
+                {% if other_categories %}
+                <optgroup label="Other Categories">
+                    {% for cat in other_categories %}
+                    <option value="{{ cat.category_name }}" {% if current.category == cat.category_name %}selected{% endif %}>{{ cat.category_name }}</option>
+                    {% endfor %}
+                </optgroup>
+                {% endif %}
             </select>
         </div>
 
         <div class="filter-group">
             <span class="filter-label">Sort by:</span>
-            <select class="filter-select" id="sortFilter" onchange="filterArticles()">
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="views">Most Viewed</option>
-                <option value="title">Title A-Z</option>
+            <select class="filter-select" name="sort" id="sortFilter" onchange="this.form.submit()">
+                <option value="newest" {% if current.sort == 'newest' %}selected{% endif %}>Newest First</option>
+                <option value="oldest" {% if current.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                <option value="views" {% if current.sort == 'views' %}selected{% endif %}>Most Viewed</option>
+                <option value="title" {% if current.sort == 'title' %}selected{% endif %}>Title A-Z</option>
             </select>
         </div>
 
-    </div>
+    </form>
 
     <!-- ARTICLES LIST -->
     <div class="articles-section" id="articlesList">
@@ -121,11 +129,11 @@
         {% for article in articles %}
         <div class="article-item">
             {% with media=article.media.all|first %}
-                {% if media and media.file %}
-                    <img src="{{ media.file.url }}" alt="{{ article.title }}" class="article-thumbnail">
-                {% else %}
-                    <img src="/Media/defaultMedia/newspaper-folded.png" alt="Article" class="article-thumbnail">
-                {% endif %}
+            {% if media and media.file %}
+            <img src="{{ media.file.url }}" alt="{{ article.title }}" class="article-thumbnail">
+            {% else %}
+            <img src="/Media/defaultMedia/newspaper-folded.png" alt="Article" class="article-thumbnail">
+            {% endif %}
             {% endwith %}
 
             <div class="article-content">
@@ -144,144 +152,29 @@
                 <div class="article-meta">
                     <span class="meta-item">📅 {{ article.created_at|date:"F j, Y" }}</span>
                     {% if article.views_count > 1 %}
-                        <span class="meta-item">👁️ {{ article.views_count }}</span>
+                    <span class="meta-item">👁️ {{ article.views_count }} views</span>
                     {% endif %}
                     {# Replace 89 with real count when available #}
                     {% if article.comments_count|default:0 > 1 %}
-                        <span class="meta-item">💬 {{ article.comments_count }} comments</span>
+                    <span class="meta-item">💬 {{ article.comments_count }} comments</span>
                     {% endif %}
                     <span class="meta-item">🏷️ {{ article.category_id.category_name }}</span>
+                    {% if article.status == 'rejected' and article.rejection_reason %}
+                    <span class="meta-item" style="color: var(--red);">Reason: {{ article.rejection_reason }}</span>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(1)">👁️</button>
-                <button class="action-btn edit" title="Edit" onclick="editArticle(1)">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(1)">🗑️</button>
+                <button class="action-btn preview" title="Preview" data-preview-url="{% url 'journalist_article_preview' article.id %}" onclick="previewArticle(this.dataset.previewUrl)">👁️</button>
+                <a href="{% url 'journalist_edit_article' article.id %}" class="action-btn edit" title="Edit" style="text-decoration: none; display: inline-flex; justify-content: center; align-items: center;">✏️</a>
+                <form method="POST" action="{% url 'journalist_delete_article' article.id %}" style="display: inline;" onsubmit="return confirm('Delete article #{{ article.id }}?\n\nThis action cannot be undone. Are you sure?');">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn delete" title="Delete">🗑️</button>
+                </form>
             </div>
         </div>
         {% endfor %}
-
-        <!-- Article 1 - Published -->
-        <div class="article-item" data-status="published" data-category="politics"
-            data-title="Mumbai's New Metro Line Opens Next Month">
-            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
-
-            <div class="article-content">
-                <div class="article-header">
-                    <span class="status-badge published">✓ Published</span>
-                </div>
-                <h3 class="article-title">Mumbai's New Metro Line Opens Next Month</h3>
-                <div class="article-meta">
-                    <span class="meta-item">📅 March 10, 2026</span>
-                    <span class="meta-item">👁️ 12,450 views</span>
-                    <span class="meta-item">💬 89 comments</span>
-                    <span class="meta-item">🏷️ Politics</span>
-                </div>
-            </div>
-
-            <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(1)">👁️</button>
-                <button class="action-btn edit" title="Edit" onclick="editArticle(1)">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(1)">🗑️</button>
-            </div>
-        </div>
-
-        <!-- Article 2 - Draft -->
-        <div class="article-item" data-status="draft" data-category="technology"
-            data-title="Smart City Initiative: Ahmedabad's Digital Transformation">
-            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
-
-            <div class="article-content">
-                <div class="article-header">
-                    <span class="status-badge draft">💾 Draft</span>
-                </div>
-                <h3 class="article-title">Smart City Initiative: Ahmedabad's Digital Transformation</h3>
-                <div class="article-meta">
-                    <span class="meta-item">📅 Last edited: March 8, 2026</span>
-                    <span class="meta-item">🏷️ Technology</span>
-                </div>
-            </div>
-
-            <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(2)">👁️</button>
-                <button class="action-btn edit" title="Edit" onclick="editArticle(2)">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(2)">🗑️</button>
-            </div>
-        </div>
-
-        <!-- Article 3 - In Review -->
-        <div class="article-item" data-status="review" data-category="business"
-            data-title="Local Startups Secure ₹50 Crore in Funding">
-            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
-
-            <div class="article-content">
-                <div class="article-header">
-                    <span class="status-badge review">⏱️ In Review</span>
-                </div>
-                <h3 class="article-title">Local Startups Secure ₹50 Crore in Funding</h3>
-                <div class="article-meta">
-                    <span class="meta-item">📅 Submitted: March 7, 2026</span>
-                    <span class="meta-item">🏷️ Business</span>
-                </div>
-            </div>
-
-            <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(3)">👁️</button>
-                <button class="action-btn edit" title="Edit (disabled)" disabled
-                    style="opacity: 0.5; cursor: not-allowed;">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(3)">🗑️</button>
-            </div>
-        </div>
-
-        <!-- Article 4 - Published -->
-        <div class="article-item" data-status="published" data-category="culture"
-            data-title="Pune's Street Art Scene Gains International Recognition">
-            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
-
-            <div class="article-content">
-                <div class="article-header">
-                    <span class="status-badge published">✓ Published</span>
-                </div>
-                <h3 class="article-title">Pune's Street Art Scene Gains International Recognition</h3>
-                <div class="article-meta">
-                    <span class="meta-item">📅 March 5, 2026</span>
-                    <span class="meta-item">👁️ 8,920 views</span>
-                    <span class="meta-item">💬 45 comments</span>
-                    <span class="meta-item">🏷️ Culture</span>
-                </div>
-            </div>
-
-            <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(4)">👁️</button>
-                <button class="action-btn edit" title="Edit" onclick="editArticle(4)">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(4)">🗑️</button>
-            </div>
-        </div>
-
-        <!-- Article 5 - Rejected -->
-        <div class="article-item" data-status="rejected" data-category="sports"
-            data-title="Cricket Tournament Brings Community Together">
-            <img src="https://via.placeholder.com/100x70" alt="Article" class="article-thumbnail">
-
-            <div class="article-content">
-                <div class="article-header">
-                    <span class="status-badge rejected">✕ Rejected</span>
-                </div>
-                <h3 class="article-title">Cricket Tournament Brings Community Together</h3>
-                <div class="article-meta">
-                    <span class="meta-item">📅 Rejected: March 3, 2026</span>
-                    <span class="meta-item">🏷️ Sports</span>
-                    <span class="meta-item" style="color: var(--red);">Reason: Needs more sources</span>
-                </div>
-            </div>
-
-            <div class="article-actions">
-                <button class="action-btn preview" title="Preview" onclick="previewArticle(5)">👁️</button>
-                <button class="action-btn edit" title="Revise & Resubmit" onclick="editArticle(5)">✏️</button>
-                <button class="action-btn delete" title="Delete" onclick="deleteArticle(5)">🗑️</button>
-            </div>
-        </div>
 
     </div>
 

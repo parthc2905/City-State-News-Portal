@@ -1,12 +1,24 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.contrib import messages
+
 from .forms import ArticleMediaForm, ArticleWriteForm
-from .models import News_article
-from django.db.models import Q
+from .models import News_article, ArticleMedia, Category
+from location.models import State, City
+from django.core.files.storage import FileSystemStorage
 
 
-# Create your views here.
 def journalistDashboardView(request):
-    return redirect('journalist_write_article')
+    return redirect("journalist_write_article")
+
+
+def journalistArticlePreviewView(request, article_id):
+    article = get_object_or_404(
+        News_article.objects.prefetch_related("media"),
+        id=article_id,
+        author_id=request.user,
+    )
+    return render(request, "journalist/journalistArticlePreview.html", {"article": article})
 
 
 def journalistWriteArticleView(request):
@@ -14,10 +26,10 @@ def journalistWriteArticleView(request):
         article = ArticleWriteForm(request.POST)
         articleMedia = ArticleMediaForm(request.POST, request.FILES)
         if article.is_valid() and articleMedia.is_valid():
-
-            article_obj = article.save(commit=False)    
+            article_obj = article.save(commit=False)
             article_obj.author_id_id = request.user.id
             article_obj.save()
+
             if request.FILES.get("file"):
                 media_obj = articleMedia.save(commit=False)
                 media_obj.article_id_id = article_obj.id
@@ -25,30 +37,167 @@ def journalistWriteArticleView(request):
     else:
         article = ArticleWriteForm()
         articleMedia = ArticleMediaForm()
-    return render(request, 'journalist/journalistWriteArticle.html',{"articleForm" : article , 'articleMedia' : articleMedia})
+
+    return render(
+        request,
+        "journalist/journalistWriteArticle.html",
+        {"articleForm": article, "articleMedia": articleMedia},
+    )
+
+
+def journalistEditArticleView(request, article_id):
+    article_obj = get_object_or_404(
+        News_article, id=article_id, author_id=request.user
+    )
+
+    if request.method == "POST":
+        article = ArticleWriteForm(request.POST, instance=article_obj)
+        articleMedia = ArticleMediaForm(request.POST, request.FILES)
+        if article.is_valid() and articleMedia.is_valid():
+            article.save()
+
+            if request.FILES.get("file"):
+                # Remove old media and save new one
+                ArticleMedia.objects.filter(article_id=article_obj).delete()
+                media_obj = articleMedia.save(commit=False)
+                media_obj.article_id_id = article_obj.id
+                media_obj.save()
+
+            messages.success(request, "Article updated successfully!")
+            return redirect("journalist_my_articles")
+    else:
+        # Map status back to publication_status form field
+        pub_status = "draft" if article_obj.status == "draft" else "published"
+        article = ArticleWriteForm(
+            instance=article_obj,
+            initial={"publication_status": pub_status},
+        )
+        articleMedia = ArticleMediaForm()
+
+    return render(
+        request,
+        "journalist/journalistWriteArticle.html",
+        {
+            "articleForm": article,
+            "articleMedia": articleMedia,
+            "editing": True,
+            "article_obj": article_obj,
+        },
+    )
+
+
+def journalistDeleteArticleView(request, article_id):
+    article = get_object_or_404(
+        News_article, id=article_id, author_id=request.user
+    )
+    if request.method == "POST":
+        article.delete()
+        messages.success(request, "Article deleted successfully!")
+    return redirect("journalist_my_articles")
 
 
 def journalistMyArticlesView(request):
-    articles = (
-        News_article.objects
-        .filter(author_id=request.user)
-        .prefetch_related("media")
-    )
-    return render(request, 'journalist/journalistMyArticles.html', {"articles": articles})
+    base_qs = News_article.objects.filter(author_id=request.user)
+    # --- filters from GET ---
+    search = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "all")
+    category = request.GET.get("category", "all")
+    sort = request.GET.get("sort", "newest")
+    if status != "all":
+        # map UI values to DB values
+        status_map = {
+            "published": "approved",
+            "draft": "draft",
+            "review": "pending",
+            "rejected": "rejected",
+        }
+        db_status = status_map.get(status)
+        if db_status:
+            base_qs = base_qs.filter(status=db_status)
+    if category != "all":
+        base_qs = base_qs.filter(category_id__category_name__iexact=category)
+
+    # --- stats: computed BEFORE search so analytics cards stay month-based ---
+    stats_qs = base_qs  # no search filter applied yet
+    total = stats_qs.count()
+    published = stats_qs.filter(status="approved").count()
+    drafts = stats_qs.filter(status="draft").count()
+    in_review = stats_qs.filter(status="pending").count()
+    now = timezone.now()
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    new_this_month = stats_qs.filter(created_at__gte=start_of_month).count()
+    percent_published = int(published * 100 / total) if total else 0
+    stats = {
+        "total": total,
+        "published": published,
+        "drafts": drafts,
+        "in_review": in_review,
+        "new_this_month": new_this_month,
+        "percent_published": percent_published,
+    }
+
+    # --- apply search filter AFTER stats (only affects article list) ---
+    if search:
+        base_qs = base_qs.filter(title__icontains=search)
+    if sort == "oldest":
+        base_qs = base_qs.order_by("created_at")
+    elif sort == "views":
+        base_qs = base_qs.order_by("-views_count")
+    elif sort == "title":
+        base_qs = base_qs.order_by("title")
+    else:  # newest
+        base_qs = base_qs.order_by("-created_at")
+
+    articles = base_qs.prefetch_related("media")
+    # Get categories the user has written articles for
+    user_categories = Category.objects.filter(news_article__author_id=request.user).distinct()
+    # Get remaining categories
+    other_categories = Category.objects.exclude(id__in=user_categories.values('id'))
+
+    context = {
+        "articles": articles,
+        "stats": stats,
+        "current": {
+            "q": search,
+            "status": status,
+            "category": category,
+            "sort": sort,
+        },
+        "user_categories": user_categories,
+        "other_categories": other_categories,
+    }
+    return render(request, "journalist/journalistMyArticles.html", context)
+
 
 def journalistProfileView(request):
     if request.method == "POST":
-        pass
-    else:
-        pass
-    return render(request, 'journalist/journalistProfile.html')
+        user = request.user
+        user.first_name = request.POST.get("first_name", user.first_name)
+        user.last_name = request.POST.get("last_name", user.last_name)
+        user.phone = request.POST.get("phone", user.phone)
+        
+        if 'avatar' in request.FILES:
+            avatar = request.FILES['avatar']
+            fs = FileSystemStorage()
+            filename = fs.save(f"profile_images/{user.id}_{avatar.name}", avatar)
+            user.profile_image = fs.url(filename)
+            
+        user.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect("journalist_profile")
+
+    states = State.objects.all()
+    cities = City.objects.all()
+    
+    return render(request, "journalist/journalistProfile.html", {
+        "states": states,
+        "cities": cities
+    })
+
 
 def journalistWritingGuideView(request):
-    return render(request, 'journalist/journalistWritingGuide.html')
+    return render(request, "journalist/journalistWritingGuide.html")
+
 
 def journalistGeneralView(request):
-    if request.method == "POST":
-        pass
-    else:
-        pass
-    return render(request, 'journalist/journalistGeneral.html')
+    return render(request, "journalist/journalistGeneral.html")
