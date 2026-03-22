@@ -10,9 +10,15 @@ function previewAvatar(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
-            document.getElementById('avatarPreview').style.backgroundImage = `url(${e.target.result})`;
-            document.getElementById('avatarPreview').style.backgroundSize = 'cover';
-            document.getElementById('avatarPreview').textContent = '';
+            const preview = document.getElementById('avatarPreview');
+            if (preview.tagName.toLowerCase() === 'img') {
+                preview.src = e.target.result;
+            } else {
+                preview.style.backgroundImage = `url(${e.target.result})`;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.textContent = '';
+            }
         };
         reader.readAsDataURL(file);
     }

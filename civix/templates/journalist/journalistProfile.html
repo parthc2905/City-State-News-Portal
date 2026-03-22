@@ -35,8 +35,8 @@
         <div class="profile-header">
             <div class="avatar-section">
                 <div class="avatar-wrapper">
-                    {% if request.user.profile_image %}
-                    <img src="{{ request.user.profile_image }}" class="avatar" id="avatarPreview" style="object-fit: cover; width: 100%; height: 100%;">
+                    {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image }}" class="avatar" id="avatarPreview" style="object-fit: cover;">
                     {% else %}
                     <div class="avatar" id="avatarPreview">{{ request.user.first_name|first|default:'?'|upper }}{{ request.user.last_name|first|default:''|upper }}</div>
                     {% endif %}
@@ -110,7 +110,7 @@
 
             <div class="form-group">
                 <label class="form-label">Bio</label>
-                <textarea class="form-textarea" name="bio" placeholder="Tell us about yourself...">{{ request.user.bio|default:'' }}</textarea>
+                <textarea class="form-textarea" name="bio" placeholder="Tell us about yourself...">{{ profile.bio|default:'' }}</textarea>
                 <p class="form-help">Write a short introduction about yourself (max 200 characters)</p>
             </div>
 
@@ -120,7 +120,7 @@
                     <select name="state" class="form-select" required>
                         <option value="">Select State</option>
                         {% for state_obj in states %}
-                        <option value="{{ state_obj.id }}">{{ state_obj.state_name }}</option>
+                        <option value="{{ state_obj.id }}" {% if profile.state_id == state_obj.id %}selected{% endif %}>{{ state_obj.state_name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -129,7 +129,7 @@
                     <select name="city" class="form-select" required>
                         <option value="">Select City</option>
                         {% for city_obj in cities %}
-                        <option value="{{ city_obj.id }}">{{ city_obj.city_name }}</option>
+                        <option value="{{ city_obj.id }}" {% if profile.city_id == city_obj.id %}selected{% endif %}>{{ city_obj.city_name }}</option>
                         {% endfor %}
                     </select>
                 </div>

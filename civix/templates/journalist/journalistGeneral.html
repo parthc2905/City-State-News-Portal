@@ -8,6 +8,21 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
+<style>
+    .alert {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    .alert-error {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    .alert-success {
+        background: #dcfce7;
+        color: #166534;
+    }
+</style>
 {% endblock page_css %}
 
 
@@ -19,6 +34,15 @@
     </div>
 </div>
 <div class="container">
+    <!-- ALERT -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" id="successAlert">
+            {% if message.tags == 'error' %}⚠{% else %}✓{% endif %} {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
     <!-- ACCOUNT PREFERENCES -->
     <div class="card">
         <div class="card-header">
@@ -26,37 +50,53 @@
             <p class="card-description">Manage how you receive updates from CIVIX</p>
         </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Email Notifications</h4>
-                <p>Receive email updates about new articles in your city</p>
+        <form method="POST" action="{% url 'journalist_general' %}">
+            {% csrf_token %}
+            <input type="hidden" name="update_notifications" value="1">
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive email updates about new articles in your city</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="email_notifications" {% if profile.email_notifications %}checked{% endif %} style="width: 20px; height: 20px;">
+                </div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-        </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Breaking News Alerts</h4>
-                <p>Get instant notifications for breaking news</p>
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Breaking News Alerts</h4>
+                    <p>Get instant notifications for breaking news</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="breaking_news_alerts" {% if profile.breaking_news_alerts %}checked{% endif %} style="width: 20px; height: 20px;">
+                </div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-        </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Weekly Newsletter</h4>
-                <p>Receive a weekly digest of top stories</p>
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Weekly Newsletter</h4>
+                    <p>Receive a weekly digest of top stories</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="weekly_newsletter" {% if profile.weekly_newsletter %}checked{% endif %} style="width: 20px; height: 20px;">
+                </div>
             </div>
-            <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
-        </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Article Recommendations</h4>
-                <p>Get personalized content suggestions</p>
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Article Recommendations</h4>
+                    <p>Get personalized content suggestions</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="article_recommendations" {% if profile.article_recommendations %}checked{% endif %} style="width: 20px; height: 20px;">
+                </div>
             </div>
-            <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
-        </div>
+
+            <div class="form-actions" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+            </div>
+        </form>
     </div>
 
     <!-- PRIVACY & SECURITY -->
@@ -66,19 +106,23 @@
             <p class="card-description">Manage your account security settings</p>
         </div>
 
-        <div class="form-group">
-            <label class="form-label">Change Password</label>
-            <input type="password" class="form-input" placeholder="Enter new password">
-        </div>
+        <form method="POST" action="{% url 'journalist_general' %}">
+            {% csrf_token %}
+            <input type="hidden" name="update_password" value="1">
+            <div class="form-group">
+                <label class="form-label">Change Password</label>
+                <input type="password" name="new_password" class="form-input" placeholder="Enter new password" required>
+            </div>
 
-        <div class="form-group">
-            <label class="form-label">Confirm New Password</label>
-            <input type="password" class="form-input" placeholder="Confirm new password">
-        </div>
+            <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" name="confirm_password" class="form-input" placeholder="Confirm new password" required>
+            </div>
 
-        <div class="form-actions">
-            <button type="button" class="btn btn-primary">Update Password</button>
-        </div>
+            <div class="form-actions" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </div>
+        </form>
     </div>
 
     <!-- DANGER ZONE -->
@@ -88,9 +132,13 @@
             <p class="card-description">Irreversible account actions</p>
         </div>
 
-        <div class="form-actions">
-            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
-        </div>
+        <form method="POST" action="{% url 'journalist_general' %}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+            {% csrf_token %}
+            <input type="hidden" name="delete_account" value="1">
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">Delete Account</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock content %}

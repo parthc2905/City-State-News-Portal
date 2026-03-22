@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-<title>My Articles — Journalist Dashboard — CIVIX</title>
+<title>{% if is_drafts_page %}Drafts{% else %}My Articles{% endif %} — Journalist Dashboard — CIVIX</title>
 {% endblock title %}
 
 
@@ -17,7 +17,7 @@
 <div class="top-bar">
     <div style="display: flex; align-items: center; gap: 16px;">
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-        <h1 class="page-title">My Articles</h1>
+        <h1 class="page-title">{% if is_drafts_page %}Drafts{% else %}My Articles{% endif %}</h1>
     </div>
     <div class="top-actions">
         <a href="{% url 'journalist_write_article' %}" class="btn btn-primary">
@@ -75,13 +75,14 @@
     </div>
 
     <!-- FILTERS -->
-    <form method="GET" action="{% url 'journalist_my_articles' %}" class="filters-bar">
+    <form method="GET" action="{% if is_drafts_page %}{% url 'journalist_drafts' %}{% else %}{% url 'journalist_my_articles' %}{% endif %}" class="filters-bar">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="text" class="search-input" name="q" placeholder="Search articles... (press Enter)" id="searchInput"
+            <input type="text" class="search-input" name="q" placeholder="Search articles... (Press Enter to Search)" id="searchInput"
                 value="{{ current.q }}">
         </div>
 
+        {% if not is_drafts_page %}
         <div class="filter-group">
             <span class="filter-label">Status:</span>
             <select class="filter-select" name="status" id="statusFilter" onchange="this.form.submit()">
@@ -92,6 +93,7 @@
                 <option value="rejected" {% if current.status == 'rejected' %}selected{% endif %}>Rejected</option>
             </select>
         </div>
+        {% endif %}
 
         <div class="filter-group">
             <span class="filter-label">Category:</span>
@@ -173,6 +175,12 @@
                     <button type="submit" class="action-btn delete" title="Delete">🗑️</button>
                 </form>
             </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3 class="empty-title">No results found</h3>
+            <p class="empty-text">We couldn't find any articles matching your query or filters.</p>
         </div>
         {% endfor %}
 

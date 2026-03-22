@@ -1,66 +1,71 @@
-<aside class="sidebar">
-    <div class="sidebar-section">
-        <div class="sidebar-title">Main</div>
-        <div class="sidebar-menu">
-            <a href="{% url 'admin_panel_dashboard' %}" style="text-decoration: none;">
-                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_dashboard' %}active{% endif %}">
-                    <span>📊</span>
-                    Dashboard
-                </div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'home' %}" class="logo">CIVIX</a>
+        <div class="user-badge" style="background: var(--red-light);">
+            <span class="user-badge-icon">🛡️</span>
+            <span class="user-badge-text" style="color: var(--red);">Admin</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-title">Main</div>
+            <a href="{% url 'admin_panel_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_dashboard' %}active{% endif %}">
+                <span class="nav-icon">📊</span>
+                Dashboard
             </a>
-            <a href="{% url 'admin_panel_applications' %}" style="text-decoration: none;">
-                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_applications' %}active{% endif %}">
-                    <span>👥</span>
-                    Applications
-                    {% if pending_applications > 0 %}<span class="menu-badge">{{ pending_applications }}</span>{% endif %}
-                </div>
+            <a href="{% url 'admin_panel_applications' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_applications' %}active{% endif %}">
+                <span class="nav-icon">👥</span>
+                Applications
+                {% if pending_applications > 0 %}<span class="menu-badge" style="margin-left: auto; padding: 2px 8px; background: var(--red); color: white; border-radius: 10px; font-size: 11px; font-weight: 700;">{{ pending_applications }}</span>{% endif %}
             </a>
-            <div class="menu-item">
-                <span>📰</span>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">📰</span>
                 Articles
-            </div>
-            <div class="menu-item">
-                <span>💬</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">💬</span>
                 Comments
-            </div>
-        </div>
-    </div>
-
-    <div class="sidebar-section">
-        <div class="sidebar-title">Users</div>
-        <div class="sidebar-menu">
-            <a href="{% url 'admin_panel_journalists' %}" style="text-decoration: none;">
-                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_journalists' %}active{% endif %}">
-                    <span>📝</span>
-                    Journalists
-                </div>
-            </a>
-            <a href="{% url 'admin_panel_advertisers' %}" style="text-decoration: none;">
-                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_advertisers' %}active{% endif %}">
-                    <span>📢</span>
-                    Advertisers
-                </div>
-            </a>
-            <a href="{% url 'admin_panel_readers' %}" style="text-decoration: none;">
-                <div class="menu-item {% if request.resolver_match.url_name == 'admin_panel_readers' %}active{% endif %}">
-                    <span>👤</span>
-                    Readers
-                </div>
             </a>
         </div>
-    </div>
 
-    <div class="sidebar-section">
-        <div class="sidebar-title">Settings</div>
-        <div class="sidebar-menu">
-            <div class="menu-item">
-                <span>⚙️</span>
+        <div class="nav-section">
+            <div class="nav-title">Users</div>
+            <a href="{% url 'admin_panel_journalists' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_journalists' %}active{% endif %}">
+                <span class="nav-icon">📝</span>
+                Journalists
+            </a>
+            <a href="{% url 'admin_panel_advertisers' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_advertisers' %}active{% endif %}">
+                <span class="nav-icon">📢</span>
+                Advertisers
+            </a>
+            <a href="{% url 'admin_panel_readers' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_readers' %}active{% endif %}">
+                <span class="nav-icon">👤</span>
+                Readers
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Settings</div>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">⚙️</span>
                 General
-            </div>
-            <div class="menu-item">
-                <span>🔒</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-icon">🔒</span>
                 Security
-            </div>
+            </a>
         </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'home' %}" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            Back to Home
+        </a>
+        <a href="{% url 'logout' %}" class="nav-item">
+            <span class="nav-icon">🚪</span>
+            Sign Out
+        </a>
     </div>
 </aside>

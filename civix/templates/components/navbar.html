@@ -12,9 +12,11 @@
                     <span class="dropdown-chevron">▼</span>
                 </button>
                 <ul class="nav-dropdown-menu">
-                    <li><a href="#">Opinion</a></li>
-                    <li><a href="#">Opinion</a></li>
-                    <!-- Add more categories here in future -->
+                    {% for category in all_categories %}
+                    <li><a href="#">{{ category.category_name }}</a></li>
+                    {% empty %}
+                    <li><a href="#">No categories found</a></li>
+                    {% endfor %}
                 </ul>
             </div>
         </nav>

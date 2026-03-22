@@ -7,9 +7,52 @@ from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q
+from news.models import News_article
 
 def homePage(request):
-    return render(request, 'base/base.html')
+    hero_article = News_article.objects.filter(status='approved').order_by('-created_at').first()
+    
+    if hero_article:
+        word_count = len(hero_article.content.split())
+        hero_article.read_time = max(1, word_count // 200)
+        trending_articles = News_article.objects.filter(status='approved').exclude(id=hero_article.id).order_by('-views_count')[:5]
+    else:
+        trending_articles = News_article.objects.filter(status='approved').order_by('-views_count')[:5]
+        
+    for article in trending_articles:
+        word_count = len(article.content.split())
+        article.read_time = max(1, word_count // 200)
+        
+    excluded_ids = [a.id for a in trending_articles]
+    if hero_article:
+        excluded_ids.append(hero_article.id)
+        
+    latest_articles = News_article.objects.filter(status='approved').exclude(id__in=excluded_ids).order_by('-created_at')[:6]
+    for article in latest_articles:
+        word_count = len(article.content.split())
+        article.read_time = max(1, word_count // 200)
+        
+    excluded_ids.extend([a.id for a in latest_articles])
+    
+    state_politics_articles = News_article.objects.filter(status='approved', category_id__category_name__icontains='Politic').exclude(id__in=excluded_ids).order_by('-created_at')[:4]
+    for article in state_politics_articles:
+        word_count = len(article.content.split())
+        article.read_time = max(1, word_count // 200)
+        
+    excluded_ids.extend([a.id for a in state_politics_articles])
+    
+    politics_sidebar_articles = News_article.objects.filter(status='approved', category_id__category_name__icontains='Politic').exclude(id__in=excluded_ids).order_by('-views_count')[:3]
+    for article in politics_sidebar_articles:
+        word_count = len(article.content.split())
+        article.read_time = max(1, word_count // 200)
+
+    return render(request, 'base/base.html', {
+        'hero_article': hero_article,
+        'trending_articles': trending_articles,
+        'latest_articles': latest_articles,
+        'state_politics_articles': state_politics_articles,
+        'politics_sidebar_articles': politics_sidebar_articles,
+    })
 
 # signup view for user registration
 def userSignupView(request):

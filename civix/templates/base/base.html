@@ -27,80 +27,72 @@
         <section class="hero-section">
             <div class="hero-grid">
                 <div class="hero-main">
+                    {% if hero_article %}
                     <div class="hero-tag">
                         <div class="dot"></div>
-                        Breaking News
+                        {% if hero_article.is_breaking %}Breaking News{% else %}Featured Story{% endif %}
                     </div>
-                    <h1 class="hero-title">Supreme Court's Historic Ruling Extends OBC Reservations Across State
-                        Universities
-                        Nationwide</h1>
-                    <p class="hero-excerpt">In a landmark 5–2 majority verdict, India's apex court has upheld the
-                        constitutional
-                        validity of extending Other Backward Class reservations in state-funded higher education
-                        institutions,
-                        potentially affecting over 2.3 crore students across 18 states in the upcoming academic year.
-                    </p>
+                    <a href="#" style="text-decoration: none; color: inherit;">
+                        <h1 class="hero-title">{{ hero_article.title }}</h1>
+                    </a>
+                    <p class="hero-excerpt">{{ hero_article.content|striptags|truncatewords:30 }}</p>
                     <div class="hero-meta">
                         <div class="author-info">
-                            <div class="author-avatar">PK</div>
+                            <div class="author-avatar">
+                                {{ hero_article.author_id.first_name|first|upper }}{{ hero_article.author_id.last_name|first|upper }}
+                            </div>
                             <div>
-                                <div class="author-name">Priya Krishnan</div>
-                                <div style="font-size:12px;color:var(--gray-500);">Senior Legal Correspondent</div>
+                                <div class="author-name">
+                                    {{ hero_article.author_id.first_name }} {{ hero_article.author_id.last_name }}
+                                </div>
+                                <div style="font-size:12px;color:var(--gray-500);">Journalist</div>
                             </div>
                         </div>
                         <span>·</span>
-                        <span>Feb 17, 2026</span>
+                        <span>{{ hero_article.published_at|default:hero_article.created_at|date:"M d, Y" }}</span>
                         <span>·</span>
-                        <span>8 min read</span>
+                        <span>{{ hero_article.read_time }} min read</span>
                     </div>
+                    <div class="hero-img p1" style="overflow: hidden; border-radius: 12px;">
+                        {% if hero_article.media.all %}
+                        <img src="{{ hero_article.media.all.0.file.url }}" alt="{{ hero_article.title }}"
+                            style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        {% else %}
+                        <div class="img-placeholder">📰</div>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <h1 class="hero-title">Welcome to CIVIX</h1>
+                    <p class="hero-excerpt">Stay updated with the latest hyper-local news from your city.</p>
                     <div class="hero-img p1">
                         <div class="img-placeholder">🏛️</div>
                     </div>
+                    {% endif %}
                 </div>
 
                 <!-- ═══ SIDEBAR TRENDING ═══ -->
                 <aside class="sidebar-section">
                     <div class="sidebar-head">Trending on CIVIX</div>
 
+                    {% for article in trending_articles %}
                     <div class="trending-item">
-                        <div class="trending-num">01</div>
+                        <div class="trending-num">{{ forloop.counter|stringformat:"02d" }}</div>
                         <div class="trending-content">
-                            <h4>Maharashtra Floods: 40,000 Evacuated as IMD Issues Red Alert for Coastal Districts</h4>
-                            <div class="trending-author">Neha Kulkarni · 4 min read</div>
+                            <a href="#" style="text-decoration: none; color: inherit;">
+                                <h4>{{ article.title }}</h4>
+                            </a>
+                            <div class="trending-author">
+                                {{ article.author_id.first_name }} {{ article.author_id.last_name }} · {{ article.read_time }} min read
+                            </div>
                         </div>
                     </div>
-
+                    {% empty %}
                     <div class="trending-item">
-                        <div class="trending-num">02</div>
                         <div class="trending-content">
-                            <h4>Gujarat Unveils ₹34,000 Crore Solar Park — Asia's Largest Renewable Energy Hub</h4>
-                            <div class="trending-author">Dhruv Shah · 6 min read</div>
+                            <h4>No trending articles yet</h4>
                         </div>
                     </div>
-
-                    <div class="trending-item">
-                        <div class="trending-num">03</div>
-                        <div class="trending-content">
-                            <h4>IPL 2026 Mega Auction: Mumbai Indians Retain Rohit Sharma, Full Squad List Revealed</h4>
-                            <div class="trending-author">Amit Kulkarni · 5 min read</div>
-                        </div>
-                    </div>
-
-                    <div class="trending-item">
-                        <div class="trending-num">04</div>
-                        <div class="trending-content">
-                            <h4>Pune-Mumbai Hyperloop Gets Final Green Light, 25-Min Commute by 2027</h4>
-                            <div class="trending-author">Kavya Mehta · 7 min read</div>
-                        </div>
-                    </div>
-
-                    <div class="trending-item">
-                        <div class="trending-num">05</div>
-                        <div class="trending-content">
-                            <h4>Rajasthan Announces Free Electricity Up to 100 Units for All Households</h4>
-                            <div class="trending-author">Sunita Agarwal · 4 min read</div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </aside>
             </div>
         </section>
@@ -113,104 +105,33 @@
         </div>
 
         <section class="articles-grid fade-in">
+            {% for article in latest_articles %}
             <article class="article-card">
-                <div class="card-img p2">
-                    <div class="img-placeholder" style="font-size:50px;">🌿</div>
+                <div class="card-img p2" style="overflow: hidden; border-radius: 12px 12px 0 0;">
+                    {% if article.media.all %}
+                    <img src="{{ article.media.all.0.file.url }}" alt="{{ article.title }}"
+                        style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    {% else %}
+                    <div class="img-placeholder" style="font-size:50px;">📰</div>
+                    {% endif %}
                 </div>
-                <span class="card-tag">Energy · Gujarat</span>
-                <h3 class="card-title">Gujarat's Surya Shakti Phase-3: How 8 GW of Solar Capacity Will Transform India's
-                    Green
-                    Energy Landscape</h3>
-                <p class="card-excerpt">The state government's ambitious renewable energy expansion plan could power 6
-                    million
-                    homes and reduce carbon emissions by 12 million tons annually.</p>
+                <span class="card-tag">
+                    {{ article.category_id.category_name }} · {{ article.city_id.state_id.state_name }}
+                </span>
+                <a href="#" style="text-decoration: none; color: inherit;">
+                    <h3 class="card-title">{{ article.title }}</h3>
+                </a>
+                <p class="card-excerpt">{{ article.content|striptags|truncatewords:30 }}</p>
                 <div class="card-meta">
-                    <span class="card-author">Dhruv Shah</span>
-                    <span class="card-read-time">6 min read</span>
+                    <span class="card-author">
+                        {{ article.author_id.first_name }} {{ article.author_id.last_name }}
+                    </span>
+                    <span class="card-read-time">{{ article.read_time }} min read</span>
                 </div>
             </article>
-
-            <article class="article-card">
-                <div class="card-img p3">
-                    <div class="img-placeholder" style="font-size:50px;">🏏</div>
-                </div>
-                <span class="card-tag">Sports · Mumbai</span>
-                <h3 class="card-title">Inside Mumbai Indians' IPL 2026 Strategy: Breaking Down the ₹85 Crore Auction
-                    Spend</h3>
-                <p class="card-excerpt">From retaining Rohit Sharma to strategic acquisitions of young talent, MI's
-                    management
-                    reveals their blueprint for the upcoming season.</p>
-                <div class="card-meta">
-                    <span class="card-author">Amit Kulkarni</span>
-                    <span class="card-read-time">5 min read</span>
-                </div>
-            </article>
-
-            <article class="article-card">
-                <div class="card-img p4">
-                    <div class="img-placeholder" style="font-size:50px;">💊</div>
-                </div>
-                <span class="card-tag">Health · Delhi</span>
-                <h3 class="card-title">AIIMS Delhi's Breakthrough ₹50 Dengue Test Kit Could Save Thousands of Lives in
-                    Rural
-                    India</h3>
-                <p class="card-excerpt">With 98% accuracy and rapid 15-minute results, this innovation addresses a
-                    critical gap
-                    in affordable diagnostic infrastructure.</p>
-                <div class="card-meta">
-                    <span class="card-author">Dr. Rajeev Menon</span>
-                    <span class="card-read-time">7 min read</span>
-                </div>
-            </article>
-
-            <article class="article-card">
-                <div class="card-img p5">
-                    <div class="img-placeholder" style="font-size:50px;">🏗️</div>
-                </div>
-                <span class="card-tag">Infrastructure · Maharashtra</span>
-                <h3 class="card-title">The Engineering Marvel Behind India's First Hyperloop: A Deep Dive into the
-                    Pune-Mumbai
-                    Corridor</h3>
-                <p class="card-excerpt">Exploring the technology, challenges, and environmental considerations of the
-                    140 km
-                    high-speed transportation project.</p>
-                <div class="card-meta">
-                    <span class="card-author">Kavya Mehta</span>
-                    <span class="card-read-time">9 min read</span>
-                </div>
-            </article>
-
-            <article class="article-card">
-                <div class="card-img p6">
-                    <div class="img-placeholder" style="font-size:50px;">💻</div>
-                </div>
-                <span class="card-tag">Technology · Bengaluru</span>
-                <h3 class="card-title">Bengaluru Launches India's First AI-Powered Traffic Management System, Promises
-                    40%
-                    Congestion Reduction</h3>
-                <p class="card-excerpt">Using machine learning and real-time data analytics, the smart city initiative
-                    aims to
-                    revolutionize urban mobility.</p>
-                <div class="card-meta">
-                    <span class="card-author">Rohan Iyer</span>
-                    <span class="card-read-time">6 min read</span>
-                </div>
-            </article>
-
-            <article class="article-card">
-                <div class="card-img p1">
-                    <div class="img-placeholder" style="font-size:50px;">⚖️</div>
-                </div>
-                <span class="card-tag">Crime · Uttar Pradesh</span>
-                <h3 class="card-title">Agra Honour Killing Case: 14 Arrested, High Court Orders SIT Investigation</h3>
-                <p class="card-excerpt">The tragic incident has reignited debate over caste-based violence and the
-                    effectiveness
-                    of existing legal protections.</p>
-                <div class="card-meta">
-                    <span class="card-author">Priya Sharma</span>
-                    <span class="card-read-time">5 min read</span>
-                </div>
-            </article>
+            {% empty %}
+            <p style="grid-column: 1 / -1; color: var(--gray-500);">No latest stories available right now.</p>
+            {% endfor %}
         </section>
 
         <!-- ═══ CITIZEN JOURNALISM BANNER ═══ -->
@@ -235,101 +156,61 @@
         <section class="two-col-section">
             <div class="main-content">
                 <div class="story-list">
+                    {% for article in state_politics_articles %}
                     <article class="story-item">
-                        <div class="story-img p4">
-                            <div class="img-placeholder" style="font-size:40px;">🏛️</div>
+                        <div class="story-img p4" style="overflow: hidden; border-radius: 8px;">
+                            {% if article.media.all %}
+                            <img src="{{ article.media.all.0.file.url }}" alt="{{ article.title }}"
+                                style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                            {% else %}
+                            <div class="img-placeholder" style="font-size:40px;">📰</div>
+                            {% endif %}
                         </div>
                         <div class="story-info">
-                            <span class="story-tag">Politics · Uttar Pradesh</span>
-                            <h3 class="story-title">Yogi Government Announces ₹12,000 Crore Infrastructure Mega Blitz
-                                Across Eastern
-                                UP</h3>
-                            <p class="story-excerpt">Over 48 new highway projects, 12 irrigation schemes, and 3 medical
-                                colleges are
-                                set to transform Purvanchal region under the state budget's flagship development
-                                initiative.</p>
-                            <div class="story-meta">Priya Sharma · 7 min read</div>
+                            <span class="story-tag">
+                                {{ article.category_id.category_name }} · {{ article.city_id.state_id.state_name }}
+                            </span>
+                            <a href="#" style="text-decoration: none; color: inherit;">
+                                <h3 class="story-title">{{ article.title }}</h3>
+                            </a>
+                            <p class="story-excerpt">{{ article.content|striptags|truncatewords:20 }}</p>
+                            <div class="story-meta">
+                                {{ article.author_id.first_name }} {{ article.author_id.last_name }} · {{ article.read_time }} min read
+                            </div>
                         </div>
                     </article>
-
-                    <article class="story-item">
-                        <div class="story-img p2">
-                            <div class="img-placeholder" style="font-size:40px;">🌾</div>
-                        </div>
-                        <div class="story-info">
-                            <span class="story-tag">Politics · Madhya Pradesh</span>
-                            <h3 class="story-title">MP Government Expands Kisan Samman Scheme to Cover 8 Lakh More
-                                Marginal Farmers
-                            </h3>
-                            <p class="story-excerpt">The enhanced PM-KISAN supplement will provide an additional ₹6,000
-                                annually to
-                                small and marginal farmers in drought-prone regions.</p>
-                            <div class="story-meta">Rahul Verma · 5 min read</div>
-                        </div>
-                    </article>
-
-                    <article class="story-item">
-                        <div class="story-img p6">
-                            <div class="img-placeholder" style="font-size:40px;">⚖️</div>
-                        </div>
-                        <div class="story-info">
-                            <span class="story-tag">Politics · Telangana</span>
-                            <h3 class="story-title">Telangana: Congress Government Faces No-Confidence Motion After 3
-                                MLAs Cross-Vote
-                            </h3>
-                            <p class="story-excerpt">Political drama unfolds in Hyderabad as the ruling party scrambles
-                                to rally
-                                numbers ahead of the floor test scheduled for Thursday.</p>
-                            <div class="story-meta">K. Rao Reddy · 8 min read</div>
-                        </div>
-                    </article>
-
-                    <article class="story-item">
-                        <div class="story-img p5">
-                            <div class="img-placeholder" style="font-size:40px;">🏢</div>
-                        </div>
-                        <div class="story-info">
-                            <span class="story-tag">Governance · Maharashtra</span>
-                            <h3 class="story-title">Maharashtra CM Launches 'One Lakh Jobs' Scheme Targeting Youth in
-                                Tier-2 Cities
-                            </h3>
-                            <p class="story-excerpt">The initiative focuses on creating sustainable employment
-                                opportunities in
-                                manufacturing, services, and technology sectors across 15 smaller cities.</p>
-                            <div class="story-meta">Neha Kulkarni · 6 min read</div>
-                        </div>
-                    </article>
+                    {% empty %}
+                    <p style="color: var(--gray-500);">No Politics stories available right now.</p>
+                    {% endfor %}
                 </div>
             </div>
 
             <aside class="sidebar-section">
-                <div class="sidebar-head">Must Reads</div>
+                <div class="sidebar-head">Must Reads - Politics</div>
 
+                {% for article in politics_sidebar_articles %}
                 <div class="trending-item">
                     <div class="trending-content">
-                        <h4>Why India's Flood Management Still Fails Despite Early Warning Systems</h4>
-                        <div class="trending-author">Editorial Board · 10 min read</div>
+                        <a href="#" style="text-decoration: none; color: inherit;">
+                            <h4>{{ article.title }}</h4>
+                        </a>
+                        <div class="trending-author">
+                            {{ article.author_id.first_name }} {{ article.author_id.last_name }} · {{ article.read_time }} min read
+                        </div>
                     </div>
                 </div>
-
+                {% empty %}
                 <div class="trending-item">
                     <div class="trending-content">
-                        <h4>Inside the Political Machinery: How State Parties Are Adapting to Digital Campaigns</h4>
-                        <div class="trending-author">Vikram Desai · 12 min read</div>
+                        <h4>No trending politics articles yet.</h4>
                     </div>
                 </div>
-
-                <div class="trending-item">
-                    <div class="trending-content">
-                        <h4>The Real Cost of Free Electricity: Rajasthan's Policy Under Economic Scrutiny</h4>
-                        <div class="trending-author">Anjali Kapoor · 8 min read</div>
-                    </div>
-                </div>
+                {% endfor %}
             </aside>
         </section>
 
         <!-- ═══ OPINION ═══ -->
-        <div class="section-divider">
+        <!-- <div class="section-divider">
             <h2 class="section-title">Opinion & Analysis</h2>
             <div class="section-line"></div>
             <a class="see-all">See all →</a>
@@ -372,7 +253,7 @@
                     </div>
                 </div>
             </article>
-        </section>
+        </section> -->
 
         <!-- ═══ NEWSLETTER ═══ -->
         <section class="newsletter-section">

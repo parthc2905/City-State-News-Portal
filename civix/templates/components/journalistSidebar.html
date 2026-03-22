@@ -26,7 +26,7 @@
 
         <div class="nav-section">
             <div class="nav-title">Quick Actions</div>
-            <a href="#" class="nav-item">
+            <a href="{% url 'journalist_drafts' %}" class="nav-item {% if request.resolver_match.url_name == 'journalist_drafts' %}active{% endif %}">
                 <span class="nav-icon">💾</span>
                 Drafts
             </a>
@@ -62,11 +62,11 @@
     </nav>
 
     <div class="sidebar-footer">
-        <a href="civix_final.html" class="nav-item">
+        <a href="{% url 'home' %}" class="nav-item">
             <span class="nav-icon">🏠</span>
             Back to Home
         </a>
-        <a href="#" class="nav-item" onclick="logout()">
+        <a href="{% url 'logout' %}" class="nav-item">
             <span class="nav-icon">🚪</span>
             Sign Out
         </a>

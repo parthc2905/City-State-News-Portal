@@ -4,6 +4,7 @@ from django.contrib import messages
 
 from .forms import ArticleMediaForm, ArticleWriteForm
 from .models import News_article, ArticleMedia, Category
+from core.models import Profile
 from location.models import State, City
 from django.core.files.storage import FileSystemStorage
 
@@ -169,20 +170,99 @@ def journalistMyArticlesView(request):
     return render(request, "journalist/journalistMyArticles.html", context)
 
 
+def journalistDraftsView(request):
+    base_qs = News_article.objects.filter(author_id=request.user)
+    search = request.GET.get("q", "").strip()
+    status = "draft"
+    category = request.GET.get("category", "all")
+    sort = request.GET.get("sort", "newest")
+    
+    base_qs = base_qs.filter(status="draft")
+    
+    if category != "all":
+        base_qs = base_qs.filter(category_id__category_name__iexact=category)
+
+    stats_qs = News_article.objects.filter(author_id=request.user)
+    total = stats_qs.count()
+    published = stats_qs.filter(status="approved").count()
+    drafts = stats_qs.filter(status="draft").count()
+    in_review = stats_qs.filter(status="pending").count()
+    now = timezone.now()
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    new_this_month = stats_qs.filter(created_at__gte=start_of_month).count()
+    percent_published = int(published * 100 / total) if total else 0
+    stats = {
+        "total": total,
+        "published": published,
+        "drafts": drafts,
+        "in_review": in_review,
+        "new_this_month": new_this_month,
+        "percent_published": percent_published,
+    }
+
+    if search:
+        base_qs = base_qs.filter(title__icontains=search)
+    if sort == "oldest":
+        base_qs = base_qs.order_by("created_at")
+    elif sort == "views":
+        base_qs = base_qs.order_by("-views_count")
+    elif sort == "title":
+        base_qs = base_qs.order_by("title")
+    else:
+        base_qs = base_qs.order_by("-created_at")
+
+    articles = base_qs.prefetch_related("media")
+    user_categories = Category.objects.filter(news_article__author_id=request.user).distinct()
+    other_categories = Category.objects.exclude(id__in=user_categories.values('id'))
+
+    context = {
+        "articles": articles,
+        "stats": stats,
+        "current": {
+            "q": search,
+            "status": status,
+            "category": category,
+            "sort": sort,
+        },
+        "user_categories": user_categories,
+        "other_categories": other_categories,
+        "is_drafts_page": True,
+    }
+    return render(request, "journalist/journalistMyArticles.html", context)
+
+
 def journalistProfileView(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
     if request.method == "POST":
         user = request.user
         user.first_name = request.POST.get("first_name", user.first_name)
         user.last_name = request.POST.get("last_name", user.last_name)
         user.phone = request.POST.get("phone", user.phone)
         
+        profile.bio = request.POST.get("bio", profile.bio)
+        state_id = request.POST.get("state")
+        city_id = request.POST.get("city")
+        if state_id:
+            profile.state_id = state_id
+        if city_id:
+            profile.city_id = city_id
+        
         if 'avatar' in request.FILES:
             avatar = request.FILES['avatar']
             fs = FileSystemStorage()
+            from django.conf import settings
+            
+            if profile.profile_image:
+                old_name = profile.profile_image.replace(settings.MEDIA_URL, "")
+                if fs.exists(old_name):
+                    fs.delete(old_name)
+                    
             filename = fs.save(f"profile_images/{user.id}_{avatar.name}", avatar)
-            user.profile_image = fs.url(filename)
+            profile.profile_image = fs.url(filename)
             
         user.save()
+        profile.save()
         messages.success(request, "Profile updated successfully!")
         return redirect("journalist_profile")
 
@@ -191,7 +271,8 @@ def journalistProfileView(request):
     
     return render(request, "journalist/journalistProfile.html", {
         "states": states,
-        "cities": cities
+        "cities": cities,
+        "profile": profile,
     })
 
 
@@ -200,4 +281,35 @@ def journalistWritingGuideView(request):
 
 
 def journalistGeneralView(request):
-    return render(request, "journalist/journalistGeneral.html")
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        if "update_notifications" in request.POST:
+            profile.email_notifications = request.POST.get("email_notifications") == "on"
+            profile.breaking_news_alerts = request.POST.get("breaking_news_alerts") == "on"
+            profile.weekly_newsletter = request.POST.get("weekly_newsletter") == "on"
+            profile.article_recommendations = request.POST.get("article_recommendations") == "on"
+            profile.save()
+            messages.success(request, "Notification preferences updated successfully.")
+            return redirect("journalist_general")
+            
+        elif "update_password" in request.POST:
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+            if new_password and new_password == confirm_password:
+                user = request.user
+                user.set_password(new_password)
+                user.save()
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+            return redirect("journalist_general")
+            
+        elif "delete_account" in request.POST:
+            user = request.user
+            user.delete()
+            return redirect("/")  # Redirect to home/login after deletion
+
+    return render(request, "journalist/journalistGeneral.html", {"profile": profile})

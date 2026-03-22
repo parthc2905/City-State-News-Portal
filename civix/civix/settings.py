@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.admin_counts', # this will take care of pending counts in admin Panel
+                'core.context_processors.global_categories', # global categories for navbar dropdown
             ],
         },
     },

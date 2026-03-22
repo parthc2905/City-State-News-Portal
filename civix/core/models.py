@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from location.models import State, City
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -44,7 +45,6 @@ class User(AbstractBaseUser):
     )
     role = models.CharField(max_length=10,choices=role_choice, default='reader')
     phone = models.CharField(max_length=15, null=True)
-    profile_image = models.CharField(max_length=255, null=True)
     acc_choice = (
         ('active','active'),
         ('blocked','blocked'),
@@ -76,3 +76,22 @@ class User(AbstractBaseUser):
     
     def __str__(self):
         return self.email
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    bio = models.TextField(blank=True, null=True)
+    state = models.ForeignKey(State, on_delete=models.SET_NULL, null=True, blank=True)
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=True)
+    profile_image = models.CharField(max_length=255, null=True)
+    
+    # Notification & Newsletter Settings
+    email_notifications = models.BooleanField(default=True, help_text="Receive email updates about new articles in your city")
+    breaking_news_alerts = models.BooleanField(default=True, help_text="Get instant notifications for breaking news")
+    weekly_newsletter = models.BooleanField(default=True, help_text="Receive a weekly digest of top stories")
+    article_recommendations = models.BooleanField(default=True, help_text="Article Recommendations")
+
+    class Meta:
+        db_table = "profile"
+
+    def __str__(self):
+        return f"{self.user.email}'s Profile"

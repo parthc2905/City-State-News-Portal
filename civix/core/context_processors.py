@@ -25,3 +25,14 @@ def admin_counts(request):
             'pending_advertisers': pending_advertisers,
         }
     return {}
+
+from news.models import Category
+
+def global_categories(request):
+    """Add all categories to global context for navbar dropdowns"""
+    try:
+        categories = list(Category.objects.all().order_by('category_name'))
+        return {'all_categories': categories}
+    except Exception as e:
+        print("====== ERROR IN CONTEXT PROCESSOR ======", repr(e))
+        return {'all_categories': []}

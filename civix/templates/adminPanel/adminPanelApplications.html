@@ -1,10 +1,13 @@
 {% extends 'adminPanel/adminPanelDashboard.html' %}
 
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Application Management</h1>
+{% endblock topbar_title %}
+
 {% block content %}
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-    <h1 class="page-title">Application Management</h1>
     <p class="page-subtitle">Review and approve journalist and advertiser applications</p>
 </div>
 
@@ -127,160 +130,6 @@
                 </td>
             </tr>
             {% endfor %}
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small">RK</div>
-                        <div class="user-info">
-                            <h4>Rajesh Kumar</h4>
-                            <p>rajesh.kumar@example.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📝 Journalist</td>
-                <td>Mumbai, MH</td>
-                <td>Mar 7, 2026</td>
-                <td><span class="status-badge status-pending">⏱️ Pending</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view" onclick="viewApplication('journalist', 'Rajesh Kumar')"
-                            title="View Details">👁️</button>
-                        <button class="btn-icon btn-approve" onclick="approveApplication('Rajesh Kumar')"
-                            title="Approve">✓</button>
-                        <button class="btn-icon btn-reject" onclick="rejectApplication('Rajesh Kumar')"
-                            title="Reject">✕</button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small" style="background: linear-gradient(135deg, #f59e0b, #d97706);">PS
-                        </div>
-                        <div class="user-info">
-                            <h4>Priya Sharma</h4>
-                            <p>priya.sharma@example.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📝 Journalist</td>
-                <td>Delhi, DL</td>
-                <td>Mar 6, 2026</td>
-                <td><span class="status-badge status-pending">⏱️ Pending</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view" onclick="viewApplication('journalist', 'Priya Sharma')"
-                            title="View Details">👁️</button>
-                        <button class="btn-icon btn-approve" onclick="approveApplication('Priya Sharma')"
-                            title="Approve">✓</button>
-                        <button class="btn-icon btn-reject" onclick="rejectApplication('Priya Sharma')"
-                            title="Reject">✕</button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Advertiser Applications -->
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">TS
-                        </div>
-                        <div class="user-info">
-                            <h4>TechVision Solutions</h4>
-                            <p>contact@techvision.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📢 Advertiser</td>
-                <td>Bengaluru, KA</td>
-                <td>Mar 7, 2026</td>
-                <td><span class="status-badge status-pending">⏱️ Pending</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view"
-                            onclick="viewApplication('advertiser', 'TechVision Solutions')"
-                            title="View Details">👁️</button>
-                        <button class="btn-icon btn-approve" onclick="approveApplication('TechVision Solutions')"
-                            title="Approve">✓</button>
-                        <button class="btn-icon btn-reject" onclick="rejectApplication('TechVision Solutions')"
-                            title="Reject">✕</button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small" style="background: linear-gradient(135deg, #ec4899, #be185d);">DM
-                        </div>
-                        <div class="user-info">
-                            <h4>Digital Marketing Pro</h4>
-                            <p>info@digitalmarketingpro.in</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📢 Advertiser</td>
-                <td>Pune, MH</td>
-                <td>Mar 6, 2026</td>
-                <td><span class="status-badge status-pending">⏱️ Pending</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view"
-                            onclick="viewApplication('advertiser', 'Digital Marketing Pro')"
-                            title="View Details">👁️</button>
-                        <button class="btn-icon btn-approve" onclick="approveApplication('Digital Marketing Pro')"
-                            title="Approve">✓</button>
-                        <button class="btn-icon btn-reject" onclick="rejectApplication('Digital Marketing Pro')"
-                            title="Reject">✕</button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small">AK</div>
-                        <div class="user-info">
-                            <h4>Amit Kulkarni</h4>
-                            <p>amit.kulkarni@example.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📝 Journalist</td>
-                <td>Mumbai, MH</td>
-                <td>Mar 5, 2026</td>
-                <td><span class="status-badge status-approved">✓ Approved</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view" onclick="viewApplication('journalist', 'Amit Kulkarni')"
-                            title="View Details">👁️</button>
-                    </div>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <div class="user-cell">
-                        <div class="user-avatar-small" style="background: linear-gradient(135deg, #10b981, #059669);">NK
-                        </div>
-                        <div class="user-info">
-                            <h4>Neha Kulkarni</h4>
-                            <p>neha.k@example.com</p>
-                        </div>
-                    </div>
-                </td>
-                <td>📝 Journalist</td>
-                <td>Pune, MH</td>
-                <td>Mar 4, 2026</td>
-                <td><span class="status-badge status-rejected">✕ Rejected</span></td>
-                <td>
-                    <div class="action-buttons">
-                        <button class="btn-icon btn-view" onclick="viewApplication('journalist', 'Neha Kulkarni')"
-                            title="View Details">👁️</button>
-                    </div>
-                </td>
-            </tr>
 
         </tbody>
     </table>

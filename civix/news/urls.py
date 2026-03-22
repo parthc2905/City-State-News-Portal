@@ -9,6 +9,7 @@ urlpatterns = [
     path('journalist/articles/preview/<int:article_id>/', views.journalistArticlePreviewView, name='journalist_article_preview'),
     path('journalist/articles/edit/<int:article_id>/', views.journalistEditArticleView, name='journalist_edit_article'),
     path('journalist/articles/delete/<int:article_id>/', views.journalistDeleteArticleView, name='journalist_delete_article'),
+    path('journalist/drafts/', views.journalistDraftsView, name='journalist_drafts'),
     path('journalist/profile/', views.journalistProfileView, name='journalist_profile'),
     path('journalist/general/', views.journalistGeneralView, name='journalist_general'),
     path('journalist/writing-guide/', views.journalistWritingGuideView, name='journalist_writing_guide'),

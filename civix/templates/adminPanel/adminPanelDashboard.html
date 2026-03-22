@@ -15,20 +15,35 @@
 
 <body>
 
-    <!-- HEADER -->
-    {% include 'components/adminPanelNavbar.html' %}
-
-    <div class="admin-layout">
+    <div class="dashboard-layout">
+        
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
 
         <!-- SIDEBAR -->
         {% include 'components/adminPanelSidebar.html' %}
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
+            <div class="top-bar">
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+                    {% block topbar_title %}{% endblock topbar_title %}
+                </div>
+                <!-- User Avatar Block from topnav -->
+                <div class="nav-user" style="display: flex; align-items: center; gap: 16px;">
+                    <div class="user-avatar" style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--red), var(--orange)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 14px;">A</div>
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600;">Admin User</div>
+                    </div>
+                </div>
+            </div>
 
-            {% block content %}
+            <div class="admin-content-inner" style="padding: 32px 40px; max-width: 1600px; margin: 0 auto;">
+                {% block content %}
 
-            {% endblock content %}
+                {% endblock content %}
+            </div>
         </main>
     </div>
 
