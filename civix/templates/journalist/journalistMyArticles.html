@@ -134,7 +134,7 @@
             {% if media and media.file %}
             <img src="{{ media.file.url }}" alt="{{ article.title }}" class="article-thumbnail">
             {% else %}
-            <img src="/Media/defaultMedia/newspaper-folded.png" alt="Article" class="article-thumbnail">
+            <div class="article-thumbnail-placeholder">📰</div>
             {% endif %}
             {% endwith %}
 

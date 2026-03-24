@@ -32,7 +32,7 @@
                         <div class="dot"></div>
                         {% if hero_article.is_breaking %}Breaking News{% else %}Featured Story{% endif %}
                     </div>
-                    <a href="#" style="text-decoration: none; color: inherit;">
+                    <a href="{% url 'article_detail' slug=hero_article.slug %}" style="text-decoration: none; color: inherit;">
                         <h1 class="hero-title">{{ hero_article.title }}</h1>
                     </a>
                     <p class="hero-excerpt">{{ hero_article.content|striptags|truncatewords:30 }}</p>
@@ -53,6 +53,7 @@
                         <span>·</span>
                         <span>{{ hero_article.read_time }} min read</span>
                     </div>
+                    <a href="{% url 'article_detail' slug=hero_article.slug %}" style="text-decoration:none;">
                     <div class="hero-img p1" style="overflow: hidden; border-radius: 12px;">
                         {% if hero_article.media.all %}
                         <img src="{{ hero_article.media.all.0.file.url }}" alt="{{ hero_article.title }}"
@@ -61,6 +62,7 @@
                         <div class="img-placeholder">📰</div>
                         {% endif %}
                     </div>
+                    </a>
                     {% else %}
                     <h1 class="hero-title">Welcome to CIVIX</h1>
                     <p class="hero-excerpt">Stay updated with the latest hyper-local news from your city.</p>
@@ -78,7 +80,7 @@
                     <div class="trending-item">
                         <div class="trending-num">{{ forloop.counter|stringformat:"02d" }}</div>
                         <div class="trending-content">
-                            <a href="#" style="text-decoration: none; color: inherit;">
+                            <a href="{% url 'article_detail' slug=article.slug %}" style="text-decoration: none; color: inherit;">
                                 <h4>{{ article.title }}</h4>
                             </a>
                             <div class="trending-author">
@@ -101,7 +103,7 @@
         <div class="section-divider">
             <h2 class="section-title">Latest Stories</h2>
             <div class="section-line"></div>
-            <a class="see-all">See all →</a>
+            <a href="{% url 'latest_stories' %}" class="see-all">See all →</a>
         </div>
 
         <section class="articles-grid fade-in">
@@ -118,10 +120,12 @@
                 <span class="card-tag">
                     {{ article.category_id.category_name }} · {{ article.city_id.state_id.state_name }}
                 </span>
-                <a href="#" style="text-decoration: none; color: inherit;">
+                <a href="{% url 'article_detail' slug=article.slug %}" style="text-decoration: none; color: inherit;">
                     <h3 class="card-title">{{ article.title }}</h3>
                 </a>
+                <a href="{% url 'article_detail' slug=article.slug %}" style="text-decoration: none; color: inherit;">
                 <p class="card-excerpt">{{ article.content|striptags|truncatewords:30 }}</p>
+                </a>
                 <div class="card-meta">
                     <span class="card-author">
                         {{ article.author_id.first_name }} {{ article.author_id.last_name }}
@@ -150,7 +154,7 @@
         <div class="section-divider">
             <h2 class="section-title">State Politics</h2>
             <div class="section-line"></div>
-            <a class="see-all">See all →</a>
+            <a href="{% url 'state_politics' %}" class="see-all">See all →</a>
         </div>
 
         <section class="two-col-section">
@@ -170,7 +174,7 @@
                             <span class="story-tag">
                                 {{ article.category_id.category_name }} · {{ article.city_id.state_id.state_name }}
                             </span>
-                            <a href="#" style="text-decoration: none; color: inherit;">
+                            <a href="{% url 'article_detail' slug=article.slug %}" style="text-decoration: none; color: inherit;">
                                 <h3 class="story-title">{{ article.title }}</h3>
                             </a>
                             <p class="story-excerpt">{{ article.content|striptags|truncatewords:20 }}</p>
@@ -191,7 +195,7 @@
                 {% for article in politics_sidebar_articles %}
                 <div class="trending-item">
                     <div class="trending-content">
-                        <a href="#" style="text-decoration: none; color: inherit;">
+                        <a href="{% url 'article_detail' slug=article.slug %}" style="text-decoration: none; color: inherit;">
                             <h4>{{ article.title }}</h4>
                         </a>
                         <div class="trending-author">

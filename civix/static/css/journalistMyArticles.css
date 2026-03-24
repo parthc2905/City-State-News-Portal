@@ -149,6 +149,18 @@
     background: var(--gray-200);
 }
 
+.article-thumbnail-placeholder {
+    width: 100px;
+    height: 70px;
+    border-radius: 8px;
+    background: var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+
 .article-content {
     flex: 1;
 }

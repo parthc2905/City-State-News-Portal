@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} — CIVIX</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Archivo+Black&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/articleDetail.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    {% include 'components/navbar.html' %}
+
+    <!-- ═══ LOCATION BAR ═══ -->
+    {% include 'components/locationBar.html' %}
+
+    <!-- ═══ MAIN 3-COLUMN LAYOUT ═══ -->
+    <div class="article-main-layout">
+
+        <!-- ══ LEFT SIDEBAR: Trending in category ══ -->
+        <aside class="article-sidebar left">
+            <div class="article-sidebar-section">
+                <h2 class="article-sidebar-title">
+                    Trending in {{ article.category_id.category_name }}
+                </h2>
+
+                {% for art in left_articles %}
+                <div class="sidebar-art-card">
+                    <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
+                        {% if art.media.all %}
+                        <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
+                        {% else %}
+                        <div class="sidebar-art-img-placeholder">📰</div>
+                        {% endif %}
+                        <div class="sidebar-art-category">{{ art.category_id.category_name }}</div>
+                        <h3 class="sidebar-art-title">{{ art.title }}</h3>
+                        <div class="sidebar-art-meta">
+                            {{ art.author_id.first_name }} {{ art.author_id.last_name }} · {{ art.read_time }} min read
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <p style="color:var(--gray-500);font-size:14px;">No related articles found.</p>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- ══ CENTER: Full Article ══ -->
+        <main class="article-body-container">
+            <article>
+
+                <!-- ARTICLE HEADER -->
+                <header class="art-header">
+                    <div class="art-meta-top">
+                        <span class="art-category-badge">{{ article.category_id.category_name }}</span>
+                        <span class="art-meta-item">
+                            📍{{ article.city_id.city_name }}, {{ article.city_id.state_id.state_name }}</span>
+                        <span class="art-meta-item">⏱️ {{ article.read_time }} min read</span>
+                        {% if article.is_breaking %}
+                        <span class="art-meta-item" style="color:var(--green);font-weight:700;">🔴 Breaking</span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="art-title">{{ article.title }}</h1>
+
+                    {% if article.excerpt %}
+                    <p class="art-excerpt">{{ article.excerpt }}</p>
+                    {% endif %}
+
+                    <!-- BYLINE -->
+                    <div class="art-byline">
+                        <div class="art-author-avatar">
+                            {{ article.author_id.first_name|first|upper }}{{ article.author_id.last_name|first|upper }}
+                        </div>
+                        <div>
+                            <div class="art-author-name">
+                                {{ article.author_id.first_name }} {{ article.author_id.last_name }}
+                            </div>
+                            <div class="art-publish-date">
+                                Published on {{ article.published_at|default:article.created_at|date:"F j, Y \a\t g:i A" }}
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- FEATURED IMAGE -->
+                {% if article.media.all %}
+                <figure>
+                    <img src="{{ article.media.all.0.file.url }}" alt="{{ article.title }}" class="art-featured-image">
+                    <figcaption class="art-image-caption">
+                        Photo: {{ article.city_id.city_name }}, {{ article.city_id.state_id.state_name }}
+                    </figcaption>
+                </figure>
+                {% endif %}
+
+                <!-- ARTICLE CONTENT -->
+                <div class="art-content">
+                    {{ article.content|safe }}
+                </div>
+
+                <!-- ARTICLE FOOTER: Tags + Share -->
+                <!-- <footer class="art-footer">
+
+                    <div class="art-tags-label">Tags:</div>
+                    <div class="art-tags-list">
+                        <a href="#" class="art-tag">{{ article.category_id.category_name }}</a>
+                        <a href="#" class="art-tag">{{ article.city_id.city_name }}</a>
+                        <a href="#" class="art-tag">{{ article.city_id.state_id.state_name }}</a>
+                        {% if article.is_breaking %}
+                        <a href="#" class="art-tag">Breaking News</a>
+                        {% endif %}
+                    </div>
+                    <div class="art-share-section">
+                        <span class="art-share-label">Share this article:</span>
+                        <div class="art-share-buttons">
+                            <button class="art-share-btn twitter" onclick="artShareOn('twitter')" title="Share on Twitter">𝕏</button>
+                            <button class="art-share-btn facebook" onclick="artShareOn('facebook')" title="Share on Facebook">f</button>
+                            <button class="art-share-btn whatsapp" onclick="artShareOn('whatsapp')" title="Share on WhatsApp">💬</button>
+                            <button class="art-share-btn linkedin" onclick="artShareOn('linkedin')" title="Share on LinkedIn">in</button>
+                            <button class="art-share-btn copy" onclick="artCopyLink()" title="Copy link">🔗</button>
+                        </div>
+                    </div>
+                </footer> -->
+
+            </article>
+        </main>
+
+        <!-- ══ RIGHT SIDEBAR: Latest News ══ -->
+        <aside class="article-sidebar right">
+            <div class="article-sidebar-section">
+                <h2 class="article-sidebar-title">Latest News</h2>
+
+                {% for art in right_articles %}
+                <div class="sidebar-art-card">
+                    <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
+                        {% if art.media.all %}
+                        <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
+                        {% else %}
+                        <div class="sidebar-art-img-placeholder">📰</div>
+                        {% endif %}
+                        <div class="sidebar-art-category">{{ art.category_id.category_name }}</div>
+                        <h3 class="sidebar-art-title">{{ art.title }}</h3>
+                        <div class="sidebar-art-meta">
+                            {{ art.author_id.first_name }} {{ art.author_id.last_name }} · {{ art.read_time }} min read
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <p style="color:var(--gray-500);font-size:14px;">No latest articles found.</p>
+                {% endfor %}
+            </div>
+        </aside>
+
+    </div>
+    <!-- ═══ END MAIN LAYOUT ═══ -->
+
+    <!-- ═══ FOOTER ═══ -->
+    {% include 'components/footer.html' %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+        function artShareOn(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.querySelector('.art-title').textContent.trim());
+            let shareUrl = '';
+            switch (platform) {
+                case 'twitter': shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`; break;
+                case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
+                case 'whatsapp': shareUrl = `https://wa.me/?text=${title}%20${url}`; break;
+                case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`; break;
+            }
+            if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+
+        function artCopyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('✓ Link copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -48,7 +48,7 @@ a {
 }
 
 .nav-inner {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 12px 40px;
     display: flex;
@@ -127,6 +127,28 @@ a {
     background: var(--green-light);
 }
 
+html::-webkit-scrollbar {
+    width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.3) transparent;
+}
+
 /* Nav dropdown (Opinion & future categories) */
 .nav-dropdown {
     position: relative;
@@ -177,6 +199,8 @@ a {
     transform: translateY(-8px);
     transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
     z-index: 1001;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .nav-dropdown.open .nav-dropdown-menu {
@@ -199,6 +223,35 @@ a {
     color: var(--black);
 }
 
+.nav-dropdown-menu {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Chrome, Edge, Safari */
+.nav-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Firefox */
+.nav-dropdown-menu {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
 /* Profile avatar & dropdown */
 .profile-dropdown {
     position: relative;
@@ -211,6 +264,10 @@ a {
     cursor: pointer;
     border-radius: 50%;
     transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
 }
 
 .profile-avatar-btn:hover {
@@ -230,6 +287,8 @@ a {
     font-family: 'Inter', sans-serif;
     font-size: 14px;
     font-weight: 600;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
 .profile-dropdown-menu {
@@ -336,19 +395,17 @@ a {
     padding: 10px 0;
     overflow-x: auto;
     white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .location-bar::-webkit-scrollbar {
-    height: 4px;
+    display: none; /* Chrome, Safari and Opera */
 }
 
-.location-bar::-webkit-scrollbar-thumb {
-    background: var(--gray-400);
-    border-radius: 2px;
-}
 
 .location-inner {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 40px;
     display: flex;
@@ -386,7 +443,7 @@ a {
 
 /* ═══ CONTAINER ═══ */
 .container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     padding: 0 40px;
 }

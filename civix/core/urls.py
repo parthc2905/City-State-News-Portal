@@ -14,5 +14,7 @@ urlpatterns = [
     path('adminpanel/advertisers/', views.adminPanelAdvertisersView, name='admin_panel_advertisers'),
     path('adminpanel/readers/', views.adminPanelReadersView, name='admin_panel_readers'),
     path('reader/dashboard/', views.readerDashboardView, name='reader_dashboard'),
-    
+    path('article/<slug:slug>/', views.articleDetailView, name='article_detail'),
+    path('latest/', views.latestStoriesView, name='latest_stories'),
+    path('state-politics/', views.statePoliticsView, name='state_politics'),
 ]

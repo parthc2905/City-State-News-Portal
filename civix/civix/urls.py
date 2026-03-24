@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('superadmin/', admin.site.urls),
-    path('core/', include('core.urls')), # include the urls of our authentication core app
+    path('', include('core.urls')), # include the urls of our authentication core app
     path('location/', include('location.urls')), # include the urls of our location app
     path('news/', include('news.urls')), # include the urls of our news app
 ]

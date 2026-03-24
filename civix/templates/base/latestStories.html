@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Stories — CIVIX</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Archivo+Black&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/articleDetail.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    {% include 'components/navbar.html' %}
+
+    <!-- ═══ LOCATION BAR ═══ -->
+    {% include 'components/locationBar.html' %}
+
+    <!-- ═══ MAIN 3-COLUMN LAYOUT ═══ -->
+    <div class="article-main-layout">
+
+        <!-- ══ LEFT SIDEBAR: Latest News (Odd) ══ -->
+        <aside class="article-sidebar left">
+            <div class="article-sidebar-section">
+                <h2 class="article-sidebar-title">Recent Updates</h2>
+
+                {% for art in left_articles %}
+                <div class="sidebar-art-card">
+                    <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
+                        {% if art.media.all %}
+                        <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
+                        {% else %}
+                        <div class="sidebar-art-img-placeholder">📰</div>
+                        {% endif %}
+                        <div class="sidebar-art-category">{{ art.category_id.category_name }}</div>
+                        <h3 class="sidebar-art-title">{{ art.title }}</h3>
+                        <div class="sidebar-art-meta">
+                            {{ art.author_id.first_name }} {{ art.author_id.last_name }} · {{ art.read_time }} min read
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <p style="color:var(--gray-500);font-size:14px;">No more articles found.</p>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <!-- ══ CENTER: Hero Article Preview ══ -->
+        <main class="article-body-container">
+            {% if hero %}
+            <article>
+                <header class="art-header">
+                    <div class="art-meta-top">
+                        <span class="art-category-badge">{{ hero.category_id.category_name }}</span>
+                        <span class="art-meta-item">📍 {{ hero.city_id.city_name }}, {{ hero.city_id.state_id.state_name }}</span>
+                        <span class="art-meta-item">⏱️ {{ hero.read_time }} min read</span>
+                        {% if hero.is_breaking %}
+                        <span class="art-meta-item" style="color:var(--green);font-weight:700;">🔴 Breaking</span>
+                        {% endif %}
+                    </div>
+
+                    <a href="{% url 'article_detail' slug=hero.slug %}" style="text-decoration: none; color: inherit;">
+                        <h1 class="art-title">{{ hero.title }}</h1>
+                    </a>
+
+                    {% if hero.content %}
+                    <p class="art-excerpt" style="font-style: normal; color: var(--gray-800); font-weight: 400; line-height: 1.6;">
+                        {{ hero.content|striptags|truncatewords:60 }}
+                    </p>
+                    {% endif %}
+
+                    <!-- BYLINE -->
+                    <div class="art-byline">
+                        <div class="art-author-avatar">
+                            {{ hero.author_id.first_name|first|upper }}{{ hero.author_id.last_name|first|upper }}
+                        </div>
+                        <div>
+                            <div class="art-author-name">
+                                {{ hero.author_id.first_name }} {{ hero.author_id.last_name }}
+                            </div>
+                            <div class="art-publish-date">
+                                Published on {{ hero.published_at|default:hero.created_at|date:"F j, Y" }}
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- FEATURED IMAGE -->
+                {% if hero.media.all %}
+                <a href="{% url 'article_detail' slug=hero.slug %}">
+                    <figure>
+                        <img src="{{ hero.media.all.0.file.url }}" alt="{{ hero.title }}" class="art-featured-image" style="margin-top: 0;">
+                        <figcaption class="art-image-caption">
+                            Photo: {{ hero.city_id.city_name }}, {{ hero.city_id.state_id.state_name }}
+                        </figcaption>
+                    </figure>
+                </a>
+                {% endif %}
+
+            </article>
+            {% else %}
+            <div style="text-align: center; padding: 80px 20px;">
+                <h1 style="font-family: 'Spectral', serif; color: var(--gray-400);">No Latest Stories</h1>
+                <p style="color: var(--gray-500);">Check back later for fresh updates from your city.</p>
+            </div>
+            {% endif %}
+        </main>
+
+        <!-- ══ RIGHT SIDEBAR: Latest News (Even) ══ -->
+        <aside class="article-sidebar right">
+            <div class="article-sidebar-section">
+                <h2 class="article-sidebar-title">More Stories</h2>
+
+                {% for art in right_articles %}
+                <div class="sidebar-art-card">
+                    <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
+                        {% if art.media.all %}
+                        <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
+                        {% else %}
+                        <div class="sidebar-art-img-placeholder">📰</div>
+                        {% endif %}
+                        <div class="sidebar-art-category">{{ art.category_id.category_name }}</div>
+                        <h3 class="sidebar-art-title">{{ art.title }}</h3>
+                        <div class="sidebar-art-meta">
+                            {{ art.author_id.first_name }} {{ art.author_id.last_name }} · {{ art.read_time }} min read
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <p style="color:var(--gray-500);font-size:14px;">No more articles found.</p>
+                {% endfor %}
+            </div>
+        </aside>
+
+    </div>
+    <!-- ═══ END MAIN LAYOUT ═══ -->
+
+    <!-- ═══ FOOTER ═══ -->
+    {% include 'components/footer.html' %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

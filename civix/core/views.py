@@ -6,8 +6,106 @@ from django.contrib.auth.decorators import login_required
 from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
 from news.models import News_article
+
+
+def articleDetailView(request, slug):
+    # Fetch published article only
+    article = get_object_or_404(
+        News_article.objects.prefetch_related('media').select_related(
+            'author_id', 'category_id', 'city_id__state_id'
+        ),
+        slug=slug,
+        status='approved',
+    )
+
+    # Increment view count
+    News_article.objects.filter(pk=article.pk).update(views_count=F('views_count') + 1)
+    article.views_count += 1
+
+    # Compute read time
+    word_count = len(article.content.split())
+    article.read_time = max(1, word_count // 200)
+
+    # Left sidebar: top trending articles in the same category (excl. current)
+    left_articles = (
+        News_article.objects
+        .filter(status='approved', category_id=article.category_id)
+        .exclude(pk=article.pk)
+        .prefetch_related('media')
+        .select_related('author_id', 'category_id')
+        .order_by('-views_count')[:4]
+    )
+    for a in left_articles:
+        a.read_time = max(1, len(a.content.split()) // 200)
+
+    # Right sidebar: latest articles excluding current + left sidebar articles
+    excluded_ids = [article.pk] + [a.pk for a in left_articles]
+    right_articles = (
+        News_article.objects
+        .filter(status='approved')
+        .exclude(pk__in=excluded_ids)
+        .prefetch_related('media')
+        .select_related('author_id', 'category_id')
+        .order_by('-created_at')[:4]
+    )
+    for a in right_articles:
+        a.read_time = max(1, len(a.content.split()) // 200)
+
+    return render(request, 'base/articleDetail.html', {
+        'article': article,
+        'left_articles': left_articles,
+        'right_articles': right_articles,
+    })
+
+
+
+def latestStoriesView(request):
+    all_articles = list(
+        News_article.objects
+        .filter(status='approved')
+        .prefetch_related('media')
+        .select_related('author_id', 'category_id', 'city_id__state_id')
+        .order_by('-created_at')
+    )
+    for a in all_articles:
+        a.read_time = max(1, len(a.content.split()) // 200)
+
+    hero = all_articles[0] if all_articles else None
+    rest  = all_articles[1:]
+    left_articles  = rest[::2][:2]   # Limit to top 2 odd-index articles
+    right_articles = rest[1::2][:2]  # Limit to top 2 even-index articles
+
+    return render(request, 'base/latestStories.html', {
+        'hero': hero,
+        'left_articles': left_articles,
+        'right_articles': right_articles,
+    })
+
+
+def statePoliticsView(request):
+    all_articles = list(
+        News_article.objects
+        .filter(status='approved', category_id__category_name__icontains='Politic')
+        .prefetch_related('media')
+        .select_related('author_id', 'category_id', 'city_id__state_id')
+        .order_by('-created_at')
+    )
+    for a in all_articles:
+        a.read_time = max(1, len(a.content.split()) // 200)
+
+    hero = all_articles[0] if all_articles else None
+    rest = all_articles[1:]
+    left_articles = rest[::2][:3]   # Showing more in see-all
+    right_articles = rest[1::2][:3] # Showing more in see-all
+
+    return render(request, 'base/statePolitics.html', {
+        'hero': hero,
+        'left_articles': left_articles,
+        'right_articles': right_articles,
+    })
+
 
 def homePage(request):
     hero_article = News_article.objects.filter(status='approved').order_by('-created_at').first()
