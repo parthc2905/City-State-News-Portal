@@ -1,12 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
-from django.contrib import messages
-
-from .forms import ArticleMediaForm, ArticleWriteForm
-from .models import News_article, ArticleMedia, Category
-from core.models import Profile
 from location.models import State, City
 from django.core.files.storage import FileSystemStorage
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
+from reports.models import CitizenReport
+from .models import News_article, ArticleMedia, Category, SavedArticle
 
 
 def journalistDashboardView(request):
@@ -313,3 +311,39 @@ def journalistGeneralView(request):
             return redirect("/")  # Redirect to home/login after deletion
 
     return render(request, "journalist/journalistGeneral.html", {"profile": profile})
+
+
+# @login_required
+# @require_POST
+def save_article_view(request, article_id):
+    article = get_object_or_404(News_article, id=article_id)
+    saved_article, created = SavedArticle.objects.get_or_create(user=request.user, article=article)
+    
+    if not created:
+        saved_article.delete()
+        return JsonResponse({'status': 'unsaved', 'message': 'Article removed from your library.'})
+    
+    return JsonResponse({'status': 'saved', 'message': 'Article saved to your library!'})
+
+
+# @login_required
+# @require_POST
+def report_article_view(request, article_id):
+    article = get_object_or_404(News_article, id=article_id)
+    reason = request.POST.get('description', '').strip()
+    
+    if not reason:
+        return JsonResponse({'status': 'error', 'message': 'Please provide a reason for reporting.'}, status=400)
+    
+    # Use article's location for the report
+    CitizenReport.objects.create(
+        user=request.user,
+        article=article,
+        title=f"Report: {article.title}",
+        description=reason,
+        state=article.city_id.state_id,
+        city=article.city_id,
+        status='pending'
+    )
+    
+    return JsonResponse({'status': 'success', 'message': 'Thank you for reporting. Our moderators will review it soon.'})

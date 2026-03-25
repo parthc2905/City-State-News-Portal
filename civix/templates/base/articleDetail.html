@@ -67,6 +67,23 @@
                         {% if article.is_breaking %}
                         <span class="art-meta-item" style="color:var(--green);font-weight:700;">🔴 Breaking</span>
                         {% endif %}
+
+                        <!-- MORE OPTIONS -->
+                        <div class="more-options-wrapper" style="margin-left: auto;">
+                            <button class="btn-more-options" title="More options" onclick="toggleMoreOptions(event, this)">
+                                ⋮
+                            </button>
+                            <div class="more-options-dropdown">
+                                <ul class="more-options-list">
+                                    <li class="more-options-item" onclick="handleSaveArticle('{{ article.id }}')">
+                                        <i>🔖</i> Save Article
+                                    </li>
+                                    <li class="more-options-item report" onclick="handleReportArticle('{{ article.id }}')">
+                                        <i>🚩</i> Report Article
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                     <h1 class="art-title">{{ article.title }}</h1>

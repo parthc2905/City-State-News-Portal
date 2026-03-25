@@ -28,9 +28,28 @@
             <div class="hero-grid">
                 <div class="hero-main">
                     {% if hero_article %}
-                    <div class="hero-tag">
-                        <div class="dot"></div>
-                        {% if hero_article.is_breaking %}Breaking News{% else %}Featured Story{% endif %}
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                        <div class="hero-tag" style="margin-bottom: 0;">
+                            <div class="dot"></div>
+                            {% if hero_article.is_breaking %}Breaking News{% else %}Featured Story{% endif %}
+                        </div>
+
+                        <!-- MORE OPTIONS -->
+                        <div class="more-options-wrapper">
+                            <button class="btn-more-options" title="More options" onclick="toggleMoreOptions(event, this)">
+                                ⋮
+                            </button>
+                            <div class="more-options-dropdown">
+                                <ul class="more-options-list">
+                                    <li class="more-options-item" onclick="handleSaveArticle('{{ hero_article.id }}')">
+                                        <i>🔖</i> Save Article
+                                    </li>
+                                    <li class="more-options-item report" onclick="handleReportArticle('{{ hero_article.id }}')">
+                                        <i>🚩</i> Report Article
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <a href="{% url 'article_detail' slug=hero_article.slug %}" style="text-decoration: none; color: inherit;">
                         <h1 class="hero-title">{{ hero_article.title }}</h1>

@@ -13,5 +13,6 @@ urlpatterns = [
     path('journalist/profile/', views.journalistProfileView, name='journalist_profile'),
     path('journalist/general/', views.journalistGeneralView, name='journalist_general'),
     path('journalist/writing-guide/', views.journalistWritingGuideView, name='journalist_writing_guide'),
-
+    path('article/save/<int:article_id>/', views.save_article_view, name='save_article'),
+    path('article/report/<int:article_id>/', views.report_article_view, name='report_article'),
 ]

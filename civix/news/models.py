@@ -81,3 +81,9 @@ class SavedArticle(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     article = models.ForeignKey(News_article, on_delete=models.CASCADE)
     saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "saved_article"
+    
+    def __str__(self):
+        return f"{self.article}"

@@ -17,4 +17,6 @@ urlpatterns = [
     path('article/<slug:slug>/', views.articleDetailView, name='article_detail'),
     path('latest/', views.latestStoriesView, name='latest_stories'),
     path('state-politics/', views.statePoliticsView, name='state_politics'),
+    path('article/save/<int:article_id>/', views.saveArticleView, name='save_article'),
+    path('article/report/<int:article_id>/', views.reportArticleView, name='report_article'),
 ]

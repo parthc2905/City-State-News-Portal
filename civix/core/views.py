@@ -7,7 +7,9 @@ from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q, F
-from news.models import News_article
+from news.models import News_article, SavedArticle
+from reports.models import CitizenReport
+from django.http import JsonResponse
 
 
 def articleDetailView(request, slug):
@@ -312,5 +314,44 @@ def adminPanelReadersView(request):
 # @role_required(allowed_roles=["reader"])
 def readerDashboardView(request):
     return render(request, 'core/reader/reader_dashboard.html')
+
+
+def saveArticleView(request, article_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'Please log in to save articles.'}, status=403)
+    
+    article = get_object_or_404(News_article, id=article_id)
+    saved_exists = SavedArticle.objects.filter(user=request.user, article=article).exists()
+    
+    if saved_exists:
+        SavedArticle.objects.filter(user=request.user, article=article).delete()
+        return JsonResponse({'message': 'Article removed from saved items.'})
+    
+    SavedArticle.objects.create(user=request.user, article=article)
+    return JsonResponse({'message': 'Article saved successfully!'})
+
+
+def reportArticleView(request, article_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'Please log in to report articles.'}, status=403)
+    
+    if request.method == 'POST':
+        article = get_object_or_404(News_article, id=article_id)
+        description = request.POST.get('description', '')
+        
+        if not description:
+            return JsonResponse({'message': 'Reporting reason is required.'}, status=400)
+            
+        CitizenReport.objects.create(
+            user=request.user,
+            article=article,
+            title=f"Article Report: {article.title[:50]}",
+            description=description,
+            state=article.city_id.state_id,
+            city=article.city_id
+        )
+        return JsonResponse({'message': 'Thank you. The article has been reported and will be reviewed.'})
+    
+    return JsonResponse({'message': 'Invalid request method.'}, status=405)
 
  

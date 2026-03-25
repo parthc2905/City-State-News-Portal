@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core', # our authentication app --> All authentication related code will be in this app like signup, login, logout, password reset, etc.
     'location', # For city and state handling
-    'news' # news articles, comments, reports, etc
+    'news', # news articles, comments, reports, etc
+    'reports', # For reporting articles
+    'subscriptions', # For user subscriptions
 ]
 
 MIDDLEWARE = [
