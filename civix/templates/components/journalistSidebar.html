@@ -30,7 +30,7 @@
                 <span class="nav-icon">💾</span>
                 Drafts
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'journalist_saved_articles' %}" class="nav-item {% if request.resolver_match.url_name == 'journalist_saved_articles' %}active{% endif %}">
                 <span class="nav-icon">🔖</span>
                 Saved
             </a>

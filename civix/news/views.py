@@ -1,10 +1,16 @@
-from location.models import State, City
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+
+from location.models import State, City
+from core.models import Profile
 from reports.models import CitizenReport
 from .models import News_article, ArticleMedia, Category, SavedArticle
+from .forms import ArticleWriteForm, ArticleMediaForm
 
 
 def journalistDashboardView(request):
@@ -166,6 +172,55 @@ def journalistMyArticlesView(request):
         "other_categories": other_categories,
     }
     return render(request, "journalist/journalistMyArticles.html", context)
+
+
+# @login_required
+def journalistSavedArticlesView(request):
+    search = request.GET.get("q", "").strip()
+    sort = request.GET.get("sort", "newest")
+    
+    # Base QuerySet for this user
+    base_qs = SavedArticle.objects.filter(user=request.user).select_related(
+        'article', 
+        'article__category_id', 
+        'article__city_id'
+    )
+    
+    # Calculate stats BEFORE search
+    total_count = base_qs.count()
+    
+    # Apply search
+    if search:
+        base_qs = base_qs.filter(article__title__icontains=search)
+        
+    # Apply sorting
+    if sort == "oldest":
+        base_qs = base_qs.order_by("saved_at")
+    elif sort == "title":
+        base_qs = base_qs.order_by("article__title")
+    else: # newest
+        base_qs = base_qs.order_by("-saved_at")
+        
+    saved_articles = base_qs.prefetch_related('article__media')
+    
+    context = {
+        "saved_articles": saved_articles,
+        "stats": {
+            "total": total_count,
+        },
+        "current": {
+            "q": search,
+            "sort": sort,
+        },
+    }
+    return render(request, "journalist/journalistSavedArticles.html", context)
+
+
+def journalistUnsaveArticleView(request, article_id):
+    if request.user.is_authenticated:
+        SavedArticle.objects.filter(user=request.user, article_id=article_id).delete()
+        messages.success(request, "Article removed from your saved items.")
+    return redirect('journalist_saved_articles')
 
 
 def journalistDraftsView(request):

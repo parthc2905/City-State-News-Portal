@@ -87,3 +87,17 @@ class SavedArticle(models.Model):
     
     def __str__(self):
         return f"{self.article}"
+
+class Comment(models.Model):
+    article = models.ForeignKey(News_article, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comments")
+    comment_text = models.TextField(null=False)
+    status_choices = (('Active', 'Active'), ('Blocked', 'Blocked'))
+    status = models.CharField(max_length=20, choices=status_choices, default='Active')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "comment"
+
+    def __str__(self):
+        return f"Comment by {self.user} on {self.article}"

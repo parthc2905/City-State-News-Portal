@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'news', # news articles, comments, reports, etc
     'reports', # For reporting articles
     'subscriptions', # For user subscriptions
+    'ads', # For advertisements
 ]
 
 MIDDLEWARE = [

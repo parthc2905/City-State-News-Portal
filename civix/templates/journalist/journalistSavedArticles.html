@@ -1,0 +1,123 @@
+{% extends 'journalist/journalistDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>Saved Articles — Journalist Dashboard — CIVIX</title>
+{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
+<style>
+    a {
+        text-decoration: none;
+    }
+    .article-thumbnail-placeholder {
+        width: 100px; /* Match base CSS */
+        height: 70px; /* Match base CSS */
+        background: var(--gray-200);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        flex-shrink: 0;
+    }
+</style>
+{% endblock page_css %}
+
+{% block content %}
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Saved Articles</h1>
+    </div>
+    <div class="top-actions">
+        <a href="{% url 'home' %}" class="btn btn-primary">
+            🏠 Explore News
+        </a>
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+
+    <!-- STATS -->
+    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Saved</span>
+                <span class="stat-icon">🔖</span>
+            </div>
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-change">Articles in your library</div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <form method="GET" action="{% url 'journalist_saved_articles' %}" class="filters-bar">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" name="q" placeholder="Search saved articles..." id="searchInput"
+                value="{{ current.q }}">
+        </div>
+
+        <div class="filter-group">
+            <span class="filter-label">Sort by:</span>
+            <select class="filter-select" name="sort" id="sortFilter" onchange="this.form.submit()">
+                <option value="newest" {% if current.sort == 'newest' %}selected{% endif %}>Recently Saved</option>
+                <option value="oldest" {% if current.sort == 'oldest' %}selected{% endif %}>Oldest Saved</option>
+                <option value="title" {% if current.sort == 'title' %}selected{% endif %}>Title A-Z</option>
+            </select>
+        </div>
+    </form>
+
+    <!-- ARTICLES LIST -->
+    <div class="articles-section" id="articlesList">
+
+        {% for saved in saved_articles %}
+        {% with article=saved.article %}
+        <div class="article-item" onclick="window.location.href='{% url 'article_detail' article.slug %}'" style="cursor: pointer;">
+            
+            {% with media=article.media.all|first %}
+            {% if media and media.file %}
+            <img src="{{ media.file.url }}" alt="{{ article.title }}" class="article-thumbnail">
+            {% else %}
+            <div class="article-thumbnail-placeholder">📰</div>
+            {% endif %}
+            {% endwith %}
+
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge published">✅ Published</span>
+                </div>
+                <h3 class="article-title">{{ article.title }}</h3>
+                <div class="article-meta">
+                    <span class="meta-item">📅 Saved on {{ saved.saved_at|date:"F j, Y" }}</span>
+                    <span class="meta-item">🏷️ {{ article.category_id.category_name }}</span>
+                </div>
+            </div>
+
+            <div class="article-actions" onclick="event.stopPropagation();">
+                <a href="{% url 'article_detail' article.slug %}" class="action-btn preview" title="View Full Article">👁️</a>
+                <form method="POST" action="{% url 'journalist_unsave_article' article.id %}" style="display: inline;" onsubmit="return confirm('Remove from saved articles?');">
+                    {% csrf_token %}
+                    <button type="submit" class="action-btn delete" title="Remove">🗑️</button>
+                </form>
+            </div>
+        </div>
+        {% endwith %}
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">🔖</div>
+            <h3 class="empty-title">No saved articles found</h3>
+            <p class="empty-text">Explore news stories and save them for quick access later.</p>
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock content %}
