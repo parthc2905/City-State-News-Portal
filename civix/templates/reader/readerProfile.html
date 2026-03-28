@@ -1,0 +1,134 @@
+{% extends 'reader/readerDashboard.html' %}
+{% load static %}
+
+{% block title %}
+<title>Profile — Reader Dashboard — CIVIX</title>
+{% endblock title %}
+
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
+{% endblock page_css %}
+
+
+{% block content %}
+
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- ALERT -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" id="successAlert">
+            ✓ {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- PROFILE OVERVIEW CARD -->
+    <div class="card">
+        <div class="profile-header">
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image }}" class="avatar" id="avatarPreview" style="object-fit: cover;">
+                    {% else %}
+                    <div class="avatar" id="avatarPreview">{{ request.user.first_name|first|default:'?'|upper }}{{ request.user.last_name|first|default:''|upper }}</div>
+                    {% endif %}
+                    <label for="avatarInput" class="avatar-upload">📷</label>
+                </div>
+                <button class="upload-btn" onclick="document.getElementById('avatarInput').click()">Change Photo</button>
+            </div>
+
+            <div class="profile-info">
+                <h2 class="profile-name">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                <p class="profile-email">{{ request.user.email }}</p>
+                <div class="profile-badges">
+                    <span class="badge badge-verified">✓ Verified</span>
+                    <span class="badge badge-journalist" style="background:#e0f2fe; color:#0284c7;">📖 Reader</span>
+                    <span class="badge badge-member">Member since {{ request.user.created_at|date:"M Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Personal Information</h3>
+            <p class="card-description">Update your personal details and contact information</p>
+        </div>
+
+        <form method="POST" action="{% url 'reader_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    <input type="text" name="first_name" class="form-input" value="{{ request.user.first_name|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" name="last_name" class="form-input" value="{{ request.user.last_name|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" class="form-input" value="{{ request.user.email }}" required readonly>
+                    <p class="form-help">Your email will be kept private</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" name="phone" class="form-input" value="{{ request.user.phone|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bio (Optional)</label>
+                <textarea class="form-textarea" name="bio" placeholder="Tell us about yourself...">{{ profile.bio|default:'' }}</textarea>
+                <p class="form-help">Write a short introduction about yourself (max 200 characters)</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <select name="state" class="form-select" required>
+                        <option value="">Select State</option>
+                        {% for state_obj in states %}
+                        <option value="{{ state_obj.id }}" {% if profile.state_id == state_obj.id %}selected{% endif %}>{{ state_obj.state_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <select name="city" class="form-select" required>
+                        <option value="">Select City</option>
+                        {% for city_obj in cities %}
+                        <option value="{{ city_obj.id }}" {% if profile.city_id == city_obj.id %}selected{% endif %}>{{ city_obj.city_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'reader_dashboard' %}" class="btn btn-secondary" style="text-decoration:none">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock content %}
+
+
+{% block page_js %}
+<script src="{% static 'js/journalistProfile.js' %}"></script>
+{% endblock page_js %}

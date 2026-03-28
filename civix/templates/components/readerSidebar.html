@@ -1,0 +1,42 @@
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'home' %}" class="logo">CIVIX</a>
+        <div class="user-badge">
+            <span class="user-badge-icon">📖</span>
+            <span class="user-badge-text">Reader</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-title">My Content</div>
+            <a href="{% url 'reader_saved_articles' %}" class="nav-item {% if request.resolver_match.url_name == 'reader_saved_articles' %}active{% endif %}">
+                <span class="nav-icon">🔖</span>
+                Saved Articles
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Settings</div>
+            <a href="{% url 'reader_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'reader_profile' %}active{% endif %}">
+                <span class="nav-icon">👤</span>
+                Profile
+            </a>
+            <a href="{% url 'reader_general' %}" class="nav-item {% if request.resolver_match.url_name == 'reader_general' %}active{% endif %}">
+                <span class="nav-icon">⚙️</span>
+                General
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'home' %}" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            Back to Home
+        </a>
+        <a href="{% url 'logout' %}" class="nav-item">
+            <span class="nav-icon">🚪</span>
+            Sign Out
+        </a>
+    </div>
+</aside>

@@ -104,3 +104,14 @@ class UserLoginForm(forms.Form):
             "id": "signinPassword"
         })
     )
+
+# Comment Form
+class CommentForm(forms.Form):
+    comment_text = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={
+            "class": "comment-textarea",
+            "placeholder": "Enter your comment...",
+            "rows": 4
+        })
+    )

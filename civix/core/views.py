@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserSignupForm, UserLoginForm
+from .forms import UserSignupForm, UserLoginForm, CommentForm
 from .models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -7,11 +7,13 @@ from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
 from django.db.models import Q, F
-from news.models import News_article, SavedArticle
+from news.models import News_article, SavedArticle, Comment
 from reports.models import CitizenReport
 from django.http import JsonResponse
-
-
+from .models import Profile
+from location.models import State, City
+from django.contrib import messages
+from django.core.files.storage import FileSystemStorage
 def articleDetailView(request, slug):
     # Fetch published article only
     article = get_object_or_404(
@@ -59,7 +61,9 @@ def articleDetailView(request, slug):
         'article': article,
         'left_articles': left_articles,
         'right_articles': right_articles,
+        'comment_form': CommentForm(),
     })
+
 
 
 
@@ -313,7 +317,135 @@ def adminPanelReadersView(request):
 # @login_required(login_url='login')
 # @role_required(allowed_roles=["reader"])
 def readerDashboardView(request):
-    return render(request, 'core/reader/reader_dashboard.html')
+    return redirect('reader_saved_articles')
+
+# @login_required
+def readerSavedArticlesView(request):
+    search = request.GET.get("q", "").strip()
+    sort = request.GET.get("sort", "newest")
+    
+    # Base QuerySet for this user
+    base_qs = SavedArticle.objects.filter(user=request.user).select_related(
+        'article', 
+        'article__category_id', 
+        'article__city_id'
+    )
+    
+    # Calculate stats BEFORE search
+    total_count = base_qs.count()
+    
+    # Apply search
+    if search:
+        base_qs = base_qs.filter(article__title__icontains=search)
+        
+    # Apply sorting
+    if sort == "oldest":
+        base_qs = base_qs.order_by("saved_at")
+    elif sort == "title":
+        base_qs = base_qs.order_by("article__title")
+    else: # newest
+        base_qs = base_qs.order_by("-saved_at")
+        
+    saved_articles = base_qs.prefetch_related('article__media')
+    
+    context = {
+        "saved_articles": saved_articles,
+        "stats": {
+            "total": total_count,
+        },
+        "current": {
+            "q": search,
+            "sort": sort,
+        },
+    }
+    return render(request, "reader/readerSavedArticles.html", context)
+
+
+def readerUnsaveArticleView(request, article_id):
+    if request.user.is_authenticated:
+        SavedArticle.objects.filter(user=request.user, article_id=article_id).delete()
+        messages.success(request, "Article removed from your saved items.")
+    return redirect('reader_saved_articles')
+
+
+def readerProfileView(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == "POST":
+        user = request.user
+        user.first_name = request.POST.get("first_name", user.first_name)
+        user.last_name = request.POST.get("last_name", user.last_name)
+        user.phone = request.POST.get("phone", user.phone)
+        
+        profile.bio = request.POST.get("bio", profile.bio)
+        state_id = request.POST.get("state")
+        city_id = request.POST.get("city")
+        if state_id:
+            profile.state_id = state_id
+        if city_id:
+            profile.city_id = city_id
+        
+        if 'avatar' in request.FILES:
+            avatar = request.FILES['avatar']
+            fs = FileSystemStorage()
+            from django.conf import settings
+            
+            if profile.profile_image:
+                old_name = profile.profile_image.replace(settings.MEDIA_URL, "")
+                if fs.exists(old_name):
+                    fs.delete(old_name)
+                    
+            filename = fs.save(f"profile_images/{user.id}_{avatar.name}", avatar)
+            profile.profile_image = fs.url(filename)
+            
+        user.save()
+        profile.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect("reader_profile")
+
+    states = State.objects.all()
+    cities = City.objects.all()
+    
+    return render(request, "reader/readerProfile.html", {
+        "states": states,
+        "cities": cities,
+        "profile": profile,
+    })
+
+
+def readerGeneralView(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        if "update_notifications" in request.POST:
+            profile.email_notifications = request.POST.get("email_notifications") == "on"
+            profile.breaking_news_alerts = request.POST.get("breaking_news_alerts") == "on"
+            profile.weekly_newsletter = request.POST.get("weekly_newsletter") == "on"
+            profile.article_recommendations = request.POST.get("article_recommendations") == "on"
+            profile.save()
+            messages.success(request, "Notification preferences updated successfully.")
+            return redirect("reader_general")
+            
+        elif "update_password" in request.POST:
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+            if new_password and new_password == confirm_password:
+                user = request.user
+                user.set_password(new_password)
+                user.save()
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+            return redirect("reader_general")
+            
+        elif "delete_account" in request.POST:
+            user = request.user
+            user.delete()
+            return redirect("/")  # Redirect to home/login after deletion
+
+    return render(request, "reader/readerGeneral.html", {"profile": profile})
 
 
 def saveArticleView(request, article_id):
@@ -353,5 +485,55 @@ def reportArticleView(request, article_id):
         return JsonResponse({'message': 'Thank you. The article has been reported and will be reviewed.'})
     
     return JsonResponse({'message': 'Invalid request method.'}, status=405)
+
+
+def simplifiedPasswordResetView(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not email or not password or not confirm_password:
+            return render(request, 'auth/password_reset_form.html', {
+                'error': 'All fields are required.',
+                'email': email
+            })
+
+        if password != confirm_password:
+            return render(request, 'auth/password_reset_form.html', {
+                'error': 'Passwords do not match.',
+                'email': email
+            })
+
+        try:
+            user = User.objects.get(email=email)
+            user.set_password(password)
+            user.save()
+            return render(request, 'auth/password_reset_complete.html')
+        except User.DoesNotExist:
+            return render(request, 'auth/password_reset_form.html', {
+                'error': 'No account found with this email.',
+                'email': email
+            })
+    
+    return render(request, 'auth/password_reset_form.html')
+
+@login_required(login_url='login')
+def addCommentView(request, article_id):
+    if request.method == 'POST':
+        article = get_object_or_404(News_article, id=article_id)
+        comment_text = request.POST.get('comment_text', '').strip()
+        
+        if comment_text:
+            Comment.objects.create(
+                article=article,
+                user=request.user,
+                comment_text=comment_text
+            )
+        
+        return redirect('article_detail', slug=article.slug)
+    
+    return redirect('home')
+
 
  
