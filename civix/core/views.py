@@ -207,7 +207,13 @@ def userLoginView(request):
                     # print(user)
                     return redirect('home') # Replace with your reader dashboard URL name
                 elif user.role == 'journalist':
-                    return redirect('home')
+                    if user.approval_status == 'approved':
+                        return redirect('home')
+                    else:
+                        if not hasattr(user, 'journalist_application'):
+                            return redirect('journalist_application')
+                        else:
+                            return redirect('journalist_pending')
                 elif user.role == 'advertiser':
                     return redirect('advertiser_dashboard')
             else:
@@ -518,7 +524,7 @@ def simplifiedPasswordResetView(request):
     
     return render(request, 'auth/password_reset_form.html')
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def addCommentView(request, article_id):
     if request.method == 'POST':
         article = get_object_or_404(News_article, id=article_id)
@@ -535,5 +541,55 @@ def addCommentView(request, article_id):
     
     return redirect('home')
 
+# @login_required(login_url='login')
+def journalistApplicationView(request):
+    if request.user.role != 'journalist' or request.user.approval_status == 'approved':
+        return redirect('home')
+        
+    if request.method != 'POST' and hasattr(request.user, 'journalist_application'):
+        return redirect('journalist_pending')
+        
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        user = request.user
+        user.first_name = request.POST.get('firstName', user.first_name)
+        user.last_name = request.POST.get('lastName', user.last_name)
+        user.phone = request.POST.get('phone', user.phone)
+        user.save()
+        
+        state_id = request.POST.get('state')
+        city_id = request.POST.get('city')
+        if state_id:
+            profile.state_id = state_id
+        if city_id:
+            profile.city_id = city_id
+            
+        profile.save()
+        
+        from .models import JournalistApplication
+        JournalistApplication.objects.filter(user=user).delete()
+        JournalistApplication.objects.create(
+            user=user,
+            aadhaar_file=request.FILES.get('aadhaar_file'),
+            portfolio_file=request.FILES.get('portfolio_file'),
+            press_card_file=request.FILES.get('press_card_file'),
+            recommendation_file=request.FILES.get('recommendation_file')
+        )
+        
+        messages.success(request, 'Application Submitted Successfully!')
+        return redirect('journalist_pending')
+        
+    states = State.objects.all()
+    cities = City.objects.all()
+    return render(request, 'journalist/journalist_application.html', {'states': states, 'cities': cities})
 
- 
+# @login_required(login_url='login')
+def journalistPendingView(request):
+    if request.user.role != 'journalist' or request.user.approval_status == 'approved':
+        return redirect('home')
+        
+    if not hasattr(request.user, 'journalist_application'):
+        return redirect('journalist_application')
+        
+    return render(request, 'journalist/journalist_pending.html')

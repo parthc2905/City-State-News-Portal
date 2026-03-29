@@ -95,3 +95,26 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.email}'s Profile"
+
+class JournalistApplication(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='journalist_application')
+    # Documents
+    aadhaar_file = models.FileField(upload_to='journalist_docs/aadhaar/')
+    portfolio_file = models.FileField(upload_to='journalist_docs/portfolio/', blank=True, null=True)
+    press_card_file = models.FileField(upload_to='journalist_docs/press_card/', blank=True, null=True)
+    recommendation_file = models.FileField(upload_to='journalist_docs/recommendation/', blank=True, null=True)
+    
+    # Verification Flags
+    aadhaar_verified = models.BooleanField(default=False)
+    portfolio_verified = models.BooleanField(default=False)
+    press_card_verified = models.BooleanField(default=False)
+    recommendation_verified = models.BooleanField(default=False)
+    
+    status = models.CharField(max_length=20, default='pending')
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "journalist_application"
+
+    def __str__(self):
+        return f"Application for {self.user.email}"

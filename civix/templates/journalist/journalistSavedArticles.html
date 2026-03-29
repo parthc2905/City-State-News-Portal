@@ -78,7 +78,7 @@
 
         {% for saved in saved_articles %}
         {% with article=saved.article %}
-        <div class="article-item" onclick="window.location.href='{% url 'article_detail' article.slug %}'" style="cursor: pointer;">
+        <div class="article-item" data-url="{% url 'article_detail' article.slug %}" onclick="window.location.href=this.dataset.url" style="cursor: pointer;">
             
             {% with media=article.media.all|first %}
             {% if media and media.file %}
