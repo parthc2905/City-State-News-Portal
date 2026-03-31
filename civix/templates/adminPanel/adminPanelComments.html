@@ -1,0 +1,149 @@
+{% extends 'adminPanel/adminPanelDashboard.html' %}
+
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Comment Management</h1>
+{% endblock topbar_title %}
+
+{% block content %}
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Comments</div>
+        <div class="stat-value">{{ stats.total }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value">{{ stats.active }}</div>
+        <div class="stat-change positive">Visible</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Reported</div>
+        <div class="stat-value">{{ stats.reported }}</div>
+        {% if stats.reported > 0 %}
+        <div class="stat-change negative">Critical</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Blocked</div>
+        <div class="stat-value">{{ stats.blocked }}</div>
+        {% if stats.blocked > 0 %}
+        <div class="stat-change negative">Hidden</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Today</div>
+        <div class="stat-value">{{ stats.today }}</div>
+    </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <form id="searchForm" class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" placeholder="Search by comment text, user, or article" value="{{ current.q }}">
+    </form>
+
+    <div class="filter-group">
+        <a href="?status=all{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'all' %}active{% endif %}">All</a>
+        <a href="?status=reported{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'reported' %}active{% endif %}">⚠️ Reported</a>
+        <a href="?status=Active{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'Active' %}active{% endif %}">✓ Active</a>
+        <a href="?status=Blocked{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'Blocked' %}active{% endif %}">🚫 Blocked</a>
+    </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Comment</th>
+                <th>Article</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for comment in comments %}
+            <tr>
+                <td>
+                    <div class="user-info">
+                        <h4>{{ comment.user.first_name }} {{ comment.user.last_name }}</h4>
+                        <p>{{ comment.user.email }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="table-text-truncate">
+                        {{ comment.comment_text|truncatewords:15 }}
+                    </div>
+                </td>
+                <td>
+                    <a href="{% url 'article_detail' comment.article.slug %}" target="_blank" class="table-link-truncate">
+                        {{ comment.article.title|truncatewords:6 }}
+                    </a>
+                </td>
+                <td>
+                    {% if comment.status == 'Active' %}
+                    <span class="status-badge status-approved">✓ Active</span>
+                    {% else %}
+                    <span class="status-badge status-rejected">🚫 Blocked</span>
+                    {% endif %}
+
+                    {% if comment.comment_reports.exists %}
+                    <div style="margin-top: 8px;">
+                        <span class="status-badge" style="background: #fff3cd; color: #856404; font-size: 10px; padding: 2px 6px; border: 1px solid #ffeeba;">
+                            ⚠️ {{ comment.comment_reports.count }} Reports
+                        </span>
+                        {% with first_report=comment.comment_reports.first %}
+                        <p style="font-size: 10px; margin: 4px 0 0 0; color: #856404; line-height: 1.2;">
+                            <b>Last:</b> {{ first_report.reason|truncatechars:30 }}
+                        </p>
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                </td>
+                <td>{{ comment.created_at|date:"j M Y" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        {% if comment.status == 'Active' %}
+                        <a href="{% url 'admin_panel_comment_block' comment.id %}" class="btn-icon btn-reject"
+                            onclick="return confirm('Block this comment? It will be hidden from users.')" title="Block Comment">
+                            🚫
+                        </a>
+                        {% else %}
+                        <a href="{% url 'admin_panel_comment_unblock' comment.id %}" class="btn-icon btn-approve"
+                            onclick="return confirm('Unblock this comment? It will be visible to users.')" title="Unblock Comment">
+                            ✓
+                        </a>
+                        {% endif %}
+
+                        {% if comment.user.account_status != 'blocked' %}
+                        <a href="{% url 'admin_panel_user_block' comment.user.id %}" class="btn-icon btn-reject"
+                             style="background-color: #c0392b; color: white;"
+                             onclick="return confirm('DANGEROUS: Block user {{ comment.user.email }} permanently? They will no longer be able to login.')" 
+                             title="Block User Account">
+                             🚫
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'admin_panel_comment_delete' comment.id %}" class="btn-icon btn-reject"
+                            onclick="return confirm('Permanently delete this comment? This cannot be undone.')" title="Delete">
+                            🗑️
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px 20px; color: var(--gray-500);">
+                    No comments found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

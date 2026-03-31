@@ -111,6 +111,7 @@ class JournalistApplication(models.Model):
     recommendation_verified = models.BooleanField(default=False)
     
     status = models.CharField(max_length=20, default='pending')
+    rejection_reason = models.TextField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

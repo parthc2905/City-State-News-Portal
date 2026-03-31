@@ -1,0 +1,147 @@
+{% extends 'adminPanel/adminPanelDashboard.html' %}
+
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Article Management</h1>
+{% endblock topbar_title %}
+
+{% block content %}
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Articles</div>
+        <div class="stat-value">{{ stats.total }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Published</div>
+        <div class="stat-value">{{ stats.approved }}</div>
+        <div class="stat-change positive">Live</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-value">{{ stats.pending }}</div>
+        {% if stats.pending > 0 %}
+        <div class="stat-change negative">Needs attention</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Reported</div>
+        <div class="stat-value">{{ stats.reported }}</div>
+        {% if stats.reported > 0 %}
+        <div class="stat-change negative">Needs review</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value">{{ stats.rejected }}</div>
+    </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <form id="searchForm" class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" placeholder="Search articles by title or author" value="{{ current.q }}">
+    </form>
+
+    <div class="filter-group">
+        <a href="?status=all{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'all' %}active{% endif %}">All</a>
+        <a href="?status=reported{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'reported' %}active{% endif %}">⚠️ Reported</a>
+        <a href="?status=approved{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'approved' %}active{% endif %}">✓ Published</a>
+        <a href="?status=pending{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'pending' %}active{% endif %}">⏱️ Pending</a>
+        <a href="?status=rejected{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'rejected' %}active{% endif %}">✕ Rejected</a>
+        <a href="?status=draft{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'draft' %}active{% endif %}">📝 Draft</a>
+    </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table class="admin-articles-table">
+        <thead>
+            <tr>
+                <th>Article</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Views</th>
+                <th>Status</th>
+                <th>Published</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+            <tr>
+                <td>
+                    <div class="user-info">
+                        <h4 class="table-title-truncate">{{ article.title }}</h4>
+                        <p>{{ article.excerpt|truncatewords:8 }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div class="user-info" style="line-height: 1.2;">
+                        <h4 style="margin: 0 0 2px 0;">{{ article.author_id.first_name }} {{ article.author_id.last_name }}</h4>
+                        <p style="margin: 0;">{{ article.author_id.email }}</p>
+                    </div>
+                </td>
+                <td>{{ article.category_id.category_name }}</td>
+                <td>{{ article.views_count }}</td>
+                <td>
+                    {% if article.status == 'approved' %}
+                    <span class="status-badge status-approved">✓ Published</span>
+                    {% elif article.status == 'pending' %}
+                    <span class="status-badge status-pending">⏱️ Pending</span>
+                    {% elif article.status == 'rejected' %}
+                    <span class="status-badge status-rejected">✕ Rejected</span>
+                    {% elif article.status == 'draft' %}
+                    <span class="status-badge status-draft">📝 Draft</span>
+                    {% endif %}
+                    
+                    {% if article.rejection_reason %}
+                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #dc3545; line-height: 1.3; max-width: 180px;">
+                        <strong style="display: block; font-size: 10px; text-transform: uppercase; opacity: 0.8;">Reason:</strong>
+                        {{ article.rejection_reason }}
+                    </div>
+                    {% endif %}
+                    {% if article.article_reports.exists %}
+                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #f39c12; line-height: 1.3;">
+                        <span class="status-badge status-pending" style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba;">
+                            ⚠️ {{ article.article_reports.count }} Reports
+                        </span>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>{{ article.created_at|date:"j M Y" }}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="{% url 'article_detail' article.slug %}" class="btn-icon btn-view" title="View Article" target="_blank">👁️</a>
+
+                        {% if article.status == 'pending' or article.article_reports.exists %}
+                        <a href="{% url 'admin_panel_article_approve' article.id %}" class="btn-icon btn-approve"
+                            onclick="return confirm('Approve this article?')" title="Approve">
+                            ✓
+                        </a>
+                        <a href="#" class="btn-icon btn-reject"
+                            onclick="rejectArticle(event, '{{ article.id }}')" title="Reject">
+                            ✕
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'admin_panel_article_delete' article.id %}" class="btn-icon btn-reject"
+                            onclick="return confirm('Permanently delete this article? This cannot be undone.')" title="Delete">
+                            🗑️
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 40px 20px; color: var(--gray-500);">
+                    No articles found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

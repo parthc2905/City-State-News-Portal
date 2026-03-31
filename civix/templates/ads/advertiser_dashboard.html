@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advertiser Dashboard — CIVIX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@0,700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #1a8917; --green-light: #e8f5e8; --gray-100: #f3f4f6; --gray-300: #d1d5db; --gray-700: #374151; --black: #111827; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--gray-100); color: var(--gray-700); }
+        .dashboard-layout { display: flex; min-height: 100vh; }
+        
+        .sidebar { width: 280px; background: var(--black); color: white; padding: 32px 24px; }
+        .sidebar-brand { font-family: 'Spectral', serif; font-size: 24px; margin-bottom: 48px; display: block; color: white; text-decoration: none; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; color: var(--gray-300); text-decoration: none; margin-bottom: 8px; transition: 0.2s; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.1); }
+        .nav-item.active { color: white; background: var(--green); }
+        
+        .main-content { flex: 1; padding: 48px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .page-title { font-family: 'Spectral', serif; font-size: 32px; font-weight: 700; color: var(--black); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+        .stat-card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-label { font-size: 14px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--black); }
+        
+        .ad-list { background: white; border-radius: 12px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .ad-table { width: 100%; border-collapse: collapse; }
+        .ad-table th, .ad-table td { padding: 16px; text-align: left; border-bottom: 1px solid var(--gray-100); }
+        .ad-table th { font-weight: 700; color: var(--black); font-size: 14px; }
+        .ad-table td { font-size: 15px; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+        .status-badge.active { background: #d1fae5; color: #065f46; }
+        .status-badge.pending { background: #fef3c7; color: #92400e; }
+        
+        .btn-new-ad { background: var(--green); color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <a href="{% url 'home' %}" class="sidebar-brand">CIVIX Ads</a>
+            <nav>
+                <a href="#" class="nav-item active">📈 Dashboard</a>
+                <a href="#" class="nav-item">📣 My Campaigns</a>
+                <a href="#" class="nav-item">📊 Reports</a>
+                <a href="#" class="nav-item">💳 Billing</a>
+                <a href="#" class="nav-item" style="margin-top: 40px;">⚙️ Settings</a>
+                <a href="{% url 'logout' %}" class="nav-item">🚪 Log out</a>
+            </nav>
+        </aside>
+        
+        <main class="main-content">
+            <header class="page-header">
+                <div>
+                    <h1 class="page-title">Dashboard Overview</h1>
+                    <p style="color: var(--gray-700); margin-top: 4px;">Welcome, {{ application.company_name }}</p>
+                </div>
+                <a href="#" class="btn-new-ad">Create New Campaign</a>
+            </header>
+            
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Impressions</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Clicks</div>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Campaigns</div>
+                    <div class="stat-value">{{ my_ads.count }}</div>
+                </div>
+            </section>
+            
+            <section class="ad-list">
+                <h3 style="margin-bottom: 24px; font-size: 20px;">Recent Campaigns</h3>
+                <table class="ad-table">
+                    <thead>
+                        <tr>
+                            <th>Campaign Name</th>
+                            <th>Status</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Clicks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ad in my_ads %}
+                        <tr>
+                            <td>{{ ad.title }}</td>
+                            <td><span class="status-badge {% if ad.status == 'Active' %}active{% else %}pending{% endif %}">{{ ad.status }}</span></td>
+                            <td>{{ ad.start_date }}</td>
+                            <td>{{ ad.end_date }}</td>
+                            <td>0</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray-700);">No campaigns created yet. Click 'Create New Campaign' to get started.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

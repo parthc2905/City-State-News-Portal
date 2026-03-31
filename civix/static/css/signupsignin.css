@@ -421,6 +421,12 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    text-decoration: none; /* button-links (e.g., <a class="btn ...">) shouldn't be underlined */
+}
+
+.btn:visited {
+    text-decoration: none;
+    color: inherit;
 }
 
 .btn-primary {

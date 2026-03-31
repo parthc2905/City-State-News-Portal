@@ -24,3 +24,15 @@ class CitizenReport(models.Model):
 
     def __str__(self):
         return self.title
+
+class CommentReport(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="comment_reports")
+    comment = models.ForeignKey('news.Comment', on_delete=models.CASCADE, related_name="comment_reports")
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "comment_report"
+
+    def __str__(self):
+        return f"Report on Comment {self.comment.id} by {self.user}"

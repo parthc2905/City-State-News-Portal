@@ -123,9 +123,40 @@ async function handleReportArticle(articleId) {
     } catch (error) {
         console.error('Error reporting article:', error);
     }
-
     // Close dropdown
     document.querySelectorAll('.more-options-wrapper.active').forEach(w => w.classList.remove('active'));
+}
+
+async function handleReportComment(commentId) {
+    const reason = prompt('Please tell us why you are reporting this comment:');
+    if (!reason) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('description', reason);
+
+        const response = await fetch(`/comment/report/${commentId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: formData
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            if (response.status === 403) {
+                alert('Please log in to report comments.');
+                window.location.href = '/login/';
+            } else {
+                alert(data.message || 'Something went wrong.');
+            }
+        }
+    } catch (error) {
+        console.error('Error reporting comment:', error);
+    }
 }
 
 // Location chip interaction

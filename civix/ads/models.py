@@ -31,3 +31,43 @@ class Advertisement(models.Model):
     def __str__(self):
         return self.title
 
+
+class AdvertiserApplication(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='advertiser_application')
+    
+    # Company Info
+    company_name = models.CharField(max_length=255)
+    business_type = models.CharField(max_length=100)
+    company_size = models.CharField(max_length=50)
+    contact_name = models.CharField(max_length=255)
+    designation = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    website = models.URLField(max_length=500, null=True, blank=True)
+    gst_number = models.CharField(max_length=50)
+    
+    # Campaign Details
+    budget_range = models.CharField(max_length=100)
+    campaign_duration = models.CharField(max_length=100)
+    target_cities = models.TextField(help_text="Comma-separated cities")
+    ad_format_preference = models.TextField(help_text="Comma-separated formats", null=True, blank=True)
+    campaign_objectives = models.TextField()
+    
+    # Documents
+    registration_certificate = models.FileField(upload_to='advertiser_docs/registration/')
+    gst_certificate = models.FileField(upload_to='advertiser_docs/gst/')
+    pan_card = models.FileField(upload_to='advertiser_docs/pan/')
+    bank_details = models.FileField(upload_to='advertiser_docs/bank/')
+    
+    # Application Info
+    choice = (("pending", "pending"), ("approved", "approved"), ("rejected", "rejected"))
+    status = models.CharField(max_length=20, choices=choice, default='pending')
+    rejection_reason = models.TextField(null=True, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "advertiser_application"
+
+    def __str__(self):
+        return f"Advertiser Application: {self.company_name} ({self.user.email})"

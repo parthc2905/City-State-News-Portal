@@ -11,12 +11,22 @@ from core.models import Profile
 from reports.models import CitizenReport
 from .models import News_article, ArticleMedia, Category, SavedArticle
 from .forms import ArticleWriteForm, ArticleMediaForm
+from functools import wraps
 
+def journalist_approved_required(view_func):
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.role == 'journalist' and request.user.approval_status != 'approved':
+            return redirect('journalist_pending')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view
 
+@journalist_approved_required
 def journalistDashboardView(request):
     return redirect("journalist_write_article")
 
 
+@journalist_approved_required
 def journalistArticlePreviewView(request, article_id):
     article = get_object_or_404(
         News_article.objects.prefetch_related("media"),
@@ -26,6 +36,7 @@ def journalistArticlePreviewView(request, article_id):
     return render(request, "journalist/journalistArticlePreview.html", {"article": article})
 
 
+@journalist_approved_required
 def journalistWriteArticleView(request):
     if request.method == "POST":
         article = ArticleWriteForm(request.POST)
@@ -50,6 +61,7 @@ def journalistWriteArticleView(request):
     )
 
 
+@journalist_approved_required
 def journalistEditArticleView(request, article_id):
     article_obj = get_object_or_404(
         News_article, id=article_id, author_id=request.user
@@ -91,6 +103,7 @@ def journalistEditArticleView(request, article_id):
     )
 
 
+@journalist_approved_required
 def journalistDeleteArticleView(request, article_id):
     article = get_object_or_404(
         News_article, id=article_id, author_id=request.user
@@ -101,6 +114,7 @@ def journalistDeleteArticleView(request, article_id):
     return redirect("journalist_my_articles")
 
 
+@journalist_approved_required
 def journalistMyArticlesView(request):
     base_qs = News_article.objects.filter(author_id=request.user)
     # --- filters from GET ---
@@ -175,6 +189,7 @@ def journalistMyArticlesView(request):
 
 
 # @login_required
+@journalist_approved_required
 def journalistSavedArticlesView(request):
     search = request.GET.get("q", "").strip()
     sort = request.GET.get("sort", "newest")
@@ -216,6 +231,7 @@ def journalistSavedArticlesView(request):
     return render(request, "journalist/journalistSavedArticles.html", context)
 
 
+@journalist_approved_required
 def journalistUnsaveArticleView(request, article_id):
     if request.user.is_authenticated:
         SavedArticle.objects.filter(user=request.user, article_id=article_id).delete()
@@ -223,6 +239,7 @@ def journalistUnsaveArticleView(request, article_id):
     return redirect('journalist_saved_articles')
 
 
+@journalist_approved_required
 def journalistDraftsView(request):
     base_qs = News_article.objects.filter(author_id=request.user)
     search = request.GET.get("q", "").strip()
@@ -284,6 +301,7 @@ def journalistDraftsView(request):
     return render(request, "journalist/journalistMyArticles.html", context)
 
 
+@journalist_approved_required
 def journalistProfileView(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
@@ -329,10 +347,12 @@ def journalistProfileView(request):
     })
 
 
+@journalist_approved_required
 def journalistWritingGuideView(request):
     return render(request, "journalist/journalistWritingGuide.html")
 
 
+@journalist_approved_required
 def journalistGeneralView(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
 

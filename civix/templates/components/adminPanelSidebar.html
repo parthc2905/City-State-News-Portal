@@ -19,11 +19,11 @@
                 Applications
                 {% if pending_applications > 0 %}<span class="menu-badge" style="margin-left: auto; padding: 2px 8px; background: var(--red); color: white; border-radius: 10px; font-size: 11px; font-weight: 700;">{{ pending_applications }}</span>{% endif %}
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'admin_panel_articles' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_articles' %}active{% endif %}">
                 <span class="nav-icon">📰</span>
                 Articles
             </a>
-            <a href="#" class="nav-item">
+            <a href="{% url 'admin_panel_comments' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_comments' %}active{% endif %}">
                 <span class="nav-icon">💬</span>
                 Comments
             </a>
@@ -42,18 +42,6 @@
             <a href="{% url 'admin_panel_readers' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_readers' %}active{% endif %}">
                 <span class="nav-icon">👤</span>
                 Readers
-            </a>
-        </div>
-
-        <div class="nav-section">
-            <div class="nav-title">Settings</div>
-            <a href="#" class="nav-item">
-                <span class="nav-icon">⚙️</span>
-                General
-            </a>
-            <a href="#" class="nav-item">
-                <span class="nav-icon">🔒</span>
-                Security
             </a>
         </div>
     </nav>

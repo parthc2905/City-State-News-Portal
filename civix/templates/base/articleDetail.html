@@ -35,7 +35,7 @@
                 {% for art in left_articles %}
                 <div class="sidebar-art-card">
                     <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
-                        {% if art.media.all %}
+                        {% if art.media.all.0 %}
                         <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
                         {% else %}
                         <div class="sidebar-art-img-placeholder">📰</div>
@@ -109,7 +109,7 @@
                 </header>
 
                 <!-- FEATURED IMAGE -->
-                {% if article.media.all %}
+                {% if article.media.all.0 %}
                 <figure>
                     <img src="{{ article.media.all.0.file.url }}" alt="{{ article.title }}" class="art-featured-image">
                     <figcaption class="art-image-caption">
@@ -187,9 +187,14 @@
                             {{ comment.user.first_name|first|upper }}{{ comment.user.last_name|first|upper }}
                         </div>
                         <div class="comment-body">
-                            <div class="comment-meta">
-                                <span class="comment-username">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
-                                <span class="comment-date">{{ comment.created_at|date:"F j, Y" }}</span>
+                            <div class="comment-meta" style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <span class="comment-username">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
+                                    <span class="comment-date">{{ comment.created_at|date:"F j, Y" }}</span>
+                                </div>
+                                <button class="btn-report" onclick="handleReportComment('{{ comment.id }}')" title="Report Comment">
+                                    <span class="report-icon">🚩</span> Report
+                                </button>
                             </div>
                             <div class="comment-text">
                                 {{ comment.comment_text|linebreaks }}
@@ -214,7 +219,7 @@
                 {% for art in right_articles %}
                 <div class="sidebar-art-card">
                     <a href="{% url 'article_detail' slug=art.slug %}" class="sidebar-art-link">
-                        {% if art.media.all %}
+                        {% if art.media.all.0 %}
                         <img src="{{ art.media.all.0.file.url }}" alt="{{ art.title }}" class="sidebar-art-img">
                         {% else %}
                         <div class="sidebar-art-img-placeholder">📰</div>

@@ -572,3 +572,39 @@
     }
 }
 
+/* REPORT BUTTON */
+.btn-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    color: var(--gray-500);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    background: #fff;
+}
+
+.btn-report:hover {
+    background: #fff5f5;
+    border-color: #feb2b2;
+    color: #e53e3e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.report-icon {
+    font-size: 14px;
+    filter: grayscale(1);
+    transition: filter 0.2s;
+}
+
+.btn-report:hover .report-icon {
+    filter: grayscale(0);
+}
+

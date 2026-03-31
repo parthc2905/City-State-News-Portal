@@ -232,10 +232,11 @@ body {
 
 /* ═══ STATS GRID ═══ */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
     gap: 20px;
     margin-bottom: 32px;
+    overflow-x: auto; /* Allow horizontal scroll if too many cards on small screens */
+    padding-bottom: 8px; /* Room for scrollbar if needed */
 }
 
 .stat-card {
@@ -243,6 +244,8 @@ body {
     border-radius: 12px;
     padding: 24px;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.04);
+    min-width: 180px; /* Ensure cards don't shrink too much */
+    flex: 1;
 }
 
 .stat-label {
@@ -317,6 +320,7 @@ body {
 .filter-group {
     display: flex;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -331,6 +335,13 @@ body {
     display: flex;
     align-items: center;
     gap: 6px;
+    text-decoration: none; /* filter buttons are <a> in some pages; prevent underline */
+    color: var(--gray-700);
+}
+
+.filter-btn:visited {
+    color: var(--gray-700);
+    text-decoration: none;
 }
 
 .filter-btn:hover {
@@ -355,6 +366,38 @@ body {
 table {
     width: 100%;
     border-collapse: collapse;
+}
+
+/* Admin Articles table: reduce gap between Article and Author */
+.admin-articles-table {
+    table-layout: fixed;
+}
+
+.admin-articles-table th,
+.admin-articles-table td {
+    vertical-align: middle;
+}
+
+.admin-articles-table th:nth-child(1),
+.admin-articles-table td:nth-child(1) { width: 22%; }
+.admin-articles-table th:nth-child(2),
+.admin-articles-table td:nth-child(2) { width: 18%; }
+.admin-articles-table th:nth-child(3),
+.admin-articles-table td:nth-child(3) { width: 12%; }
+.admin-articles-table th:nth-child(4),
+.admin-articles-table td:nth-child(4) { width: 12%; }
+.admin-articles-table th:nth-child(5),
+.admin-articles-table td:nth-child(5) { width: 14%; }
+.admin-articles-table th:nth-child(6),
+.admin-articles-table td:nth-child(6) { width: 12%; }
+.admin-articles-table th:nth-child(7),
+.admin-articles-table td:nth-child(7) { width: 10%; }
+
+.admin-articles-table .user-info p {
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 thead {
@@ -419,6 +462,7 @@ tr:hover {
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
+    white-space: nowrap;
 }
 
 .status-pending {
@@ -439,6 +483,44 @@ tr:hover {
 .action-buttons {
     display: flex;
     gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.table-title-truncate {
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-text-truncate {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--gray-700);
+}
+
+.table-link-truncate {
+    color: var(--blue);
+    text-decoration: none;
+    font-size: 13px;
+    max-width: 180px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table-link-truncate:visited {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+.status-draft {
+    background: #e0e7ff;
+    color: #3730a3;
 }
 
 .btn-icon {
@@ -654,7 +736,7 @@ tr:hover {
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
 
     table {

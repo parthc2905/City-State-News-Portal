@@ -1,28 +1,43 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserSignupForm, UserLoginForm, CommentForm
-from .models import User
+from django.http import JsonResponse, Http404
+from .forms import (
+    UserSignupForm,
+    UserLoginForm,
+    CommentForm,
+    JournalistIdentityForm,
+    JournalistProfileLocationForm,
+    JournalistApplicationDocumentsForm,
+)
+from .models import User, Profile, JournalistApplication
+from ads.models import AdvertiserApplication
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
 from django.core.mail import send_mail
 from django.conf import settings
-from django.db.models import Q, F
+from django.db.models import Q, F, Count
+from django.db.models.functions import TruncMonth
 from news.models import News_article, SavedArticle, Comment
 from reports.models import CitizenReport
-from django.http import JsonResponse
-from .models import Profile
 from location.models import State, City
 from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
+from django.utils import timezone
+from django.urls import reverse
+
 def articleDetailView(request, slug):
-    # Fetch published article only
-    article = get_object_or_404(
-        News_article.objects.prefetch_related('media').select_related(
-            'author_id', 'category_id', 'city_id__state_id'
-        ),
-        slug=slug,
-        status='approved',
+    # Fetch article - allow admin to see non-approved articles
+    article_qs = News_article.objects.prefetch_related('media').select_related(
+        'author_id', 'category_id', 'city_id__state_id'
     )
+    
+    # Try to find the article by slug
+    article = get_object_or_404(article_qs, slug=slug)
+
+    # Permission check: If article is not approved, only admin or the author can see it
+    if article.status != 'approved':
+        if not request.user.is_authenticated or (request.user.role != 'admin' and request.user != article.author_id):
+            raise Http404()
 
     # Increment view count
     News_article.objects.filter(pk=article.pk).update(views_count=F('views_count') + 1)
@@ -202,7 +217,7 @@ def userLoginView(request):
             if user:
                 login(request, user)
                 if user.role == 'admin':
-                    return redirect('admin_dashboard') # Replace with your admin dashboard URL name
+                    return redirect('admin_panel_dashboard') # Replace with your admin dashboard URL name
                 elif user.role == 'reader':
                     # print(user)
                     return redirect('home') # Replace with your reader dashboard URL name
@@ -227,14 +242,147 @@ def logoutView(request):
     logout(request)
     return redirect('home')
 
-# @login_required(login_url='login')
-# @role_required(allowed_roles=["admin"])
+@role_required(allowed_roles=["admin"])
 def adminPanelDashboardView(request):
-    return redirect('admin_panel_applications')
+    # --- Applications Stats ---
+    apps_qs = User.objects.filter(role__in=['journalist', 'advertiser'])
+    app_stats = {
+        'total': apps_qs.count(),
+        'pending': apps_qs.filter(approval_status='pending').count(),
+        'approved': apps_qs.filter(approval_status='approved').count(),
+        'rejected': apps_qs.filter(approval_status='rejected').count(),
+    }
+    
+    app_roles = list(apps_qs.values('role').annotate(count=Count('id')))
+    app_status = list(apps_qs.values('approval_status').annotate(count=Count('id')))
+
+    # --- Articles Stats ---
+    articles_qs = News_article.objects.all()
+    article_stats = {
+        'total': articles_qs.count(),
+        'approved': articles_qs.filter(status='approved').count(),
+        'pending': articles_qs.filter(status='pending').count(),
+        'reported': articles_qs.filter(article_reports__isnull=False).distinct().count(),
+    }
+    
+    article_status = list(articles_qs.values('status').annotate(count=Count('id')))
+    category_dist = list(articles_qs.values('category_id__category_name').annotate(count=Count('id')))
+    
+    # --- Comments Stats ---
+    comments_qs = Comment.objects.all()
+    comment_stats = {
+        'total': comments_qs.count(),
+        'active': comments_qs.filter(status='Active').count(),
+        'blocked': comments_qs.filter(status='Blocked').count(),
+        'reported': comments_qs.filter(comment_reports__isnull=False).distinct().count(),
+    }
+
+    # --- Timeline Data ---
+    from datetime import timedelta
+    six_months_ago = timezone.now() - timedelta(days=180)
+    
+    articles_timeline = list(
+        News_article.objects.filter(created_at__gte=six_months_ago)
+        .annotate(month=TruncMonth('created_at'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+    
+    users_timeline = list(
+        User.objects.filter(created_at__gte=six_months_ago)
+        .annotate(month=TruncMonth('created_at'))
+        .values('month')
+        .annotate(count=Count('id'))
+        .order_by('month')
+    )
+
+    context = {
+        'stats': {
+            'apps': app_stats,
+            'articles': article_stats,
+            'comments': comment_stats,
+        },
+        'charts': {
+            'app_roles': app_roles,
+            'app_status': app_status,
+            'article_status': article_status,
+            'category_dist': category_dist,
+            'articles_timeline': [
+                {'month': item['month'].strftime('%b %Y'), 'count': item['count']} 
+                for item in articles_timeline
+            ],
+            'users_timeline': [
+                {'month': item['month'].strftime('%b %Y'), 'count': item['count']} 
+                for item in users_timeline
+            ],
+        }
+    }
+    return render(request, 'adminPanel/adminPanelOverview.html', context)
 
 
 def adminPanelApplicationsView(request):
-    query = request.GET.get("q")
+    from datetime import timedelta
+    from .models import JournalistApplication
+
+    query = request.GET.get("q", "").strip()
+    tab = request.GET.get("tab", "all").strip()  # all | journalists | advertisers | pending
+
+    base_qs = User.objects.filter(role__in=["journalist", "advertiser"])
+
+    # --- Stats (computed from DB; independent of q/tab) ---
+    pending_count = base_qs.filter(approval_status="pending").count()
+    journalists_count = base_qs.filter(role="journalist").count()
+    advertisers_count = base_qs.filter(role="advertiser").count()
+    total_count = base_qs.count()
+
+    now = timezone.now()
+    start_of_week = (now - timedelta(days=now.weekday())).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
+
+    approved_this_week = base_qs.filter(
+        approval_status="approved",
+        updated_at__gte=start_of_week,
+    ).count()
+    rejected_this_week = base_qs.filter(
+        approval_status="rejected",
+        updated_at__gte=start_of_week,
+    ).count()
+
+    reviewed_qs = (
+        base_qs.filter(approval_status__in=["approved", "rejected"])
+        .select_related("journalist_application")
+    )
+    durations_days = []
+    for user in reviewed_qs.iterator():
+        submitted_at = user.created_at
+        if user.role == "journalist":
+            try:
+                submitted_at = user.journalist_application.submitted_at
+            except JournalistApplication.DoesNotExist:
+                submitted_at = user.created_at
+
+        diff_seconds = (user.updated_at - submitted_at).total_seconds()
+        diff_days = diff_seconds / (24 * 3600)
+        if diff_days >= 0:
+            durations_days.append(diff_days)
+
+    avg_review_time_days = round(sum(durations_days) / len(durations_days), 1) if durations_days else 0.0
+
+    stats = {
+        "pending": pending_count,
+        "approved_this_week": approved_this_week,
+        "rejected_this_week": rejected_this_week,
+        "avg_review_time_days": avg_review_time_days,
+    }
+
+    toolbar_counts = {
+        "all": total_count,
+        "journalists": journalists_count,
+        "advertisers": advertisers_count,
+        "pending": pending_count,
+    }
 
 
     if query:
@@ -250,21 +398,195 @@ def adminPanelApplicationsView(request):
 
 
 
-    return render(request, 'adminPanel/adminPanelApplications.html', {'users':users})
+    # --- Apply tab filter to the list ---
+    if tab == "journalists":
+        users = users.filter(role="journalist")
+    elif tab == "advertisers":
+        users = users.filter(role="advertiser")
+    elif tab == "pending":
+        users = users.filter(approval_status="pending")
+
+    return render(
+        request,
+        "adminPanel/adminPanelApplications.html",
+        {
+            "users": users,
+            "stats": stats,
+            "toolbar_counts": toolbar_counts,
+            "current": {"q": query, "tab": tab},
+        },
+    )
+
+
+def _format_datetime_display(dt):
+    """Format datetimes for the admin modal preview."""
+    if not dt:
+        return "-"
+    local_dt = timezone.localtime(dt)
+    return local_dt.strftime("%b %d, %Y %I:%M %p")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelApplicationPreviewView(request, id):
+    user = get_object_or_404(User, id=id)
+
+    data = {
+        "type": user.role,
+        "application_id": f"{'JRN' if user.role == 'journalist' else 'ADV'}-{user.id}",
+        "full_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or "-",
+        "email": user.email or "-",
+        "phone": user.phone or "-",
+        "applied_on_display": _format_datetime_display(user.created_at),
+        "rejection_reason": "-",
+        "documents": [],
+    }
+
+    if user.role == "journalist":
+        try:
+            app = user.journalist_application
+        except Exception:
+            app = None
+
+        if app:
+            data["applied_on_display"] = _format_datetime_display(app.submitted_at)
+
+            document_rows = [
+                ("Aadhaar ID", getattr(app, "aadhaar_file", None), bool(getattr(app, "aadhaar_verified", False))),
+                ("Portfolio", getattr(app, "portfolio_file", None), bool(getattr(app, "portfolio_verified", False))),
+                ("Press Card", getattr(app, "press_card_file", None), bool(getattr(app, "press_card_verified", False))),
+                ("Recommendation", getattr(app, "recommendation_file", None), bool(getattr(app, "recommendation_verified", False))),
+            ]
+
+            docs_out = []
+            for label, file_obj, verified in document_rows:
+                url = None
+                try:
+                    if file_obj:
+                        url = file_obj.url
+                except Exception:
+                    url = None
+
+                docs_out.append({
+                    "label": label,
+                    "verified": verified,
+                    "url": url,
+                })
+
+            data["documents"] = docs_out
+            if app.rejection_reason:
+                data["rejection_reason"] = app.rejection_reason
+
+    elif user.role == "advertiser":
+        try:
+            app = user.advertiser_application
+        except AdvertiserApplication.DoesNotExist:
+            app = None
+        
+        if app:
+            data["applied_on_display"] = _format_datetime_display(app.submitted_at)
+            data["full_name"] = f"{app.contact_name} ({app.designation})"
+            # Set phone from application if user phone is missing
+            if not data["phone"] or data["phone"] == "-":
+                data["phone"] = app.phone
+            
+            data["company_info"] = {
+                "name": app.company_name,
+                "type": app.business_type,
+                "size": app.company_size,
+                "gst": app.gst_number,
+                "website": app.website or "-",
+                "budget": app.budget_range,
+            }
+            
+            document_rows = [
+                ("Registration", app.registration_certificate),
+                ("GST Certificate", app.gst_certificate),
+                ("PAN Card", app.pan_card),
+                ("Bank Details", app.bank_details),
+            ]
+            
+            docs_out = []
+            for label, file_obj in document_rows:
+                url = None
+                try:
+                    if file_obj:
+                        url = file_obj.url
+                except Exception:
+                    url = None
+                docs_out.append({"label": label, "verified": True, "url": url})
+            
+            data["documents"] = docs_out
+            if app.rejection_reason:
+                data["rejection_reason"] = app.rejection_reason
+
+    return JsonResponse(data)
 
 
 def adminPanelApplicationsApproval(request,id):
     user = get_object_or_404(User,id=id)
     user.approval_status = "approved"
     user.save()
-    return redirect('admin_panel_applications')
+
+    # Update app status
+    if user.role == "journalist":
+        try:
+            app = user.journalist_application
+            app.status = "approved"
+            app.save()
+        except: pass
+    elif user.role == "advertiser":
+        try:
+            app = user.advertiser_application
+            app.status = "approved"
+            app.save()
+        except: pass
+
+    from urllib.parse import urlencode
+
+    redirect_url = reverse("admin_panel_applications")
+    params = {}
+    if request.GET.get("q"):
+        params["q"] = request.GET.get("q")
+    if request.GET.get("tab"):
+        params["tab"] = request.GET.get("tab")
+
+    if params:
+        redirect_url = f"{redirect_url}?{urlencode(params)}"
+    return redirect(redirect_url)
 
 
 def adminPanelApplicationsReject(request,id):
     user = get_object_or_404(User,id=id)
     user.approval_status = "rejected"
+    
+    if user.role == "journalist" and hasattr(user, 'journalist_application'):
+        app = user.journalist_application
+        app.status = "rejected"
+        reason = request.GET.get("reason", "").strip()
+        if reason:
+            app.rejection_reason = reason
+        app.save()
+    elif user.role == "advertiser" and hasattr(user, 'advertiser_application'):
+        app = user.advertiser_application
+        app.status = "rejected"
+        reason = request.GET.get("reason", "").strip()
+        if reason:
+            app.rejection_reason = reason
+        app.save()
+
     user.save()
-    return redirect('admin_panel_applications')
+    from urllib.parse import urlencode
+
+    redirect_url = reverse("admin_panel_applications")
+    params = {}
+    if request.GET.get("q"):
+        params["q"] = request.GET.get("q")
+    if request.GET.get("tab"):
+        params["tab"] = request.GET.get("tab")
+
+    if params:
+        redirect_url = f"{redirect_url}?{urlencode(params)}"
+    return redirect(redirect_url)
 
 
 def adminPanelJournalistsView(request):
@@ -318,6 +640,157 @@ def adminPanelReadersView(request):
         users = User.objects.filter(role__in=['reader']).order_by('id')
 
     return render(request, 'adminPanel/adminPanelReaders.html', {'users':users})
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelArticlesView(request):
+    q = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "all").strip()
+
+    base_qs = News_article.objects.select_related("author_id", "category_id")
+
+    if q:
+        base_qs = base_qs.filter(
+            Q(title__icontains=q) |
+            Q(author_id__first_name__icontains=q) |
+            Q(author_id__last_name__icontains=q)
+        )
+
+    stats_qs = base_qs
+    stats = {
+        "total": stats_qs.count(),
+        "approved": stats_qs.filter(status="approved").count(),
+        "pending": stats_qs.filter(status="pending").count(),
+        "reported": stats_qs.filter(article_reports__isnull=False).distinct().count(),
+        "rejected": stats_qs.filter(status="rejected").count(),
+    }
+
+    articles_qs = base_qs
+    if status == "reported":
+        articles_qs = articles_qs.filter(article_reports__isnull=False).distinct()
+    elif status != "all":
+        articles_qs = articles_qs.filter(status=status)
+
+    articles = articles_qs.order_by("-created_at")
+
+    return render(
+        request,
+        "adminPanel/adminPanelArticles.html",
+        {
+            "articles": articles,
+            "stats": stats,
+            "current": {"q": q, "status": status},
+        },
+    )
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelArticleApproveView(request, id):
+    article = get_object_or_404(News_article, id=id)
+    article.status = "approved"
+    article.published_at = timezone.now()
+    article.rejection_reason = None
+    article.save()
+    return redirect("admin_panel_articles")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelArticleRejectView(request, id):
+    article = get_object_or_404(News_article, id=id)
+    article.status = "rejected"
+    article.published_at = None
+    
+    reason = request.GET.get("reason", "").strip()
+    if reason:
+        article.rejection_reason = reason
+    elif not article.rejection_reason:
+        article.rejection_reason = "Rejected by admin."
+        
+    article.save()
+    return redirect("admin_panel_articles")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelArticleDeleteView(request, id):
+    News_article.objects.filter(id=id).delete()
+    return redirect("admin_panel_articles")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelCommentsView(request):
+    q = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "all").strip()
+
+    base_qs = Comment.objects.select_related("user", "article")
+
+    if q:
+        base_qs = base_qs.filter(
+            Q(comment_text__icontains=q) |
+            Q(user__first_name__icontains=q) |
+            Q(user__last_name__icontains=q) |
+            Q(user__email__icontains=q) |
+            Q(article__title__icontains=q)
+        )
+
+    stats_qs = base_qs
+    today = timezone.localdate()
+    stats = {
+        "total": stats_qs.count(),
+        "active": stats_qs.filter(status="Active").count(),
+        "reported": stats_qs.filter(comment_reports__isnull=False).distinct().count(),
+        "blocked": stats_qs.filter(status="Blocked").count(),
+        "today": stats_qs.filter(created_at__date=today).count(),
+    }
+
+    comments_qs = base_qs
+    if status == "reported":
+        comments_qs = comments_qs.filter(comment_reports__isnull=False).distinct()
+    elif status != "all":
+        comments_qs = comments_qs.filter(status=status)
+
+    comments = comments_qs.order_by("-created_at")
+
+    return render(
+        request,
+        "adminPanel/adminPanelComments.html",
+        {
+            "comments": comments,
+            "stats": stats,
+            "current": {"q": q, "status": status},
+        },
+    )
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelCommentBlockView(request, id):
+    comment = get_object_or_404(Comment, id=id)
+    comment.status = "Blocked"
+    comment.save()
+    return redirect("admin_panel_comments")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelCommentUnblockView(request, id):
+    comment = get_object_or_404(Comment, id=id)
+    comment.status = "Active"
+    comment.save()
+    return redirect("admin_panel_comments")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelCommentDeleteView(request, id):
+    Comment.objects.filter(id=id).delete()
+    return redirect("admin_panel_comments")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelUserBlockView(request, id):
+    user = get_object_or_404(User, id=id)
+    user.account_status = 'blocked'
+    user.is_active = False
+    user.save()
+    messages.success(request, f"User {user.email} has been blocked.")
+    return redirect("admin_panel_comments")
 
 
 # @login_required(login_url='login')
@@ -493,6 +966,29 @@ def reportArticleView(request, article_id):
     return JsonResponse({'message': 'Invalid request method.'}, status=405)
 
 
+def reportCommentView(request, comment_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'Please log in to report comments.'}, status=403)
+    
+    if request.method == 'POST':
+        from news.models import Comment
+        from reports.models import CommentReport
+        comment = get_object_or_404(Comment, id=comment_id)
+        reason = request.POST.get('description', '').strip()
+        
+        if not reason:
+            return JsonResponse({'message': 'Reporting reason is required.'}, status=400)
+            
+        CommentReport.objects.create(
+            user=request.user,
+            comment=comment,
+            reason=reason
+        )
+        return JsonResponse({'message': 'Thank you. The comment has been reported and will be reviewed.'})
+    
+    return JsonResponse({'message': 'Invalid request method.'}, status=405)
+
+
 def simplifiedPasswordResetView(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -546,39 +1042,65 @@ def journalistApplicationView(request):
     if request.user.role != 'journalist' or request.user.approval_status == 'approved':
         return redirect('home')
         
-    if request.method != 'POST' and hasattr(request.user, 'journalist_application'):
+    if request.method != 'POST' and hasattr(request.user, 'journalist_application') and not request.GET.get('edit'):
         return redirect('journalist_pending')
         
     profile, _ = Profile.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
         user = request.user
-        user.first_name = request.POST.get('firstName', user.first_name)
-        user.last_name = request.POST.get('lastName', user.last_name)
-        user.phone = request.POST.get('phone', user.phone)
-        user.save()
-        
-        state_id = request.POST.get('state')
-        city_id = request.POST.get('city')
-        if state_id:
-            profile.state_id = state_id
-        if city_id:
-            profile.city_id = city_id
-            
-        profile.save()
-        
         from .models import JournalistApplication
-        JournalistApplication.objects.filter(user=user).delete()
-        JournalistApplication.objects.create(
-            user=user,
-            aadhaar_file=request.FILES.get('aadhaar_file'),
-            portfolio_file=request.FILES.get('portfolio_file'),
-            press_card_file=request.FILES.get('press_card_file'),
-            recommendation_file=request.FILES.get('recommendation_file')
-        )
-        
-        messages.success(request, 'Application Submitted Successfully!')
-        return redirect('journalist_pending')
+
+        app, _ = JournalistApplication.objects.get_or_create(user=user)
+
+        # Map existing template field names to form/model field names.
+        post_data = request.POST.copy()
+        post_data["first_name"] = request.POST.get("firstName", "")
+        post_data["last_name"] = request.POST.get("lastName", "")
+        post_data["remove_portfolio"] = request.POST.get("remove_portfolio") == "true"
+        post_data["remove_presscard"] = request.POST.get("remove_presscard") == "true"
+        post_data["remove_recommendation"] = request.POST.get("remove_recommendation") == "true"
+
+        user_form = JournalistIdentityForm(post_data, instance=user)
+        profile_form = JournalistProfileLocationForm(post_data, instance=profile)
+        app_form = JournalistApplicationDocumentsForm(post_data, request.FILES, instance=app)
+
+        if user_form.is_valid() and profile_form.is_valid() and app_form.is_valid():
+            user_form.save()
+            profile_form.save()
+
+            updated_app = app_form.save(commit=False)
+
+            if app_form.cleaned_data.get("remove_portfolio"):
+                updated_app.portfolio_file = None
+                updated_app.portfolio_verified = False
+            elif request.FILES.get("portfolio_file"):
+                updated_app.portfolio_verified = False
+
+            if app_form.cleaned_data.get("remove_presscard"):
+                updated_app.press_card_file = None
+                updated_app.press_card_verified = False
+            elif request.FILES.get("press_card_file"):
+                updated_app.press_card_verified = False
+
+            if app_form.cleaned_data.get("remove_recommendation"):
+                updated_app.recommendation_file = None
+                updated_app.recommendation_verified = False
+            elif request.FILES.get("recommendation_file"):
+                updated_app.recommendation_verified = False
+
+            if request.FILES.get("aadhaar_file"):
+                updated_app.aadhaar_verified = False
+
+            updated_app.status = "pending"
+            updated_app.submitted_at = timezone.now()
+            updated_app.save()
+
+            messages.success(request, 'Application Submitted Successfully!')
+            return redirect('journalist_pending')
+
+        messages.error(request, "Please fix the form errors and submit again.")
+        return redirect("journalist_application")
         
     states = State.objects.all()
     cities = City.objects.all()
@@ -593,3 +1115,12 @@ def journalistPendingView(request):
         return redirect('journalist_application')
         
     return render(request, 'journalist/journalist_pending.html')
+
+# @login_required(login_url='login')
+def journalistWithdrawView(request):
+    if request.method == 'POST' and request.user.is_authenticated and request.user.role == 'journalist':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, 'Your application has been withdrawn and account deleted.')
+    return redirect('home')

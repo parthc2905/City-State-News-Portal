@@ -20,7 +20,7 @@
             </div>
         </nav>
         <div class="nav-actions">
-            {% if request.user.is_authenticated and not request.user.is_admin %}
+            {% if request.user.is_authenticated %}
                 <div class="profile-dropdown">
                     <button class="profile-avatar-btn" aria-expanded="false" aria-haspopup="true" title="Profile menu">
                         {% if request.user.profile and request.user.profile.profile_image %}
@@ -42,19 +42,43 @@
                             </div>
                         </div>
                         <div class="profile-dropdown-divider"></div>
-                        <a href="{% if request.user.role == 'journalist' %}{% url 'journalist_profile' %}{% elif request.user.role == 'reader' %}{% url 'reader_profile' %}{% else %}#{% endif %}" class="profile-dropdown-item">My Profile</a>
-                        {% if request.user.role == 'journalist' %}
-                        <a href="{% url 'journalist_write_article' %}" class="profile-dropdown-item">
-                            <span class="dropdown-icon">✍️</span>
-                            Write Article
-                        </a>
-                        <a href="{% url 'journalist_my_articles' %}" class="profile-dropdown-item">
-                            <span class="dropdown-icon">📝</span>
-                            My Articles
-                        </a>
+                        
+                        {% if request.user.role == 'admin' %}
+                            <a href="{% url 'admin_panel_dashboard' %}" class="profile-dropdown-item">Admin Dashboard</a>
+                        {% elif request.user.role == 'journalist' %}
+                            {% if request.user.approval_status == 'pending' %}
+                                <a href="{% url 'journalist_pending' %}" class="profile-dropdown-item">Pending Approval</a>
+                            {% else %}
+                                <a href="{% url 'journalist_profile' %}" class="profile-dropdown-item">My Profile</a>
+                                <a href="{% url 'journalist_write_article' %}" class="profile-dropdown-item">
+                                    <span class="dropdown-icon">✍️</span>   
+                                    Write Article
+                                </a>
+                                <a href="{% url 'journalist_my_articles' %}" class="profile-dropdown-item">
+                                    <span class="dropdown-icon">📝</span>
+                                    My Articles
+                                </a>
+                                <a href="{% url 'journalist_saved_articles' %}" class="profile-dropdown-item">Saved Articles</a>
+                                <a href="{% url 'journalist_general' %}" class="profile-dropdown-item">Settings</a>
+                            {% endif %}
+                        {% elif request.user.role == 'advertiser' %}
+                            {% if request.user.approval_status == 'pending' %}
+                                <a href="{% url 'advertiser_pending' %}" class="profile-dropdown-item">Pending Approval</a>
+                            {% elif request.user.approval_status == 'approved' %}
+                                <a href="{% url 'advertiser_dashboard' %}" class="profile-dropdown-item">Ads Dashboard</a>
+                                <a href="{% url 'reader_profile' %}" class="profile-dropdown-item">My Profile</a>
+                                <a href="{% url 'reader_general' %}" class="profile-dropdown-item">Settings</a>
+                            {% else %}
+                                <a href="{% url 'apply_advertiser' %}" class="profile-dropdown-item">Apply Now</a>
+                                <a href="{% url 'reader_profile' %}" class="profile-dropdown-item">My Profile</a>
+                                <a href="{% url 'reader_general' %}" class="profile-dropdown-item">Settings</a>
+                            {% endif %}
+                        {% elif request.user.role == 'reader' %}
+                            <a href="{% url 'reader_profile' %}" class="profile-dropdown-item">My Profile</a>
+                            <a href="{% url 'reader_saved_articles' %}" class="profile-dropdown-item">Saved Articles</a>
+                            <a href="{% url 'reader_general' %}" class="profile-dropdown-item">Settings</a>
                         {% endif %}
-                        <a href="{% if request.user.role == 'journalist' %}{% url 'journalist_saved_articles' %}{% elif request.user.role == 'reader' %}{% url 'reader_saved_articles' %}{% else %}#{% endif %}" class="profile-dropdown-item">Saved Articles</a>
-                        <a href="{% if request.user.role == 'journalist' %}{% url 'journalist_general' %}{% elif request.user.role == 'reader' %}{% url 'reader_general' %}{% else %}#{% endif %}" class="profile-dropdown-item">Settings</a>
+
                         <div class="profile-dropdown-divider"></div>
                         <a href="{% url 'logout' %}" class="profile-dropdown-item profile-dropdown-logout">Log out</a>
                     </div>

@@ -6,32 +6,28 @@
 
 {% block content %}
 
-<!-- PAGE HEADER -->
-<div class="page-header">
-    <p class="page-subtitle">Review and approve journalist and advertiser applications</p>
-</div>
 
 <!-- STATS -->
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-label">Pending Applications</div>
-        <div class="stat-value">12</div>
-        <div class="stat-change positive">↑ 3 from yesterday</div>
+        <div class="stat-value">{{ stats.pending }}</div>
+        <div class="stat-change positive">Needs review</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Approved This Week</div>
-        <div class="stat-value">47</div>
-        <div class="stat-change positive">↑ 12%</div>
+        <div class="stat-value">{{ stats.approved_this_week }}</div>
+        <div class="stat-change positive">Recently approved</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Rejected This Week</div>
-        <div class="stat-value">8</div>
-        <div class="stat-change negative">↓ 2</div>
+        <div class="stat-value">{{ stats.rejected_this_week }}</div>
+        <div class="stat-change negative">Recently rejected</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">Avg. Review Time</div>
-        <div class="stat-value">2.3d</div>
-        <div class="stat-change positive">↓ 0.5d faster</div>
+        <div class="stat-value">{{ stats.avg_review_time_days }}d</div>
+        <div class="stat-change positive">Avg across reviewed</div>
     </div>
 </div>
 
@@ -40,15 +36,28 @@
 
     <form id="searchForm" class="search-box">
         <span class="search-icon">🔍</span>
-        <input type="text" name="q" placeholder="Search by name or email">
+        <input type="text" name="q" placeholder="Search by name or email" value="{{ current.q }}">
+        <input type="hidden" name="tab" value="{{ current.tab }}">
     </form>
 
 
     <div class="filter-group">
-        <button class="filter-btn active">All (12)</button>
-        <button class="filter-btn">📝 Journalists (7)</button>
-        <button class="filter-btn">📢 Advertisers (5)</button>
-        <button class="filter-btn">⏱️ Pending</button>
+        <a href="?tab=all{% if current.q %}&q={{ current.q|urlencode }}{% endif %}"
+            class="filter-btn {% if current.tab == 'all' %}active{% endif %}">
+            All ({{ toolbar_counts.all }})
+        </a>
+        <a href="?tab=journalists{% if current.q %}&q={{ current.q|urlencode }}{% endif %}"
+            class="filter-btn {% if current.tab == 'journalists' %}active{% endif %}">
+            📝 Journalists ({{ toolbar_counts.journalists }})
+        </a>
+        <a href="?tab=advertisers{% if current.q %}&q={{ current.q|urlencode }}{% endif %}"
+            class="filter-btn {% if current.tab == 'advertisers' %}active{% endif %}">
+            📢 Advertisers ({{ toolbar_counts.advertisers }})
+        </a>
+        <a href="?tab=pending{% if current.q %}&q={{ current.q|urlencode }}{% endif %}"
+            class="filter-btn {% if current.tab == 'pending' %}active{% endif %}">
+            ⏱️ Pending ({{ toolbar_counts.pending }})
+        </a>
     </div>
 </div>
 
@@ -102,13 +111,19 @@
                     <span class="status-badge status-rejected">
                         ✕ Rejected
                     </span>
+                    {% if user.role == 'journalist' and user.journalist_application.rejection_reason %}
+                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #dc3545; line-height: 1.3; max-width: 180px;">
+                        <strong style="display: block; font-size: 10px; text-transform: uppercase; opacity: 0.8;">Reason:</strong>
+                        {{ user.journalist_application.rejection_reason }}
+                    </div>
+                    {% endif %}
                     {% endif %}
 
                 </td>
                 <td>
                     <div class="action-buttons">
 
-                        <button class="btn-icon btn-view" onclick="viewApplication('journalist', 'Rajesh Kumar')"
+                        <button class="btn-icon btn-view" onclick="viewApplication('{{ user.id }}')"
                             title="View Details">👁️</button>
 
 
@@ -119,8 +134,8 @@
                             ✓
                         </a>
 
-                        <a href="{% url 'admin_panel_applications_reject' user.id %}" class="btn-icon btn-reject"
-                            onclick="return confirm('Reject this user?')" title="Reject">
+                        <a href="#" class="btn-icon btn-reject"
+                            onclick="rejectApplication(event, '{{ user.id }}')" title="Reject">
                             ✕
                         </a>
 

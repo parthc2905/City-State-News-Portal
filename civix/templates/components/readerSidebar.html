@@ -2,8 +2,8 @@
     <div class="sidebar-header">
         <a href="{% url 'home' %}" class="logo">CIVIX</a>
         <div class="user-badge">
-            <span class="user-badge-icon">📖</span>
-            <span class="user-badge-text">Reader</span>
+            <span class="user-badge-icon">{% if request.user.role == 'advertiser' %}📢{% else %}📖{% endif %}</span>
+            <span class="user-badge-text">{% if request.user.role == 'advertiser' %}Advertiser{% else %}Reader{% endif %}</span>
         </div>
     </div>
 

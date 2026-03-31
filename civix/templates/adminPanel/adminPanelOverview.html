@@ -1,0 +1,197 @@
+{% extends 'adminPanel/adminPanelDashboard.html' %}
+{% load static %}
+
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Admin Overview</h1>
+{% endblock topbar_title %}
+
+{% block content %}
+
+<!-- ═══ TOP STATS ═══ -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Applications</div>
+        <div class="stat-value">{{ stats.apps.total }}</div>
+        <div class="stat-change {% if stats.apps.pending > 0 %}negative{% else %}positive{% endif %}">
+            {{ stats.apps.pending }} Pending
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Live Articles</div>
+        <div class="stat-value">{{ stats.articles.approved }}</div>
+        <div class="stat-change positive">Global</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Reported Articles</div>
+        <div class="stat-value">{{ stats.articles.reported }}</div>
+        {% if stats.articles.reported > 0 %}
+        <div class="stat-change negative">Action required</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Comments</div>
+        <div class="stat-value">{{ stats.comments.total }}</div>
+        <div class="stat-change negative">{{ stats.comments.reported }} Reported</div>
+    </div>
+</div>
+
+<!-- ═══ CHARTS SECTION ═══ -->
+<div class="charts-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 32px;">
+    
+    <!-- Timeline Chart -->
+    <div class="chart-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); grid-column: span 2;">
+        <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: var(--gray-700);">Activity Timeline (Last 6 Months)</h3>
+        <div style="height: 300px;">
+            <canvas id="timelineChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Category Distribution -->
+    <div class="chart-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: var(--gray-700);">Articles by Category</h3>
+        <div style="height: 250px;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+
+    <!-- App Distribution -->
+    <div class="chart-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-bottom: 12px; font-size: 16px; font-weight: 600; color: var(--gray-700);">Application Distribution</h3>
+        <div style="display: flex; gap: 20px; height: 200px;">
+            <div style="flex: 1;"><canvas id="appStatusChart"></canvas></div>
+            <div style="flex: 1;"><canvas id="appRoleChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Article Status -->
+    <div class="chart-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: var(--gray-700);">Article Status Overview</h3>
+        <div style="height: 250px;">
+            <canvas id="articleStatusChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Comments Status -->
+    <div class="chart-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="margin-bottom: 20px; font-size: 16px; font-weight: 600; color: var(--gray-700);">Comment Moderation</h3>
+        <div style="height: 250px;">
+            <canvas id="commentStatusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- DATA STORE FOR JS -->
+{{ charts|json_script:"charts-data" }}
+{{ stats|json_script:"stats-data" }}
+
+<!-- ═══ CHART.JS ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    (function() {
+        const charts = JSON.parse(document.getElementById('charts-data').textContent);
+        const stats = JSON.parse(document.getElementById('stats-data').textContent);
+
+        const pieOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } }
+            }
+        };
+
+        // 1. Timeline Chart
+        new Chart(document.getElementById('timelineChart'), {
+            type: 'line',
+            data: {
+                labels: charts.articles_timeline.map(i => i.month),
+                datasets: [
+                    {
+                        label: 'Articles',
+                        data: charts.articles_timeline.map(i => i.count),
+                        borderColor: '#dc2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                        fill: true, tension: 0.4
+                    },
+                    {
+                        label: 'Users',
+                        data: charts.users_timeline.map(i => i.count),
+                        borderColor: '#1a8917',
+                        backgroundColor: 'rgba(26, 137, 23, 0.1)',
+                        fill: true, tension: 0.4
+                    }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // 2. Category Chart
+        new Chart(document.getElementById('categoryChart'), {
+            type: 'bar',
+            data: {
+                labels: charts.category_dist.map(i => i.category_id__category_name),
+                datasets: [{
+                    label: 'Count',
+                    data: charts.category_dist.map(i => i.count),
+                    backgroundColor: '#1d4ed8', borderRadius: 4
+                }]
+            },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }
+        });
+
+        // 3. App Status
+        new Chart(document.getElementById('appStatusChart'), {
+            type: 'pie',
+            data: {
+                labels: charts.app_status.map(i => i.approval_status),
+                datasets: [{
+                    data: charts.app_status.map(i => i.count),
+                    backgroundColor: ['#fbbf24', '#1a8917', '#dc2626', '#6b6b6b']
+                }]
+            },
+            options: pieOptions
+        });
+
+        // 4. App Roles
+        new Chart(document.getElementById('appRoleChart'), {
+            type: 'pie',
+            data: {
+                labels: charts.app_roles.map(i => i.role),
+                datasets: [{
+                    data: charts.app_roles.map(i => i.count),
+                    backgroundColor: ['#8b5cf6', '#ec4899']
+                }]
+            },
+            options: pieOptions
+        });
+
+        // 5. Article Status
+        new Chart(document.getElementById('articleStatusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: charts.article_status.map(i => i.status),
+                datasets: [{
+                    data: charts.article_status.map(i => i.count),
+                    backgroundColor: ['#1a8917', '#fbbf24', '#dc2626', '#6b6b6b']
+                }]
+            },
+            options: Object.assign({}, pieOptions, { cutout: '65%' })
+        });
+
+        // 6. Comment Status
+        new Chart(document.getElementById('commentStatusChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Active', 'Blocked'],
+                datasets: [{
+                    data: [stats.comments.active, stats.comments.blocked],
+                    backgroundColor: ['#1a8917', '#dc2626'],
+                    borderRadius: 4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    })();
+</script>
+
+{% endblock content %}

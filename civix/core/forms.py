@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
-from .models import User
+from .models import User, Profile, JournalistApplication
 
 # User Registration Form
 class UserSignupForm(UserCreationForm):
@@ -114,4 +114,31 @@ class CommentForm(forms.Form):
             "placeholder": "Enter your comment...",
             "rows": 4
         })
-    )
+    )
+
+
+class JournalistIdentityForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "phone"]
+
+
+class JournalistProfileLocationForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ["state", "city"]
+
+
+class JournalistApplicationDocumentsForm(forms.ModelForm):
+    remove_portfolio = forms.BooleanField(required=False)
+    remove_presscard = forms.BooleanField(required=False)
+    remove_recommendation = forms.BooleanField(required=False)
+
+    class Meta:
+        model = JournalistApplication
+        fields = [
+            "aadhaar_file",
+            "portfolio_file",
+            "press_card_file",
+            "recommendation_file",
+        ]

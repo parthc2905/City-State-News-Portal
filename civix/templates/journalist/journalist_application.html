@@ -475,7 +475,7 @@
             <select class="form-select" name="state" required>
               <option value="">Select State</option>
               {% for state in states %}
-              <option value="{{ state.id }}">{{ state.state_name }}</option>
+              <option value="{{ state.id }}" {% if request.user.profile.state.id == state.id %}selected{% endif %}>{{ state.state_name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -484,7 +484,7 @@
             <select class="form-select" name="city" required>
               <option value="">Select City</option>
               {% for city in cities %}
-              <option value="{{ city.id }}">{{ city.city_name }}</option>
+              <option value="{{ city.id }}" {% if request.user.profile.city.id == city.id %}selected{% endif %}>{{ city.city_name }}</option>
               {% endfor %}
             </select>
           </div>
@@ -518,49 +518,71 @@
         <!-- Aadhaar/ID (REQUIRED) -->
         <div class="form-group">
           <label class="form-label">Government ID (Aadhaar/PAN/Passport) <span class="required">*</span></label>
-          <div class="file-upload" onclick="document.getElementById('aadhaar').click()" id="aadhaar-upload">
+          <div class="file-upload {% if request.user.journalist_application.aadhaar_file %}has-file{% endif %}" onclick="document.getElementById('aadhaar').click()" id="aadhaar-upload">
             <div class="upload-icon">🆔</div>
-            <div class="upload-text">Click to upload Document</div>
+            <div class="upload-text">{% if request.user.journalist_application.aadhaar_file %}Click to upload a new ID instead{% else %}Click to upload Document{% endif %}</div>
             <div class="upload-hint">PDF, JPG or PNG (max 10MB)</div>
-            <div class="file-name" id="aadhaar-name"></div>
+            <div class="file-name" id="aadhaar-name">
+                {% if request.user.journalist_application.aadhaar_file %}
+                   ✓ Previously uploaded file exists
+                {% endif %}
+            </div>
           </div>
-          <input type="file" id="aadhaar" name="aadhaar_file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('aadhaar')" required>
+          <input type="file" id="aadhaar" name="aadhaar_file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('aadhaar')" {% if not request.user.journalist_application.aadhaar_file %}required{% endif %}>
         </div>
 
         <!-- Portfolio (OPTIONAL) -->
         <div class="form-group">
           <label class="form-label">Portfolio (Published Articles)</label>
-          <div class="file-upload" onclick="document.getElementById('portfolio').click()" id="portfolio-upload">
+          <div class="file-upload {% if request.user.journalist_application.portfolio_file %}has-file{% endif %}" onclick="document.getElementById('portfolio').click()" id="portfolio-upload">
             <div class="upload-icon">📰</div>
-            <div class="upload-text">Click to upload Portfolio</div>
+            <div class="upload-text">{% if request.user.journalist_application.portfolio_file %}Click to upload a new Portfolio instead{% else %}Click to upload Portfolio{% endif %}</div>
             <div class="upload-hint">PDF or ZIP file containing 5-10 articles (max 10MB) • Optional to unlock features</div>
-            <div class="file-name" id="portfolio-name"></div>
+            <div class="file-name" id="portfolio-name">
+                {% if request.user.journalist_application.portfolio_file %}
+                   ✓ Previously uploaded file exists
+                {% endif %}
+            </div>
           </div>
           <input type="file" id="portfolio" name="portfolio_file" class="file-input" accept=".pdf,.zip" onchange="handleFileUpload('portfolio')">
+          <input type="hidden" id="remove_portfolio" name="remove_portfolio" value="false">
+          <button type="button" class="btn btn-secondary" id="btn-remove-portfolio" onclick="removeDocument('portfolio')" {% if request.user.journalist_application.portfolio_file %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: inline-block; border-color: var(--red); color: var(--red);"{% else %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: none; border-color: var(--red); color: var(--red);"{% endif %}>🗑️ Remove Portfolio</button>
         </div>
 
         <!-- Press Card (OPTIONAL) -->
         <div class="form-group">
           <label class="form-label">Press Accreditation Card</label>
-          <div class="file-upload" onclick="document.getElementById('presscard').click()" id="presscard-upload">
+          <div class="file-upload {% if request.user.journalist_application.press_card_file %}has-file{% endif %}" onclick="document.getElementById('presscard').click()" id="presscard-upload">
             <div class="upload-icon">📄</div>
-            <div class="upload-text">Click to upload Press Card</div>
+            <div class="upload-text">{% if request.user.journalist_application.press_card_file %}Click to upload a new Press Card instead{% else %}Click to upload Press Card{% endif %}</div>
             <div class="upload-hint">PDF, JPG or PNG (max 10MB) • Optional</div>
-            <div class="file-name" id="presscard-name"></div>
+            <div class="file-name" id="presscard-name">
+                {% if request.user.journalist_application.press_card_file %}
+                   ✓ Previously uploaded file exists
+                {% endif %}
+            </div>
           </div>
           <input type="file" id="presscard" name="press_card_file" class="file-input" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileUpload('presscard')">
+          <input type="hidden" id="remove_presscard" name="remove_presscard" value="false">
+          <button type="button" class="btn btn-secondary" id="btn-remove-presscard" onclick="removeDocument('presscard')" {% if request.user.journalist_application.press_card_file %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: inline-block; border-color: var(--red); color: var(--red);"{% else %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: none; border-color: var(--red); color: var(--red);"{% endif %}>🗑️ Remove Press Card</button>
         </div>
 
         <!-- Recommendation (OPTIONAL) -->
         <div class="form-group">
           <label class="form-label">Letter of Recommendation</label>
-          <div class="file-upload" onclick="document.getElementById('recommendation').click()" id="recommendation-upload">
+          <div class="file-upload {% if request.user.journalist_application.recommendation_file %}has-file{% endif %}" onclick="document.getElementById('recommendation').click()" id="recommendation-upload">
             <div class="upload-icon">✉️</div>
-            <div class="upload-text">Click to upload Recommendation Letter</div>
+            <div class="upload-text">{% if request.user.journalist_application.recommendation_file %}Click to upload a new Recommendation Letter instead{% else %}Click to upload Recommendation Letter{% endif %}</div>
             <div class="upload-hint">PDF format (max 10MB) • Optional</div>
-            <div class="file-name" id="recommendation-name"></div>
+            <div class="file-name" id="recommendation-name">
+                {% if request.user.journalist_application.recommendation_file %}
+                   ✓ Previously uploaded file exists
+                {% endif %}
+            </div>
           </div>
           <input type="file" id="recommendation" name="recommendation_file" class="file-input" accept=".pdf" onchange="handleFileUpload('recommendation')">
+          <input type="hidden" id="remove_recommendation" name="remove_recommendation" value="false">
+          <button type="button" class="btn btn-secondary" id="btn-remove-recommendation" onclick="removeDocument('recommendation')" {% if request.user.journalist_application.recommendation_file %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: inline-block; border-color: var(--red); color: var(--red);"{% else %}style="margin-top: 10px; padding: 6px 12px; font-size: 13px; display: none; border-color: var(--red); color: var(--red);"{% endif %}>🗑️ Remove Recommendation</button>
         </div>
       </div>
 
@@ -633,7 +655,22 @@ function handleFileUpload(inputId) {
     // Update UI
     uploadDiv.classList.add('has-file');
     nameDiv.textContent = `✓ ${file.name} (${fileSize} MB)`;
+    
+    // Unhide the remove button if it's an optional file
+    const removeBtn = document.getElementById('btn-remove-' + inputId);
+    if (removeBtn) {
+        removeBtn.style.display = 'inline-block';
+        document.getElementById('remove_' + inputId).value = 'false';
+    }
   }
+}
+
+function removeDocument(inputId) {
+    document.getElementById(inputId).value = '';
+    document.getElementById(inputId + '-upload').classList.remove('has-file');
+    document.getElementById(inputId + '-name').textContent = 'Removed';
+    document.getElementById('remove_' + inputId).value = 'true';
+    document.getElementById('btn-remove-' + inputId).style.display = 'none';
 }
 </script>
 

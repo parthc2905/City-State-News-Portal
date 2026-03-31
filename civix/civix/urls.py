@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('core.urls')), # include the urls of our authentication core app
     path('location/', include('location.urls')), # include the urls of our location app
     path('news/', include('news.urls')), # include the urls of our news app
+    path('ads/', include('ads.urls')), # include the urls of our ads app
 ]
 
 if settings.DEBUG:
