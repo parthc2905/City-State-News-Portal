@@ -74,3 +74,20 @@ class AdvertiserApplicationForm(forms.ModelForm):
             'target_cities': forms.HiddenInput(),
             'ad_format_preference': forms.HiddenInput(),
         }
+
+from .models import Advertisement
+
+class AdvertisementForm(forms.ModelForm):
+    class Meta:
+        model = Advertisement
+        fields = ['title', 'description', 'target_url', 'media_file', 'ad_format', 'placement', 'start_date', 'end_date']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g., Summer Sale 2026'}),
+            'description': forms.Textarea(attrs={'class': 'form-textarea', 'placeholder': 'Brief description of the ad campaign...', 'rows': 3}),
+            'target_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://www.yourwebsite.com/sale'}),
+            'media_file': forms.FileInput(attrs={'class': 'form-input', 'accept': 'image/*,video/*'}),
+            'ad_format': forms.Select(attrs={'class': 'form-select'}),
+            'placement': forms.Select(attrs={'class': 'form-select'}),
+            'start_date': forms.DateInput(attrs={'class': 'form-input', 'type': 'date'}),
+            'end_date': forms.DateInput(attrs={'class': 'form-input', 'type': 'date'}),
+        }

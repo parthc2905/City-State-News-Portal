@@ -431,7 +431,7 @@ body {
 
 .btn-primary {
     background: var(--green);
-    color: white;
+    color: white !important;
 }
 
 .btn-primary:hover:not(:disabled) {

@@ -6,6 +6,13 @@ class Advertisement(models.Model):
     advertiser = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ads")
     title = models.CharField(max_length=200, null=False)
     description = models.TextField(null=True, blank=True)
+    target_url = models.URLField(max_length=500, null=True, blank=True)
+    media_file = models.FileField(upload_to='advertisements/media/', null=True, blank=True)
+    AD_FORMAT_CHOICES = (
+        ('Banner', 'Banner image'),
+        ('Video', 'Video ad'),
+    )
+    ad_format = models.CharField(max_length=20, choices=AD_FORMAT_CHOICES, default='Banner')
     PLACEMENT_CHOICES = (
         ('Homepage', 'Homepage'),
         ('Sidebar', 'Sidebar'),

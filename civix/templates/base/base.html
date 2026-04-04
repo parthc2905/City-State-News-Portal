@@ -118,6 +118,32 @@
             </div>
         </section>
 
+        <!-- ═══ ADVERTISEMENT BANNER ═══ -->
+        {% if display_ad %}
+        <div class="ad-banner-container" id="adBanner-{{ display_ad.id }}">
+            <div class="ad-banner-header">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-actions">
+                    <button class="ad-action-btn" title="Report Ad">🚩</button>
+                    <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
+                </div>
+            </div>
+            
+            <a {% if display_ad.target_url %}href="{{ display_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+                {% if display_ad.ad_format == 'Video' and display_ad.media_file %}
+                <video src="{{ display_ad.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
+                {% elif display_ad.media_file %}
+                <img src="{{ display_ad.media_file.url }}" alt="{{ display_ad.title }}" class="ad-media">
+                {% else %}
+                <div class="ad-placeholder">
+                    <h3>{{ display_ad.title }}</h3>
+                    <p>{{ display_ad.description }}</p>
+                </div>
+                {% endif %}
+            </a>
+        </div>
+        {% endif %}
+
         <!-- ═══ LATEST STORIES ═══ -->
         <div class="section-divider">
             <h2 class="section-title">Latest Stories</h2>

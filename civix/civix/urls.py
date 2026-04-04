@@ -25,6 +25,7 @@ urlpatterns = [
     path('location/', include('location.urls')), # include the urls of our location app
     path('news/', include('news.urls')), # include the urls of our news app
     path('ads/', include('ads.urls')), # include the urls of our ads app
+    path('subscriptions/', include('subscriptions.urls')), # include the urls of our subscriptions app
 ]
 
 if settings.DEBUG:

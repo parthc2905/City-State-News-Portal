@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import AdvertiserApplication, Advertisement
-from .forms import AdvertiserApplicationForm
+from .forms import AdvertiserApplicationForm, AdvertisementForm
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import logout
@@ -43,7 +43,12 @@ def applyAdvertiserView(request):
 
 @login_required
 def advertiserPendingView(request):
-    application = get_object_or_404(AdvertiserApplication, user=request.user)
+    try:
+        application = AdvertiserApplication.objects.get(user=request.user)
+    except AdvertiserApplication.DoesNotExist:
+        # If they landed here but haven't even applied, send them to the application form
+        return redirect('apply_advertiser')
+        
     if application.status == 'approved':
         return redirect('advertiser_dashboard')
     
@@ -225,4 +230,34 @@ def advertiserGeneralView(request):
     return render(request, "ads/advertiser_general.html", {
         "profile": profile,
         "application": application
+    })
+
+@login_required
+def advertiserCampaignsView(request):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+
+    if request.method == 'POST':
+        form = AdvertisementForm(request.POST, request.FILES)
+        if form.is_valid():
+            ad = form.save(commit=False)
+            ad.advertiser = request.user
+            ad.status = 'Active'  # Default to active for now
+            ad.payment_status = 'Pending'  # Payment integration required later
+            ad.save()
+            messages.success(request, "Campaign uploaded successfully! It is currently pending payment.")
+            return redirect('advertiser_campaigns')
+    else:
+        form = AdvertisementForm()
+
+    my_ads = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
+    
+    return render(request, 'ads/my_campaigns.html', {
+        'application': application,
+        'form': form,
+        'my_ads': my_ads
     })

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subscribe to CIVIX — Local News, Unlimited Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --gray-900: #1a1a1a;
+    --gray-800: #2d2d2d;
+    --gray-700: #4a4a4a;
+    --gray-600: #6b6b6b;
+    --gray-500: #8b8b8b;
+    --gray-400: #b3b3b3;
+    --gray-300: #d1d1d1;
+    --gray-200: #e8e8e8;
+    --gray-100: #f4f4f4;
+    --white: #ffffff;
+    --green: #1a8917;
+    --green-dark: #156d12;
+    --green-light: #e8f5e8;
+    --yellow: #fbbf24;
+    --blue: #0066cc;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-900);
+  }
+
+  /* ═══ HEADER ═══ */
+  .top-nav {
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-back {
+    color: var(--green);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ═══ HERO ═══ */
+  .hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: white;
+    padding: 80px 40px 60px;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-family: 'Spectral', serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* ═══ TOGGLE ═══ */
+  .billing-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+
+  .toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--white);
+    padding: 8px;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .toggle-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-600);
+    padding: 0 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-label.active {
+    color: var(--green-dark);
+  }
+
+  .toggle-switch {
+    position: relative;
+    width: 56px;
+    height: 32px;
+    background: var(--gray-200);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-switch.active {
+    background: var(--green);
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 50%;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .toggle-switch.active .toggle-slider {
+    transform: translateX(24px);
+  }
+
+  .save-badge {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--black);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-left: 8px;
+  }
+
+  /* ═══ PRICING CARDS ═══ */
+  .pricing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: -40px;
+  }
+
+  .pricing-card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 40px 32px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    position: relative;
+    border: 2px solid transparent;
+  }
+
+  .pricing-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  }
+
+  .pricing-card.popular {
+    border-color: var(--green);
+    transform: scale(1.05);
+  }
+
+  .pricing-card.popular:hover {
+    transform: scale(1.05) translateY(-8px);
+  }
+
+  .popular-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: white;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .plan-name {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-600);
+    margin-bottom: 12px;
+  }
+
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .currency {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gray-700);
+  }
+
+  .amount {
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .period {
+    font-size: 16px;
+    color: var(--gray-600);
+  }
+
+  .plan-description {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 24px;
+    min-height: 40px;
+  }
+
+  .plan-features {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+
+  .plan-features li {
+    padding: 12px 0;
+    font-size: 15px;
+    color: var(--gray-700);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .feature-icon {
+    color: var(--green);
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .feature-icon.disabled {
+    color: var(--gray-300);
+  }
+
+  /* ═══ BUTTONS ═══ */
+  .btn {
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-primary {
+    background: var(--green);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(26, 137, 23, 0.3);
+  }
+
+  .btn-secondary {
+    background: var(--white);
+    color: var(--gray-700);
+    border: 2px solid var(--gray-300);
+  }
+
+  .btn-secondary:hover {
+    background: var(--gray-100);
+    border-color: var(--gray-400);
+  }
+
+  /* ═══ FEATURES SECTION ═══ */
+  .features-section {
+    background: var(--white);
+    padding: 80px 40px;
+  }
+
+  .features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'Spectral', serif;
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: var(--gray-600);
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+
+  .feature-item {
+    text-align: center;
+  }
+
+  .feature-icon-large {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+
+  .feature-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .feature-desc {
+    font-size: 15px;
+    color: var(--gray-600);
+    line-height: 1.6;
+  }
+
+  /* ═══ FAQ ═══ */
+  .faq-section {
+    padding: 80px 40px;
+    background: var(--gray-100);
+  }
+
+  .faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .faq-question {
+    padding: 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+  }
+
+  .faq-question:hover {
+    background: var(--gray-100);
+  }
+
+  .faq-toggle {
+    font-size: 24px;
+    color: var(--green);
+    transition: transform 0.3s;
+  }
+
+  .faq-item.active .faq-toggle {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .faq-item.active .faq-answer {
+    max-height: 500px;
+  }
+
+  .faq-answer-content {
+    padding: 0 24px 24px;
+    font-size: 15px;
+    color: var(--gray-600);
+    line-height: 1.6;
+  }
+
+  /* ═══ CTA SECTION ═══ */
+  .cta-section {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: white;
+    padding: 80px 40px;
+    text-align: center;
+  }
+
+  .cta-title {
+    font-family: 'Spectral', serif;
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .cta-subtitle {
+    font-size: 18px;
+    opacity: 0.95;
+    margin-bottom: 32px;
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .btn-white {
+    background: white;
+    color: var(--green-dark);
+    padding: 16px 32px;
+  }
+
+  .btn-white:hover {
+    background: var(--gray-100);
+    transform: translateY(-2px);
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 1024px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pricing-card.popular {
+      transform: scale(1);
+    }
+
+    .pricing-card.popular:hover {
+      transform: translateY(-8px);
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-title {
+      font-size: 36px;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+    }
+
+    .pricing-container,
+    .features-container,
+    .faq-container {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .amount {
+      font-size: 48px;
+    }
+
+    .section-title {
+      font-size: 28px;
+    }
+
+    .cta-title {
+      font-size: 32px;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero {
+      padding: 60px 20px 40px;
+    }
+
+    .toggle-container {
+      flex-direction: column;
+      padding: 12px;
+    }
+
+    .pricing-card {
+      padding: 32px 24px;
+    }
+
+    .amount {
+      font-size: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- 
+═══════════════════════════════════════════════════════════════
+CIVIX SUBSCRIPTION PAGE
+Industry-standard low pricing for hyper-local news
+═══════════════════════════════════════════════════════════════
+-->
+
+<!-- HEADER -->
+<header class="top-nav">
+  <div class="nav-inner">
+    <a href="civix_final.html" class="logo">CIVIX</a>
+    <a href="civix_final.html" class="nav-back">← Back to Home</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 class="hero-title">Support Local Journalism</h1>
+  <p class="hero-subtitle">Get unlimited access to hyper-local news across 500+ Indian cities. Cancel anytime.</p>
+  <span class="hero-badge">✓ No ads • Unlimited articles • Cancel anytime</span>
+</section>
+
+<!-- BILLING TOGGLE -->
+<div class="billing-toggle">
+  <div class="toggle-container">
+    <span class="toggle-label active" id="monthlyLabel" onclick="toggleBilling('monthly')">Monthly</span>
+    <div class="toggle-switch" id="toggleSwitch" onclick="toggleBilling()">
+      <div class="toggle-slider"></div>
+    </div>
+    <span class="toggle-label" id="yearlyLabel" onclick="toggleBilling('yearly')">
+      Yearly <span class="save-badge">Save 33%</span>
+    </span>
+  </div>
+</div>
+
+<!-- PRICING CARDS -->
+<section class="pricing-container">
+  <div class="pricing-grid">
+    
+    <!-- FREE PLAN -->
+    <div class="pricing-card">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">
+        <span class="currency">₹</span>
+        <span class="amount">0</span>
+      </div>
+      <div class="plan-description">Perfect for casual readers</div>
+      
+      <ul class="plan-features">
+        <li><span class="feature-icon">✓</span> 5 articles per month</li>
+        <li><span class="feature-icon">✓</span> Basic city news</li>
+        <li><span class="feature-icon">✓</span> Newsletter access</li>
+        <li><span class="feature-icon disabled">✕</span> Unlimited articles</li>
+        <li><span class="feature-icon disabled">✕</span> Ad-free experience</li>
+        <li><span class="feature-icon disabled">✕</span> Premium content</li>
+        <li><span class="feature-icon disabled">✕</span> Save & bookmark</li>
+      </ul>
+      
+      <button class="btn btn-secondary" onclick="window.location.href='civix_auth_modern.html'">Get Started</button>
+    </div>
+
+    <!-- MONTHLY PLAN -->
+    <div class="pricing-card popular" id="monthlyPlan">
+      <div class="popular-badge">Most Popular</div>
+      <div class="plan-name">Monthly</div>
+      <div class="plan-price">
+        <span class="currency">₹</span>
+        <span class="amount" id="monthlyPrice">99</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="plan-description">Full access, billed monthly</div>
+      
+      <ul class="plan-features">
+        <li><span class="feature-icon">✓</span> Unlimited articles</li>
+        <li><span class="feature-icon">✓</span> All 500+ cities</li>
+        <li><span class="feature-icon">✓</span> Ad-free reading</li>
+        <li><span class="feature-icon">✓</span> Premium investigations</li>
+        <li><span class="feature-icon">✓</span> Save & bookmark</li>
+        <li><span class="feature-icon">✓</span> Mobile app access</li>
+        <li><span class="feature-icon">✓</span> Cancel anytime</li>
+      </ul>
+      
+      <button class="btn btn-primary" onclick="subscribe('monthly')">Subscribe Now</button>
+    </div>
+
+    <!-- YEARLY PLAN -->
+    <div class="pricing-card" id="yearlyPlan" style="display: none;">
+      <div class="popular-badge">Best Value</div>
+      <div class="plan-name">Yearly</div>
+      <div class="plan-price">
+        <span class="currency">₹</span>
+        <span class="amount">799</span>
+        <span class="period">/year</span>
+      </div>
+      <div class="plan-description">Save ₹389 — just ₹66/month</div>
+      
+      <ul class="plan-features">
+        <li><span class="feature-icon">✓</span> Unlimited articles</li>
+        <li><span class="feature-icon">✓</span> All 500+ cities</li>
+        <li><span class="feature-icon">✓</span> Ad-free reading</li>
+        <li><span class="feature-icon">✓</span> Premium investigations</li>
+        <li><span class="feature-icon">✓</span> Save & bookmark</li>
+        <li><span class="feature-icon">✓</span> Mobile app access</li>
+        <li><span class="feature-icon">✓</span> Priority support</li>
+      </ul>
+      
+      <button class="btn btn-primary" onclick="subscribe('yearly')">Subscribe Now</button>
+    </div>
+
+    <!-- STUDENT PLAN -->
+    <div class="pricing-card">
+      <div class="plan-name">Student</div>
+      <div class="plan-price">
+        <span class="currency">₹</span>
+        <span class="amount" id="studentPrice">49</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="plan-description">50% off with valid student ID</div>
+      
+      <ul class="plan-features">
+        <li><span class="feature-icon">✓</span> Unlimited articles</li>
+        <li><span class="feature-icon">✓</span> All 500+ cities</li>
+        <li><span class="feature-icon">✓</span> Ad-free reading</li>
+        <li><span class="feature-icon">✓</span> Premium investigations</li>
+        <li><span class="feature-icon">✓</span> Save & bookmark</li>
+        <li><span class="feature-icon">✓</span> Mobile app access</li>
+        <li><span class="feature-icon">✓</span> Valid for 1 year</li>
+      </ul>
+      
+      <button class="btn btn-secondary" onclick="subscribe('student')">Verify Student Status</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="features-container">
+    <h2 class="section-title">Why Subscribe to CIVIX?</h2>
+    <p class="section-subtitle">Join 2.4M readers supporting local journalism</p>
+    
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon-large">🗞️</div>
+        <h3 class="feature-title">Unlimited Access</h3>
+        <p class="feature-desc">Read unlimited articles from 500+ cities across India with no paywalls or restrictions.</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon-large">🚫</div>
+        <h3 class="feature-title">Ad-Free Experience</h3>
+        <p class="feature-desc">Enjoy clean, distraction-free reading without advertisements or popups.</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon-large">📰</div>
+        <h3 class="feature-title">Premium Content</h3>
+        <p class="feature-desc">Exclusive investigations, in-depth analysis, and expert opinions from local journalists.</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon-large">🔖</div>
+        <h3 class="feature-title">Save & Organize</h3>
+        <p class="feature-desc">Bookmark articles, create reading lists, and access your saved content anywhere.</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon-large">📱</div>
+        <h3 class="feature-title">Mobile Apps</h3>
+        <p class="feature-desc">Read on the go with our iOS and Android apps, with offline reading support.</p>
+      </div>
+      
+      <div class="feature-item">
+        <div class="feature-icon-large">💚</div>
+        <h3 class="feature-title">Support Journalism</h3>
+        <p class="feature-desc">Your subscription directly supports local journalists and civic reporting in your city.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Can I cancel anytime?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Yes! You can cancel your subscription at any time from your account settings. Your access will continue until the end of your current billing period, and you won't be charged again.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        What payment methods do you accept?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          We accept all major credit/debit cards (Visa, Mastercard, RuPay), UPI, net banking, and mobile wallets (Paytm, PhonePe, Google Pay). All payments are processed securely through Razorpay.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Is there a free trial?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          We offer a 14-day free trial for new subscribers. No credit card required! You can explore all premium features before committing to a paid plan.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Can I share my subscription?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Individual subscriptions are for personal use only. However, you can access your account on up to 3 devices. We also offer family plans for up to 5 members at a discounted rate.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        How do I verify my student status?
+        <span class="faq-toggle">+</span>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-content">
+          Simply upload a valid student ID or enrollment letter when subscribing. Verification typically takes 1-2 business days. Student plans are valid for one academic year and can be renewed annually with proof of enrollment.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to Stay Informed?</h2>
+  <p class="cta-subtitle">Join thousands of readers supporting local journalism</p>
+  <div class="cta-buttons">
+    <button class="btn btn-white" onclick="subscribe('monthly')">Start Free Trial</button>
+  </div>
+</section>
+
+<script>
+// Billing toggle
+let currentBilling = 'monthly';
+
+function toggleBilling(type) {
+  const toggleSwitch = document.getElementById('toggleSwitch');
+  const monthlyLabel = document.getElementById('monthlyLabel');
+  const yearlyLabel = document.getElementById('yearlyLabel');
+  const monthlyPlan = document.getElementById('monthlyPlan');
+  const yearlyPlan = document.getElementById('yearlyPlan');
+  const studentPrice = document.getElementById('studentPrice');
+  
+  if (type === 'monthly' || currentBilling === 'yearly') {
+    // Switch to monthly
+    currentBilling = 'monthly';
+    toggleSwitch.classList.remove('active');
+    monthlyLabel.classList.add('active');
+    yearlyLabel.classList.remove('active');
+    monthlyPlan.style.display = 'block';
+    yearlyPlan.style.display = 'none';
+    studentPrice.textContent = '49';
+  } else {
+    // Switch to yearly
+    currentBilling = 'yearly';
+    toggleSwitch.classList.add('active');
+    monthlyLabel.classList.remove('active');
+    yearlyLabel.classList.add('active');
+    monthlyPlan.style.display = 'none';
+    yearlyPlan.style.display = 'block';
+    studentPrice.textContent = '399';
+  }
+}
+
+// FAQ toggle
+function toggleFaq(element) {
+  const faqItem = element.parentElement;
+  const isActive = faqItem.classList.contains('active');
+  
+  // Close all FAQs
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Open clicked FAQ if it wasn't active
+  if (!isActive) {
+    faqItem.classList.add('active');
+  }
+}
+
+// Subscribe function
+function subscribe(plan) {
+  let message = '';
+  
+  switch(plan) {
+    case 'monthly':
+      message = 'Redirecting to payment...\n\n✓ Monthly Plan: ₹99/month\n✓ 14-day free trial\n✓ Cancel anytime';
+      break;
+    case 'yearly':
+      message = 'Redirecting to payment...\n\n✓ Yearly Plan: ₹799/year\n✓ Save ₹389 (33% off)\n✓ 14-day free trial';
+      break;
+    case 'student':
+      message = 'Student verification required\n\n✓ Student Plan: ₹49/month\n✓ 50% discount\n✓ Valid for 1 year\n\nPlease upload your student ID to continue.';
+      break;
+  }
+  
+  alert(message);
+  
+  // In real implementation, redirect to payment gateway
+  // window.location.href = '/checkout?plan=' + plan;
+}
+</script>
+
+</body>
+</html>

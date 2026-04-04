@@ -129,6 +129,16 @@ def statePoliticsView(request):
 
 
 def homePage(request):
+    # Enforce application process for journalists and advertisers
+    if request.user.is_authenticated:
+        if request.user.role == 'journalist' and request.user.approval_status == 'pending':
+            if not hasattr(request.user, 'journalist_application'):
+                return redirect('journalist_application')
+        elif request.user.role == 'advertiser' and request.user.approval_status == 'pending':
+            from ads.models import AdvertiserApplication
+            if not AdvertiserApplication.objects.filter(user=request.user).exists():
+                return redirect('apply_advertiser')
+
     hero_article = News_article.objects.filter(status='approved').order_by('-created_at').first()
     
     if hero_article:
@@ -165,12 +175,28 @@ def homePage(request):
         word_count = len(article.content.split())
         article.read_time = max(1, word_count // 200)
 
+    from ads.models import Advertisement
+    import random
+    
+    # Fetch active homepage ads
+    active_ads = list(Advertisement.objects.filter(
+        status='Active',
+        payment_status='Paid',
+        placement='Homepage',
+        start_date__lte=timezone.now().date(),
+        end_date__gte=timezone.now().date()
+    ))
+    
+    # Pick a random ad to display
+    display_ad = random.choice(active_ads) if active_ads else None
+
     return render(request, 'base/base.html', {
         'hero_article': hero_article,
         'trending_articles': trending_articles,
         'latest_articles': latest_articles,
         'state_politics_articles': state_politics_articles,
         'politics_sidebar_articles': politics_sidebar_articles,
+        'display_ad': display_ad,
     })
 
 # signup view for user registration

@@ -95,7 +95,7 @@ a {
 
 .btn-primary {
     background: var(--green);
-    color: white;
+    color: white !important;
     border: none;
     padding: 8px 16px;
     border-radius: 24px;
@@ -1334,4 +1334,98 @@ footer {
 .more-options-item.report:hover {
     background: #fff5f5;
     color: #e03131;
+}
+
+/* ═══ ADVERTISEMENT BANNER ═══ */
+.ad-banner-container {
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 40px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.ad-banner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ad-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    background: var(--white);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--gray-200);
+}
+
+.ad-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.ad-action-btn {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    color: var(--gray-600);
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.ad-action-btn:hover {
+    background: var(--gray-200);
+    color: var(--black);
+}
+
+.ad-banner-content {
+    display: block;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    max-height: 400px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ad-media {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.ad-placeholder {
+    padding: 40px;
+    text-align: center;
+    color: var(--gray-700);
+}
+
+.ad-placeholder h3 {
+    font-family: 'Spectral', serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+}
+
+.ad-placeholder p {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
 }

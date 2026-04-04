@@ -410,7 +410,10 @@
 <header class="top-nav">
   <div class="nav-inner">
     <a href="{% url 'home' %}" class="logo">CIVIX</a>
-    <a href="{% url 'home' %}" class="nav-back">← Back to Home</a>
+    <div style="display: flex; gap: 20px; align-items: center;">
+      <a href="{% url 'home' %}" class="nav-back">← Back to Home</a>
+      <a href="{% url 'logout' %}" class="nav-back" style="color: var(--red);">Logout</a>
+    </div>
   </div>
 </header>
 
