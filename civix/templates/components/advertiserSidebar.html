@@ -1,0 +1,62 @@
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'home' %}" class="logo">CIVIX</a>
+        <div class="user-badge">
+            <span class="user-badge-icon">📣</span>
+            <span class="user-badge-text">Advertiser</span>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section">
+            <div class="nav-title">Campaigns</div>
+            <a href="{% url 'advertiser_dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'advertiser_dashboard' %}active{% endif %}">
+                <span class="nav-icon">📈</span>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item {% if request.resolver_match.url_name == 'advertiser_campaigns' %}active{% endif %}">
+                <span class="nav-icon">📣</span>
+                My Campaigns
+            </a>
+            <!-- <a href="#" class="nav-item">
+                <span class="nav-icon">➕</span>
+                New Campaign
+            </a> -->
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Reports & Finance</div>
+            <a href="{% url 'advertiser_reports' %}" class="nav-item {% if request.resolver_match.url_name == 'advertiser_reports' %}active{% endif %}">
+                <span class="nav-icon">📊</span>
+                Reports
+            </a>
+            <a href="{% url 'advertiser_billing' %}" class="nav-item {% if request.resolver_match.url_name == 'advertiser_billing' %}active{% endif %}">
+                <span class="nav-icon">💳</span>
+                Billing
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-title">Settings</div>
+            <a href="{% url 'advertiser_profile' %}" class="nav-item {% if request.resolver_match.url_name == 'advertiser_profile' %}active{% endif %}">
+                <span class="nav-icon">👤</span>
+                Profile
+            </a>
+            <a href="{% url 'advertiser_general' %}" class="nav-item {% if request.resolver_match.url_name == 'advertiser_general' %}active{% endif %}">
+                <span class="nav-icon">⚙️</span>
+                General
+            </a>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        <a href="{% url 'home' %}" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            Back to Home
+        </a>
+        <a href="{% url 'logout' %}" class="nav-item">
+            <span class="nav-icon">🚪</span>
+            Sign Out
+        </a>
+    </div>
+</aside>

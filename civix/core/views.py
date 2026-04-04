@@ -466,11 +466,13 @@ def adminPanelApplicationPreviewView(request, id):
                 except Exception:
                     url = None
 
-                docs_out.append({
-                    "label": label,
-                    "verified": verified,
-                    "url": url,
-                })
+                if url:
+                    docs_out.append({
+                        "label": label,
+                        "verified": verified,
+                        "url": url,
+                        "slug": label.lower().replace(" ", "_")
+                    })
 
             data["documents"] = docs_out
             if app.rejection_reason:
@@ -499,21 +501,27 @@ def adminPanelApplicationPreviewView(request, id):
             }
             
             document_rows = [
-                ("Registration", app.registration_certificate),
-                ("GST Certificate", app.gst_certificate),
-                ("PAN Card", app.pan_card),
-                ("Bank Details", app.bank_details),
+                ("Registration", app.registration_certificate, getattr(app, "registration_verified", False)),
+                ("GST Certificate", app.gst_certificate, getattr(app, "gst_verified", False)),
+                ("PAN Card", app.pan_card, getattr(app, "pan_verified", False)),
+                ("Bank Details", app.bank_details, getattr(app, "bank_verified", False)),
             ]
             
             docs_out = []
-            for label, file_obj in document_rows:
+            for label, file_obj, verified in document_rows:
                 url = None
                 try:
                     if file_obj:
                         url = file_obj.url
                 except Exception:
                     url = None
-                docs_out.append({"label": label, "verified": True, "url": url})
+                if url:
+                    docs_out.append({
+                        "label": label, 
+                        "verified": verified, 
+                        "url": url,
+                        "slug": label.lower().replace(" ", "_")
+                    })
             
             data["documents"] = docs_out
             if app.rejection_reason:
@@ -524,6 +532,29 @@ def adminPanelApplicationPreviewView(request, id):
 
 def adminPanelApplicationsApproval(request,id):
     user = get_object_or_404(User,id=id)
+
+    # SECURE FLOW: Ensure documents are verified before final approval
+    unverified = []
+    if user.role == "journalist":
+        app = getattr(user, 'journalist_application', None)
+        if app:
+            if app.aadhaar_file and not app.aadhaar_verified: unverified.append("Aadhaar")
+            if app.portfolio_file and not app.portfolio_verified: unverified.append("Portfolio")
+            if app.press_card_file and not app.press_card_verified: unverified.append("Press Card")
+            if app.recommendation_file and not app.recommendation_verified: unverified.append("Recommendation")
+    elif user.role == "advertiser":
+        app = getattr(user, 'advertiser_application', None)
+        if app:
+            if app.registration_certificate and not app.registration_verified: unverified.append("Registration")
+            if app.gst_certificate and not app.gst_verified: unverified.append("GST Certificate")
+            if app.pan_card and not app.pan_verified: unverified.append("PAN Card")
+            if app.bank_details and not app.bank_verified: unverified.append("Bank Details")
+
+    if unverified:
+        from django.contrib import messages
+        messages.warning(request, f"Action blocked: Complete document verification ({', '.join(unverified)}) before approving the application.")
+        return redirect(request.META.get('HTTP_REFERER', 'admin_panel_applications'))
+
     user.approval_status = "approved"
     user.save()
 
@@ -671,13 +702,19 @@ def adminPanelArticlesView(request):
     elif status != "all":
         articles_qs = articles_qs.filter(status=status)
 
-    articles = articles_qs.order_by("-created_at")
+    articles_list = articles_qs.order_by("-created_at")
+    
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(articles_list, 10)  # 10 articles per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(
         request,
         "adminPanel/adminPanelArticles.html",
         {
-            "articles": articles,
+            "articles": page_obj,
             "stats": stats,
             "current": {"q": q, "status": status},
         },
@@ -1124,3 +1161,57 @@ def journalistWithdrawView(request):
         user.delete()
         messages.success(request, 'Your application has been withdrawn and account deleted.')
     return redirect('home')
+
+@login_required
+def adminPanelDocumentActionView(request, user_id, doc_slug, action):
+    if request.user.role != 'admin':
+        return JsonResponse({"error": "Unauthorized"}, status=403)
+    
+    user = get_object_or_404(User, id=user_id)
+    from ads.models import AdvertiserApplication
+    from .models import JournalistApplication
+    
+    app = None
+    if user.role == "journalist":
+        app = JournalistApplication.objects.filter(user=user).first()
+    elif user.role == "advertiser":
+        app = AdvertiserApplication.objects.filter(user=user).first()
+    
+    if not app:
+        return JsonResponse({"error": "Application not found"}, status=404)
+    
+    # Map slug to field
+    field_map = {
+        "aadhaar_id": "aadhaar_verified",
+        "aadhaar_card": "aadhaar_verified",
+        "portfolio": "portfolio_verified",
+        "press_card": "press_card_verified",
+        "recommendation": "recommendation_verified",
+        "recommendation_letter": "recommendation_verified",
+        "registration": "registration_verified",
+        "registration_certificate": "registration_verified",
+        "gst_certificate": "gst_verified",
+        "pan_card": "pan_verified",
+        "bank_details": "bank_verified",
+    }
+    
+    field_name = field_map.get(doc_slug)
+    if not field_name:
+        return JsonResponse({"error": f"Invalid document slug: {doc_slug}"}, status=400)
+    
+    if action == "approve":
+        setattr(app, field_name, True)
+        app.save()
+        return JsonResponse({"status": "success", "message": f"{doc_slug} approved"})
+    elif action == "reject":
+        reason = request.POST.get("reason", "Incomplete/Invalid document")
+        setattr(app, field_name, False)
+        # Update overall rejection reason too
+        existing_reason = app.rejection_reason or ""
+        new_reason_entry = f"{doc_slug.replace('_', ' ').capitalize()}: {reason}"
+        if new_reason_entry not in existing_reason:
+           app.rejection_reason = f"{existing_reason}\n{new_reason_entry}".strip()
+        app.save()
+        return JsonResponse({"status": "success", "message": f"{doc_slug} rejected"})
+    
+    return JsonResponse({"error": "Invalid action"}, status=400)

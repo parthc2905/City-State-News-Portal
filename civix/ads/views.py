@@ -5,6 +5,10 @@ from .forms import AdvertiserApplicationForm
 from django.contrib import messages
 from django.utils import timezone
 from django.contrib.auth import logout
+from django.db.models import Count, Sum
+from core.models import Profile
+from location.models import State, City
+from django.core.files.storage import FileSystemStorage
 
 @login_required
 def applyAdvertiserView(request):
@@ -42,11 +46,49 @@ def advertiserPendingView(request):
     application = get_object_or_404(AdvertiserApplication, user=request.user)
     if application.status == 'approved':
         return redirect('advertiser_dashboard')
-    return render(request, 'ads/advertiser_pending.html', {'application': application})
+    
+    all_verified = all([
+        application.registration_verified,
+        application.gst_verified,
+        application.pan_verified,
+        application.bank_verified
+    ])
+    
+    return render(request, 'ads/advertiser_pending.html', {
+        'application': application,
+        'all_verified': all_verified
+    })
 
 @login_required
 def advertiserDashboardView(request):
     # Ensure they are approved
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+        
+    my_ads = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
+    
+    # Simple stats for overview
+    total_campaigns = my_ads.count()
+    active_campaigns = my_ads.filter(status='Active').count()
+    
+    context = {
+        'application': application,
+        'my_ads': my_ads,
+        'stats': {
+            'total_campaigns': total_campaigns,
+            'active_campaigns': active_campaigns,
+            'total_impressions': 0, # Placeholders
+            'total_clicks': 0
+        }
+    }
+    return render(request, 'ads/advertiser_dashboard_overview.html', context)
+
+@login_required
+def advertiserReportsView(request):
     try:
         application = request.user.advertiser_application
         if application.status != 'approved':
@@ -59,9 +101,30 @@ def advertiserDashboardView(request):
     context = {
         'application': application,
         'my_ads': my_ads,
-        # Stats could be added here later
+        'stats': {
+            'total_impressions': 0,
+            'total_clicks': 0,
+            'ctr': 0
+        }
     }
-    return render(request, 'ads/advertiser_dashboard.html', context)
+    return render(request, 'ads/advertisement_reports.html', context)
+
+@login_required
+def advertiserBillingView(request):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+        
+    my_ads = Advertisement.objects.filter(advertiser=request.user)
+    
+    context = {
+        'application': application,
+        'my_ads': my_ads,
+    }
+    return render(request, 'ads/advertisement_billing.html', context)
 
 @login_required
 def advertiserWithdrawView(request):
@@ -71,3 +134,95 @@ def advertiserWithdrawView(request):
         user.delete()
         messages.success(request, 'Your application has been withdrawn and account deleted.')
     return redirect('home')
+@login_required
+def advertiserProfileView(request):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+        
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == "POST":
+        user = request.user
+        user.first_name = request.POST.get("first_name", user.first_name)
+        user.last_name = request.POST.get("last_name", user.last_name)
+        user.phone = request.POST.get("phone", user.phone)
+        
+        profile.bio = request.POST.get("bio", profile.bio)
+        state_id = request.POST.get("state")
+        city_id = request.POST.get("city")
+        if state_id:
+            profile.state_id = state_id
+        if city_id:
+            profile.city_id = city_id
+        
+        if 'avatar' in request.FILES:
+            avatar = request.FILES['avatar']
+            fs = FileSystemStorage()
+            from django.conf import settings
+            
+            if profile.profile_image:
+                old_name = profile.profile_image.replace(settings.MEDIA_URL, "")
+                if fs.exists(old_name):
+                    fs.delete(old_name)
+                    
+            filename = fs.save(f"profile_images/{user.id}_{avatar.name}", avatar)
+            profile.profile_image = fs.url(filename)
+            
+        user.save()
+        profile.save()
+        messages.success(request, "Profile updated successfully!")
+        return redirect("advertiser_profile")
+
+    states = State.objects.all()
+    cities = City.objects.all()
+    
+    return render(request, "ads/advertiser_profile.html", {
+        "states": states,
+        "cities": cities,
+        "profile": profile,
+        "application": application, # needed for sidebar/header
+    })
+
+@login_required
+def advertiserGeneralView(request):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+        
+    profile, created = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        if "update_notifications" in request.POST:
+            profile.email_notifications = request.POST.get("email_notifications") == "on"
+            profile.breaking_news_alerts = request.POST.get("breaking_news_alerts") == "on"
+            profile.weekly_newsletter = request.POST.get("weekly_newsletter") == "on"
+            profile.article_recommendations = request.POST.get("article_recommendations") == "on"
+            profile.save()
+            messages.success(request, "Notification preferences updated successfully.")
+            return redirect("advertiser_general")
+            
+        elif "update_password" in request.POST:
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+            if new_password and new_password == confirm_password:
+                user = request.user
+                user.set_password(new_password)
+                user.save()
+                from django.contrib.auth import update_session_auth_hash
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated successfully.")
+            else:
+                messages.error(request, "Passwords do not match.")
+            return redirect("advertiser_general")
+
+    return render(request, "ads/advertiser_general.html", {
+        "profile": profile,
+        "application": application
+    })

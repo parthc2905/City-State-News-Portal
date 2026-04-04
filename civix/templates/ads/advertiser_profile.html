@@ -1,0 +1,153 @@
+{% extends 'ads/advertiser_dashboard_base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Profile — Advertiser Dashboard — CIVIX</title>
+{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
+<style>
+    .badge-advertiser {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+</style>
+{% endblock page_css %}
+
+{% block content %}
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Personal Profile</h1>
+    </div>
+</div>
+
+<div class="container">
+    <!-- ALERT -->
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" id="successAlert" style="padding: 12px; background: #dcfce7; color: #166534; border-radius: 8px; margin-bottom: 20px;">
+            ✓ {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- PROFILE OVERVIEW CARD -->
+    <div class="card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 24px;">
+        <div class="profile-header" style="display: flex; gap: 24px; align-items: center;">
+            <div class="avatar-section" style="text-align: center;">
+                <div class="avatar-wrapper" style="position: relative; width: 100px; height: 100px; margin: 0 auto 12px;">
+                    {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image }}" class="avatar" id="avatarPreview" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                    <div class="avatar" id="avatarPreview" style="width: 100%; height: 100%; border-radius: 50%; background: var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 700;">{{ request.user.first_name|first|default:'?'|upper }}</div>
+                    {% endif %}
+                    <label for="avatarInput" class="avatar-upload" style="position: absolute; bottom: 0; right: 0; background: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer;">📷</label>
+                </div>
+                <button class="upload-btn" onclick="document.getElementById('avatarInput').click()" style="background: none; border: none; color: var(--blue); font-weight: 600; cursor: pointer;">Change Photo</button>
+            </div>
+
+            <div class="profile-info">
+                <h2 class="profile-name" style="font-size: 24px; font-weight: 700; color: var(--black);">{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                <p class="profile-email" style="color: var(--gray-600); margin-bottom: 12px;">{{ request.user.email }}</p>
+                <div class="profile-badges" style="display: flex; gap: 8px;">
+                    <span class="badge badge-advertiser" style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600;">📣 Advertiser</span>
+                    <span class="badge" style="padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; background: var(--gray-100);">Member since {{ request.user.created_at|date:"M Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="card" style="background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div class="card-header" style="margin-bottom: 32px;">
+            <h3 class="card-title" style="font-size: 20px; font-weight: 700;">Personal Information</h3>
+            <p class="card-description" style="color: var(--gray-500); margin-top: 4px;">Update your personal details and contact information</p>
+        </div>
+
+        <form method="POST" action="{% url 'advertiser_profile' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;" onchange="previewAvatar(event)">
+            
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">First Name</label>
+                    <input type="text" name="first_name" class="form-input" value="{{ request.user.first_name|default:'' }}" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Last Name</label>
+                    <input type="text" name="last_name" class="form-input" value="{{ request.user.last_name|default:'' }}" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Email Address</label>
+                    <input type="email" name="email" class="form-input" value="{{ request.user.email }}" required readonly style="width: 100%; padding: 10px; border: 1px solid var(--gray-200); border-radius: 8px; background: var(--gray-50); color: var(--gray-500);">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Phone Number</label>
+                    <input type="tel" name="phone" class="form-input" value="{{ request.user.phone|default:'' }}" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Bio / Description</label>
+                <textarea class="form-textarea" name="bio" placeholder="Tell us about yourself..." style="width: 100%; padding: 12px; border: 1px solid var(--gray-300); border-radius: 8px; height: 100px;">{{ profile.bio|default:'' }}</textarea>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">State</label>
+                    <select name="state" class="form-select" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                        <option value="">Select State</option>
+                        {% for state_obj in states %}
+                        <option value="{{ state_obj.id }}" {% if profile.state_id == state_obj.id %}selected{% endif %}>{{ state_obj.state_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">City</label>
+                    <select name="city" class="form-select" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                        <option value="">Select City</option>
+                        {% for city_obj in cities %}
+                        <option value="{{ city_obj.id }}" {% if profile.city_id == city_obj.id %}selected{% endif %}>{{ city_obj.city_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions" style="display: flex; gap: 12px; justify-content: flex-end; border-top: 1px solid var(--gray-100); padding-top: 24px;">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <a href="{% url 'advertiser_dashboard' %}" class="btn btn-secondary" style="text-decoration:none">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block page_js %}
+<script>
+function previewAvatar(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        const output = document.getElementById('avatarPreview');
+        if (output.tagName === 'IMG') {
+            output.src = reader.result;
+        } else {
+            // Replace div with img
+            const img = document.createElement('img');
+            img.src = reader.result;
+            img.id = 'avatarPreview';
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.borderRadius = '50%';
+            img.style.objectFit = 'cover';
+            output.parentNode.replaceChild(img, output);
+        }
+    }
+    reader.readAsDataURL(event.target.files[0]);
+}
+</script>
+{% endblock page_js %}

@@ -45,4 +45,5 @@ urlpatterns = [
     path('article/save/<int:article_id>/', views.saveArticleView, name='save_article'),
     path('article/report/<int:article_id>/', views.reportArticleView, name='report_article'),
     path('comment/report/<int:comment_id>/', views.reportCommentView, name='report_comment'),
+    path('adminpanel/applications/document-action/<int:user_id>/<str:doc_slug>/<str:action>/', views.adminPanelDocumentActionView, name='admin_panel_document_action'),
 ]

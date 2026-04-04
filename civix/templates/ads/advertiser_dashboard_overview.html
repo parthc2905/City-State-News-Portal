@@ -1,0 +1,213 @@
+{% extends 'ads/advertiser_dashboard_base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Dashboard — Advertiser Dashboard — CIVIX</title>
+{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
+<style>
+    /* Custom adjustments for Advertiser dashboard */
+    :root {
+        --brand-color: #1a8917; /* Keeping the Civix green */
+    }
+    
+    .status-badge.active { background: #d1fae5; color: #065f46; border: 1px solid #065f46; }
+    .status-badge.expired { background: #fee2e2; color: #991b1b; border: 1px solid #991b1b; }
+    .status-badge.pending { background: #fef3c7; color: #92400e; border: 1px solid #92400e; }
+
+    .stat-card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-600);
+    }
+
+    .stat-icon {
+        font-size: 20px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--black);
+    }
+
+    .stat-change {
+        font-size: 12px;
+        color: var(--gray-500);
+    }
+
+    .stat-change.positive {
+        color: var(--green);
+    }
+
+    /* Table styles from Journalist My Articles */
+    .campaign-list {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-top: 24px;
+    }
+
+    .campaign-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 100px;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--gray-100);
+        align-items: center;
+        gap: 16px;
+    }
+
+    .campaign-header {
+        background: var(--gray-50);
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--gray-500);
+    }
+
+    .campaign-title {
+        font-weight: 600;
+        color: var(--black);
+    }
+
+    .campaign-meta {
+        font-size: 14px;
+        color: var(--gray-600);
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+</style>
+{% endblock page_css %}
+
+{% block content %}
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Dashboard Overview</h1>
+    </div>
+    <div class="top-actions">
+        <a href="#" class="btn btn-primary">
+            ➕ Create New Campaign
+        </a>
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+    <div style="margin-bottom: 32px;">
+        <p style="color: var(--gray-600); font-size: 16px;">Welcome back, <strong>{{ application.company_name }}</strong></p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Campaigns</span>
+                <span class="stat-icon">📣</span>
+            </div>
+            <div class="stat-value">{{ stats.total_campaigns }}</div>
+            <div class="stat-change">Lifetime across all time</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Active Now</span>
+                <span class="stat-icon">🟢</span>
+            </div>
+            <div class="stat-value">{{ stats.active_campaigns }}</div>
+            <div class="stat-change positive">Currently running</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Impressions</span>
+                <span class="stat-icon">👁️</span>
+            </div>
+            <div class="stat-value">{{ stats.total_impressions }}</div>
+            <div class="stat-change">Across all campaigns</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Clicks</span>
+                <span class="stat-icon">🖱️</span>
+            </div>
+            <div class="stat-value">{{ stats.total_clicks }}</div>
+            <div class="stat-change">Direct traffic generated</div>
+        </div>
+    </div>
+
+    <!-- RECENT CAMPAIGNS -->
+    <div class="campaign-list">
+        <div class="campaign-item campaign-header">
+            <div>Campaign Name</div>
+            <div>Status</div>
+            <div>Start Date</div>
+            <div>End Date</div>
+            <div style="text-align: right;">Actions</div>
+        </div>
+
+        {% for ad in my_ads %}
+        <div class="campaign-item">
+            <div class="campaign-title">{{ ad.title }}</div>
+            <div>
+                <span class="status-badge {{ ad.status|lower }}">
+                    {% if ad.status == 'Active' %}🟢{% elif ad.status == 'Expired' %}🔴{% else %}🟡{% endif %} 
+                    {{ ad.status }}
+                </span>
+            </div>
+            <div class="campaign-meta">{{ ad.start_date|date:"M d, Y" }}</div>
+            <div class="campaign-meta">{{ ad.end_date|date:"M d, Y" }}</div>
+            <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                <button class="action-btn" title="View Insights">📊</button>
+                <button class="action-btn" title="Edit Campaign">✏️</button>
+            </div>
+        </div>
+        {% empty %}
+        <div style="padding: 64px; text-align: center; color: var(--gray-500);">
+            <div style="font-size: 48px; margin-bottom: 16px;">📉</div>
+            <h3>No campaigns found</h3>
+            <p>You haven't created any advertisement campaigns yet.</p>
+            <a href="#" class="btn btn-primary" style="margin-top: 24px;">Create First Campaign</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

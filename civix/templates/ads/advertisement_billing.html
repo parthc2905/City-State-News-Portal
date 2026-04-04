@@ -1,0 +1,143 @@
+{% extends 'ads/advertiser_dashboard_base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Billing — Advertiser Dashboard — CIVIX</title>
+{% endblock title %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
+<style>
+    /* Billing specific styles */
+    .billing-card {
+        background: white;
+        padding: 32px;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        margin-top: 24px;
+    }
+
+    .billing-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--black);
+        margin-bottom: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .invoice-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 24px;
+    }
+
+    .invoice-table th, .invoice-table td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .invoice-table th {
+        font-weight: 700;
+        color: var(--gray-500);
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .invoice-id {
+        font-weight: 600;
+        color: var(--blue);
+    }
+
+    .status-badge.paid { background: #d1fae5; color: #065f46; border: 1px solid #065f46; }
+    .status-badge.pending { background: #fef3c7; color: #92400e; border: 1px solid #92400e; }
+
+</style>
+{% endblock page_css %}
+
+{% block content %}
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div style="display: flex; align-items: center; gap: 16px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        <h1 class="page-title">Billing & Payments</h1>
+    </div>
+    <div class="top-actions">
+        <button class="btn btn-primary">
+            💳 Manage Payment Methods
+        </button>
+    </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="container">
+    
+    <!-- BILLING SUMMARY -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+        <div class="billing-card">
+            <h2 class="billing-title">Payment History</h2>
+            
+            <table class="invoice-table">
+                <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Campaign</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ad in my_ads %}
+                    <tr>
+                        <td class="invoice-id">#INV-{{ ad.id|add:1000 }}</td>
+                        <td>{{ ad.title }}</td>
+                        <td>₹ 0.00</td>
+                        <td>
+                            <span class="status-badge {{ ad.payment_status|lower }}">
+                                {{ ad.payment_status }}
+                            </span>
+                        </td>
+                        <td>{{ ad.created_at|date:"M d, Y" }}</td>
+                        <td>
+                            <button class="action-btn" title="Download Invoice">📊</button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="padding: 40px; text-align: center; color: var(--gray-500);">
+                            No payment history found yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <div class="billing-card" style="padding: 24px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--gray-600);">Available Balance</h3>
+                <div style="font-size: 32px; font-weight: 800; color: var(--black);">₹ 0.00</div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 24px; justify-content: center;">Add Funds</button>
+            </div>
+
+            <div class="billing-card" style="padding: 24px;">
+                <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--gray-600);">Tax Information</h3>
+                <div style="font-size: 14px; border-bottom: 1px solid var(--gray-100); padding-bottom: 12px; margin-bottom: 12px;">
+                    <span style="font-weight: 600;">GST Number:</span><br>
+                    <span style="color: var(--gray-700);">{{ application.gst_number }}</span>
+                </div>
+                <div style="font-size: 14px;">
+                    <span style="font-weight: 600;">Address:</span><br>
+                    <span style="color: var(--gray-700);">{{ application.company_name }}</span>
+                </div>
+                <button class="btn btn-secondary" style="width: 100%; margin-top: 24px; justify-content: center;">Update Details</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

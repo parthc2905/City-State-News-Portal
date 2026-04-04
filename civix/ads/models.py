@@ -59,6 +59,12 @@ class AdvertiserApplication(models.Model):
     pan_card = models.FileField(upload_to='advertiser_docs/pan/')
     bank_details = models.FileField(upload_to='advertiser_docs/bank/')
     
+    # Verification Flags
+    registration_verified = models.BooleanField(default=False)
+    gst_verified = models.BooleanField(default=False)
+    pan_verified = models.BooleanField(default=False)
+    bank_verified = models.BooleanField(default=False)
+    
     # Application Info
     choice = (("pending", "pending"), ("approved", "approved"), ("rejected", "rejected"))
     status = models.CharField(max_length=20, choices=choice, default='pending')

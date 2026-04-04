@@ -144,4 +144,23 @@
     </table>
 </div>
 
+<!-- PAGINATION -->
+{% if articles.has_other_pages %}
+<div class="pagination">
+    {% if articles.has_previous %}
+    <a href="?page=1{% if current.q %}&q={{ current.q }}{% endif %}{% if current.status %}&status={{ current.status }}{% endif %}" class="pagination-link" title="First Page">&laquo; First</a>
+    <a href="?page={{ articles.previous_page_number }}{% if current.q %}&q={{ current.q }}{% endif %}{% if current.status %}&status={{ current.status }}{% endif %}" class="pagination-link" title="Previous Page">‹ Prev</a>
+    {% endif %}
+
+    <div class="pagination-info">
+        Page {{ articles.number }} of {{ articles.paginator.num_pages }}
+    </div>
+
+    {% if articles.has_next %}
+    <a href="?page={{ articles.next_page_number }}{% if current.q %}&q={{ current.q }}{% endif %}{% if current.status %}&status={{ current.status }}{% endif %}" class="pagination-link" title="Next Page">Next ›</a>
+    <a href="?page={{ articles.paginator.num_pages }}{% if current.q %}&q={{ current.q }}{% endif %}{% if current.status %}&status={{ current.status }}{% endif %}" class="pagination-link" title="Last Page">Last &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endblock content %}
