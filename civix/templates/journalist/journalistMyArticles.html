@@ -152,7 +152,7 @@
                 </div>
                 <h3 class="article-title">{{ article.title }}</h3>
                 <div class="article-meta">
-                    <span class="meta-item">📅 {{ article.created_at|date:"F j, Y" }}</span>
+                    <span class="meta-item">📅 {{ article.created_at|date:"d M Y" }}</span>
                     {% if article.views_count > 1 %}
                     <span class="meta-item">👁️ {{ article.views_count }} views</span>
                     {% endif %}

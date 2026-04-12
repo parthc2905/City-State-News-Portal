@@ -104,7 +104,7 @@
                     </div>
                     {% endif %}
                 </td>
-                <td>{{ comment.created_at|date:"j M Y" }}</td>
+                <td>{{ comment.created_at|date:"d M Y" }}</td>
                 <td>
                     <div class="action-buttons">
                         {% if comment.status == 'Active' %}

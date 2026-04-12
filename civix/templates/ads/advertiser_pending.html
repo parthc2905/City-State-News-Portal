@@ -436,7 +436,7 @@
         <div class="timeline-dot completed"></div>
         <div class="timeline-title">Application Received</div>
         <div class="timeline-desc">Your company profile and campaign metrics have been logged</div>
-        <div class="timeline-date">{{ application.submitted_at|date:"M d, Y \a\t g:i A" }}</div>
+        <div class="timeline-date">{{ application.submitted_at|date:"d M Y \a\t g:i A" }}</div>
       </div>
 
       <div class="timeline-item">
@@ -490,7 +490,7 @@
 
     <div class="detail-row">
       <span class="detail-label">Submitted On</span>
-      <span class="detail-value">{{ application.submitted_at|date:"F d, Y" }}</span>
+      <span class="detail-value">{{ application.submitted_at|date:"d M Y" }}</span>
     </div>
   </div>
 

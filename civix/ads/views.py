@@ -246,23 +246,36 @@ def advertiserCampaignsView(request):
     except AdvertiserApplication.DoesNotExist:
         return redirect('apply_advertiser')
 
+    my_ads = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
+    
+    return render(request, 'ads/my_campaigns.html', {
+        'application': application,
+        'my_ads': my_ads
+    })
+
+@login_required
+def createCampaignView(request):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+
     if request.method == 'POST':
         form = AdvertisementForm(request.POST, request.FILES)
         if form.is_valid():
             ad = form.save(commit=False)
             ad.advertiser = request.user
-            ad.status = 'Active'  # Default to active for now
-            ad.payment_status = 'Pending'  # Payment integration required later
+            ad.status = 'Active'
+            ad.payment_status = 'Pending'
             ad.save()
-            messages.success(request, "Campaign uploaded successfully! It is currently pending payment.")
+            messages.success(request, "Campaign created successfully!")
             return redirect('advertiser_campaigns')
     else:
         form = AdvertisementForm()
 
-    my_ads = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
-    
-    return render(request, 'ads/my_campaigns.html', {
+    return render(request, 'ads/create_campaign.html', {
         'application': application,
-        'form': form,
-        'my_ads': my_ads
+        'form': form
     })

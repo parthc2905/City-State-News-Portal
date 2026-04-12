@@ -427,7 +427,7 @@
         <div class="timeline-dot completed"></div>
         <div class="timeline-title">Application Submitted</div>
         <div class="timeline-desc">Your journalist application has been received</div>
-        <div class="timeline-date">{{ request.user.journalist_application.submitted_at|date:"M d, Y \a\t g:i A" }}</div>
+        <div class="timeline-date">{{ request.user.journalist_application.submitted_at|date:"d M Y \a\t g:i A" }}</div>
       </div>
 
       <div class="timeline-item">
@@ -471,7 +471,7 @@
 
     <div class="detail-row">
       <span class="detail-label">Submitted On</span>
-      <span class="detail-value">{{ request.user.journalist_application.submitted_at|date:"F d, Y" }}</span>
+      <span class="detail-value">{{ request.user.journalist_application.submitted_at|date:"d M Y" }}</span>
     </div>
   </div>
 

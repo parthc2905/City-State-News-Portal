@@ -96,7 +96,7 @@
                     {% endif %}
                 </td>
                 <td>Mumbai, MH</td>
-                <td>{{ user.created_at|date:"j /F /Y" }}</td>
+                <td>{{ user.created_at|date:"d M Y" }}</td>
                 <td>
 
                     {% if user.approval_status == 'pending' %}

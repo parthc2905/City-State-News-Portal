@@ -52,9 +52,9 @@
                     <div class="author-name">{{ article.author_id.first_name }} {{ article.author_id.last_name }}</div>
                     <div class="publish-date">
                         {% if article.published_at %}
-                        Published on {{ article.published_at|date:"F j, Y" }} at {{ article.published_at|date:"g:i A" }}
+                        Published on {{ article.published_at|date:"d M Y" }} at {{ article.published_at|date:"g:i A" }}
                         {% else %}
-                        Created on {{ article.created_at|date:"F j, Y" }} at {{ article.created_at|date:"g:i A" }}
+                        Created on {{ article.created_at|date:"d M Y" }} at {{ article.created_at|date:"g:i A" }}
                         {% endif %}
                     </div>
                 </div>

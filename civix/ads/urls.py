@@ -6,6 +6,7 @@ urlpatterns = [
     path('pending/', views.advertiserPendingView, name='advertiser_pending'),
     path('dashboard/', views.advertiserDashboardView, name='advertiser_dashboard'),
     path('campaigns/', views.advertiserCampaignsView, name='advertiser_campaigns'),
+    path('campaigns/create/', views.createCampaignView, name='create_campaign'),
     path('reports/', views.advertiserReportsView, name='advertiser_reports'),
     path('billing/', views.advertiserBillingView, name='advertiser_billing'),
     path('profile/', views.advertiserProfileView, name='advertiser_profile'),

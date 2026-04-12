@@ -113,7 +113,7 @@
                     <span>·</span>
                     <span>{{ article.read_time }} min read</span>
                     <span>·</span>
-                    <span>{{ article.published_at|default:article.created_at|date:"M d, Y" }}</span>
+                    <span>{{ article.published_at|default:article.created_at|date:"d M Y" }}</span>
                 </div>
             </a>
             {% empty %}

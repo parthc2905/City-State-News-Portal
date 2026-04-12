@@ -18,10 +18,10 @@
                 <span class="nav-icon">📣</span>
                 My Campaigns
             </a>
-            <!-- <a href="#" class="nav-item">
+            <a href="{% url 'create_campaign' %}" class="nav-item {% if request.resolver_match.url_name == 'create_campaign' %}active{% endif %}">
                 <span class="nav-icon">➕</span>
-                New Campaign
-            </a> -->
+                Create New Campaign
+            </a>
         </div>
 
         <div class="nav-section">

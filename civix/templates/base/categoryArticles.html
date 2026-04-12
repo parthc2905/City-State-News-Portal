@@ -106,7 +106,7 @@
                                 {{ hero.author_id.first_name }} {{ hero.author_id.last_name }}
                             </div>
                             <div class="art-publish-date">
-                                Published on {{ hero.published_at|default:hero.created_at|date:"F j, Y" }}
+                                Published on {{ hero.published_at|default:hero.created_at|date:"d M Y" }}
                             </div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@
                             <div class="comment-meta" style="display: flex; justify-content: space-between; align-items: center;">
                                 <div>
                                     <span class="comment-username">{{ comment.user.first_name }} {{ comment.user.last_name }}</span>
-                                    <span class="comment-date">{{ comment.created_at|date:"F j, Y" }}</span>
+                                    <span class="comment-date">{{ comment.created_at|date:"d M Y" }}</span>
                                 </div>
                                 <button class="btn-report" onclick="handleReportComment('{{ comment.id }}')" title="Report Comment">
                                     <span class="report-icon">🚩</span> Report

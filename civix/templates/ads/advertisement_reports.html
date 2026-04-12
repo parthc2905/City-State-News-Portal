@@ -47,55 +47,45 @@
 </style>
 {% endblock page_css %}
 
+{% block dashboard_title %}Performance Reports{% endblock %}
+
+{% block dashboard_actions %}
+<button class="btn btn-secondary">
+    📅 Last 30 Days
+</button>
+<button class="btn btn-primary">
+    📥 Download Report
+</button>
+{% endblock dashboard_actions %}
+
 {% block content %}
-<!-- TOP BAR -->
-<div class="top-bar">
-    <div style="display: flex; align-items: center; gap: 16px;">
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
-        <h1 class="page-title">Performance Reports</h1>
+<!-- STATS -->
+<div class="reports-stats-grid">
+    <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">CTR (Click Through Rate)</div>
+        <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">{{ stats.ctr }}%</div>
     </div>
-    <div class="top-actions">
-        <button class="btn btn-secondary">
-            📅 Last 30 Days
-        </button>
-        <button class="btn btn-primary">
-            📥 Download Report
-        </button>
+    <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">Engagement Rate</div>
+        <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">0.0%</div>
+    </div>
+    <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">Total Spend</div>
+        <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">₹ 0</div>
     </div>
 </div>
 
-<!-- CONTAINER -->
-<div class="container">
+<!-- MAIN REPORT SECTION -->
+<div class="report-card">
+    <div class="report-icon">📉</div>
+    <h2 class="report-title">Data Insights are Processing</h2>
+    <p class="report-description">Detailed analytical reports will be available once your campaigns have generated enough impression and click data (usually within 24-48 hours after launching).</p>
     
-    <!-- STATS -->
-    <div class="reports-stats-grid">
-        <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">CTR (Click Through Rate)</div>
-            <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">{{ stats.ctr }}%</div>
-        </div>
-        <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">Engagement Rate</div>
-            <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">0.0%</div>
-        </div>
-        <div class="stat-card" style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-            <div style="font-size: 14px; font-weight: 600; color: var(--gray-600);">Total Spend</div>
-            <div style="font-size: 28px; font-weight: 700; color: var(--black); margin-top: 8px;">₹ 0</div>
+    <div style="border-top: 1px solid var(--gray-100); padding-top: 32px; margin-top: 32px; text-align: left;">
+        <h3 style="font-size: 18px; margin-bottom: 20px;">Top Performing Ad Types</h3>
+        <div style="padding: 20px; background: var(--gray-50); border-radius: 8px; color: var(--gray-500); text-align: center;">
+            Launch campaigns to see performance by ad format.
         </div>
     </div>
-
-    <!-- MAIN REPORT SECTION -->
-    <div class="report-card">
-        <div class="report-icon">📉</div>
-        <h2 class="report-title">Data Insights are Processing</h2>
-        <p class="report-description">Detailed analytical reports will be available once your campaigns have generated enough impression and click data (usually within 24-48 hours after launching).</p>
-        
-        <div style="border-top: 1px solid var(--gray-100); padding-top: 32px; margin-top: 32px; text-align: left;">
-            <h3 style="font-size: 18px; margin-bottom: 20px;">Top Performing Ad Types</h3>
-            <div style="padding: 20px; background: var(--gray-50); border-radius: 8px; color: var(--gray-500); text-align: center;">
-                Launch campaigns to see performance by ad format.
-            </div>
-        </div>
-    </div>
-
 </div>
 {% endblock content %}

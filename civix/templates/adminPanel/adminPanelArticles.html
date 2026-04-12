@@ -110,7 +110,7 @@
                     </div>
                     {% endif %}
                 </td>
-                <td>{{ article.created_at|date:"j M Y" }}</td>
+                <td>{{ article.created_at|date:"d M Y" }}</td>
                 <td>
                     <div class="action-buttons">
                         <a href="{% url 'article_detail' article.slug %}" class="btn-icon btn-view" title="View Article" target="_blank">👁️</a>
