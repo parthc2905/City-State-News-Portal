@@ -1191,7 +1191,7 @@ def addCommentView(request, article_id):
 
 # @login_required(login_url='login')
 def journalistApplicationView(request):
-    if request.user.role != 'journalist' or request.user.approval_status == 'approved':
+    if request.user.role not in ['journalist', 'reader'] or request.user.approval_status == 'approved':
         return redirect('home')
         
     if request.method != 'POST' and hasattr(request.user, 'journalist_application') and not request.GET.get('edit'):
@@ -1218,6 +1218,8 @@ def journalistApplicationView(request):
         app_form = JournalistApplicationDocumentsForm(post_data, request.FILES, instance=app)
 
         if user_form.is_valid() and profile_form.is_valid() and app_form.is_valid():
+            # Update role to journalist if it was reader
+            user.role = 'journalist'
             user_form.save()
             profile_form.save()
 

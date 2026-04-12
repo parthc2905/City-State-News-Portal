@@ -211,7 +211,7 @@
                     We
                     verify and publish within 24 hours.</p>
             </div>
-            <a href="{% if not user.is_authenticated %}{% url 'login' %}{% elif user.role == 'journalist' %}{% url 'journalist_write_article' %}{% else %}{% url 'journalist_application' %}{% endif %}" style="text-decoration: none;">
+            <a href="{% if not request.user.is_authenticated %}{% url 'login' %}{% elif request.user.role == 'journalist' %}{% url 'journalist_write_article' %}{% else %}{% url 'journalist_application' %}{% endif %}" style="text-decoration: none;">
                 <button class="citizen-btn">Submit Your Report →</button>
             </a>
         </div>

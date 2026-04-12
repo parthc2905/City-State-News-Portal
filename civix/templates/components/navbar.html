@@ -94,6 +94,8 @@
                         {% elif request.user.role == 'reader' %}
                             <a href="{% url 'reader_profile' %}" class="profile-dropdown-item">My Profile</a>
                             <a href="{% url 'reader_saved_articles' %}" class="profile-dropdown-item">Saved Articles</a>
+                            <a href="{% url 'journalist_application' %}" class="profile-dropdown-item">Apply for Journalist</a>
+                            <a href="{% url 'apply_advertiser' %}" class="profile-dropdown-item">Apply for Advertiser</a>
                             <a href="{% url 'reader_general' %}" class="profile-dropdown-item">Settings</a>
                         {% endif %}
 

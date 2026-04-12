@@ -31,6 +31,11 @@ def applyAdvertiserView(request):
             app.user = request.user
             app.status = 'pending'
             app.submitted_at = timezone.now()
+            
+            # Update role to advertiser
+            request.user.role = 'advertiser'
+            request.user.save()
+            
             app.save()
             messages.success(request, "Your application has been submitted and is under review.")
             return redirect('advertiser_pending')
