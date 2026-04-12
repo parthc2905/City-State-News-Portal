@@ -40,7 +40,9 @@ urlpatterns = [
     path('article/<slug:slug>/', views.articleDetailView, name='article_detail'),
     path('article/comment/<int:article_id>/', views.addCommentView, name='add_comment'),
     path('latest/', views.latestStoriesView, name='latest_stories'),
+    path('search/', views.searchResultsView, name='search'),
 
+    path('category/<slug:slug>/', views.categoryArticlesView, name='category_articles'),
     path('state-politics/', views.statePoliticsView, name='state_politics'),
     path('article/save/<int:article_id>/', views.saveArticleView, name='save_article'),
     path('article/report/<int:article_id>/', views.reportArticleView, name='report_article'),

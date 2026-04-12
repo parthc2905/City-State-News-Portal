@@ -16,32 +16,32 @@
 
             <div class="footer-col">
                 <h5>Explore</h5>
-                <a href="#">Politics</a>
-                <a href="#">Business</a>
-                <a href="#">Technology</a>
-                <a href="#">Culture</a>
-                <a href="#">Opinion</a>
-                <a href="#">Videos</a>
+                <a href="{% url 'state_politics' %}">Politics</a>
+                <a href="{% url 'search' %}?q=Business">Business</a>
+                <a href="{% url 'search' %}?q=Technology">Technology</a>
+                <a href="{% url 'search' %}?q=Culture">Culture</a>
+                <a href="{% url 'search' %}?q=Opinion">Opinion</a>
+                <a href="{% url 'search' %}?q=Videos">Videos</a>
             </div>
 
             <div class="footer-col">
                 <h5>Cities</h5>
-                <a href="#">Mumbai</a>
-                <a href="#">Delhi</a>
-                <a href="#">Bengaluru</a>
-                <a href="#">Ahmedabad</a>
-                <a href="#">Pune</a>
-                <a href="#">All Cities</a>
+                <a href="{% url 'search' %}?q=Mumbai&filter=city">Mumbai</a>
+                <a href="{% url 'search' %}?q=Delhi&filter=city">Delhi</a>
+                <a href="{% url 'search' %}?q=Bengaluru&filter=city">Bengaluru</a>
+                <a href="{% url 'search' %}?q=Ahmedabad&filter=city">Ahmedabad</a>
+                <a href="{% url 'search' %}?q=Pune&filter=city">Pune</a>
+                <a href="{% url 'search' %}?q=">All Cities</a>
             </div>
 
             <div class="footer-col">
                 <h5>Company</h5>
-                <a href="#">About</a>
-                <a href="#">Careers</a>
-                <a href="#">Advertise</a>
-                <a href="#">Contact</a>
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
+                <a href="{% url 'home' %}">About</a>
+                <a href="{% url 'journalist_application' %}">Careers</a>
+                <a href="{% url 'apply_advertiser' %}">Advertise</a>
+                <a href="{% url 'home' %}#contact">Contact</a>
+                <a href="{% url 'home' %}">Privacy</a>
+                <a href="{% url 'home' %}">Terms</a>
             </div>
         </div>
 

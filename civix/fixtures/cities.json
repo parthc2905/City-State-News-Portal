@@ -78,4 +78,4 @@
 {"model":"location.City","pk":67,"fields":{"city_name":"Jodhpur","state_id_id":21}},
 {"model":"location.City","pk":68,"fields":{"city_name":"Kota","state_id_id":21}},
 {"model":"location.City","pk":69,"fields":{"city_name":"Udaipur","state_id_id":21}}
-]
+] 

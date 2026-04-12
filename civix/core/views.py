@@ -105,6 +105,59 @@ def latestStoriesView(request):
     })
 
 
+def searchResultsView(request):
+    """Search articles by city, state or category name."""
+    from django.core.paginator import Paginator
+
+    query = request.GET.get('q', '').strip()
+    filter_type = request.GET.get('filter', 'all')  # all | city | state | category
+
+    articles = News_article.objects.none()
+    total_count = 0
+
+    if query:
+        base_qs = (
+            News_article.objects
+            .filter(status='approved')
+            .prefetch_related('media')
+            .select_related('author_id', 'category_id', 'city_id__state_id')
+        )
+
+        if filter_type == 'city':
+            articles = base_qs.filter(city_id__city_name__icontains=query)
+        elif filter_type == 'state':
+            articles = base_qs.filter(city_id__state_id__state_name__icontains=query)
+        elif filter_type == 'category':
+            articles = base_qs.filter(category_id__category_name__icontains=query)
+        else:
+            # Search across all three
+            articles = base_qs.filter(
+                Q(city_id__city_name__icontains=query) |
+                Q(city_id__state_id__state_name__icontains=query) |
+                Q(category_id__category_name__icontains=query) |
+                Q(title__icontains=query)
+            ).distinct()
+
+        articles = articles.order_by('-created_at')
+        total_count = articles.count()
+
+        for a in articles:
+            a.read_time = max(1, len(a.content.split()) // 200)
+
+    paginator = Paginator(list(articles), 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'base/searchResults.html', {
+        'query': query,
+        'filter_type': filter_type,
+        'articles': page_obj,
+        'total_count': total_count,
+    })
+
+
+
+
 def statePoliticsView(request):
     all_articles = list(
         News_article.objects
@@ -125,6 +178,42 @@ def statePoliticsView(request):
         'hero': hero,
         'left_articles': left_articles,
         'right_articles': right_articles,
+    })
+
+
+def categoryArticlesView(request, slug):
+    """Show all approved articles for a given category slug."""
+    import random
+    from news.models import Category
+
+    category = get_object_or_404(Category, slug=slug)
+
+    all_articles = list(
+        News_article.objects
+        .filter(status='approved', category_id=category)
+        .prefetch_related('media', 'comments', 'comments__user')
+        .select_related('author_id', 'category_id', 'city_id__state_id')
+        .order_by('-created_at')
+    )
+    for a in all_articles:
+        a.read_time = max(1, len(a.content.split()) // 200)
+
+    if not all_articles:
+        messages.info(request, f'No articles found in "{category.category_name}" yet.')
+        return redirect('home')
+
+    # Hero = random article from the category
+    hero = random.choice(all_articles)
+    rest = [a for a in all_articles if a.pk != hero.pk]
+    left_articles  = rest[::2][:3]
+    right_articles = rest[1::2][:3]
+
+    return render(request, 'base/categoryArticles.html', {
+        'category': category,
+        'hero': hero,
+        'left_articles': left_articles,
+        'right_articles': right_articles,
+        'comment_form': CommentForm(),
     })
 
 

@@ -1,9 +1,12 @@
 <div class="location-bar">
     <div class="location-inner">
         <span class="loc-label">📍 Browse by state:</span>
-        <span class="loc-chip active">All India</span>
+        <a href="{% url 'search' %}?q=" class="loc-chip {% if not query %}active{% endif %}">All India</a>
         {% for state in all_states %}
-            <span class="loc-chip">{{ state.state_name }}</span>
+            <a href="{% url 'search' %}?q={{ state.state_name }}&filter=state" 
+               class="loc-chip {% if query == state.state_name %}active{% endif %}">
+                {{ state.state_name }}
+            </a>
         {% endfor %}
     </div>
 </div>

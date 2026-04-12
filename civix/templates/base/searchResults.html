@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if query %}Search: {{ query }}{% else %}Search{% endif %} — CIVIX</title>
+    <meta name="description" content="Search CIVIX articles by city, state or category.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Archivo+Black&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <!-- ═══ NAVBAR ═══ -->
+    {% include 'components/navbar.html' %}
+
+    <!-- ═══ LOCATION BAR ═══ -->
+    {% include 'components/locationBar.html' %}
+
+    <div class="search-results-page">
+
+        <!-- ═══ TOP CONTROLS AND INFO ═══ -->
+        <div class="search-top-flex-container">
+            
+            <!-- LEFT: Search + Filters -->
+            <div class="search-controls-col">
+                <div class="search-results-search-bar">
+                    <form action="{% url 'search' %}" method="GET" class="search-results-form">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" name="q" value="{{ query }}" placeholder="Search city, state or category…"
+                            autocomplete="off">
+                        {% if filter_type and filter_type != 'all' %}
+                        <input type="hidden" name="filter" value="{{ filter_type }}">
+                        {% endif %}
+                        <button type="submit">Search</button>
+                    </form>
+                </div>
+
+                {% if query %}
+                <div class="search-filter-bar">
+                    <span class="search-filter-label">Filter by:</span>
+                    <a href="{% url 'search' %}?q={{ query }}&filter=all"
+                       class="search-filter-pill {% if filter_type == 'all' %}active{% endif %}">All</a>
+                    <a href="{% url 'search' %}?q={{ query }}&filter=city"
+                       class="search-filter-pill {% if filter_type == 'city' %}active{% endif %}">📍 City</a>
+                    <a href="{% url 'search' %}?q={{ query }}&filter=state"
+                       class="search-filter-pill {% if filter_type == 'state' %}active{% endif %}">🗺️ State</a>
+                    <a href="{% url 'search' %}?q={{ query }}&filter=category"
+                       class="search-filter-pill {% if filter_type == 'category' %}active{% endif %}">🏷️ Category</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- RIGHT: Results Info -->
+            <div class="search-results-info-col">
+                <div class="search-results-label">Search Results</div>
+                <h1 class="search-results-title">
+                    {% if query %}
+                        Results for "{{ query }}"
+                    {% else %}
+                        Explore Articles
+                    {% endif %}
+                </h1>
+                <p class="search-results-meta">
+                    {% if query %}
+                        <span class="search-results-query">{{ total_count }}</span>
+                        article{{ total_count|pluralize }} found
+                    {% else %}
+                        Enter a city, state or category to find articles.
+                    {% endif %}
+                </p>
+            </div>
+
+        </div>
+
+        <!-- ═══ RESULTS GRID ═══ -->
+        <div class="search-results-grid">
+            {% for article in articles %}
+            <a href="{% url 'article_detail' slug=article.slug %}" class="search-result-card" style="text-decoration:none;color:inherit;">
+                <!-- Thumbnail -->
+                <div class="search-result-img-wrap">
+                    {% if article.media.all %}
+                    <img src="{{ article.media.all.0.file.url }}" alt="{{ article.title }}">
+                    {% else %}
+                    <div class="search-result-img-placeholder">📰</div>
+                    {% endif %}
+                </div>
+
+                <!-- Tags (category + city/state) -->
+                <div class="search-result-tags">
+                    <span class="search-result-tag">{{ article.category_id.category_name }}</span>
+                    <span class="search-result-tag city-tag">📍 {{ article.city_id.city_name }}, {{ article.city_id.state_id.state_name }}</span>
+                </div>
+
+                <!-- Title -->
+                <div class="search-result-title">{{ article.title }}</div>
+
+                <!-- Excerpt -->
+                <p class="search-result-excerpt">{{ article.content|striptags|truncatewords:25 }}</p>
+
+                <!-- Meta -->
+                <div class="search-result-meta">
+                    <span>{{ article.author_id.first_name }} {{ article.author_id.last_name }}</span>
+                    <span>·</span>
+                    <span>{{ article.read_time }} min read</span>
+                    <span>·</span>
+                    <span>{{ article.published_at|default:article.created_at|date:"M d, Y" }}</span>
+                </div>
+            </a>
+            {% empty %}
+            <div class="search-no-results">
+                <div class="search-no-results-icon">🔍</div>
+                {% if query %}
+                <h2>No articles found for "{{ query }}"</h2>
+                <p>Try a different city, state or category name.</p>
+                {% else %}
+                <h2>Start your search</h2>
+                <p>Enter a city (e.g. Mumbai), state (e.g. Maharashtra) or category (e.g. Politics) above.</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ═══ PAGINATION ═══ -->
+        {% if articles.has_other_pages %}
+        <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:48px;font-family:'Inter',sans-serif;font-size:14px;">
+            {% if articles.has_previous %}
+            <a href="?q={{ query }}&filter={{ filter_type }}&page={{ articles.previous_page_number }}"
+               style="padding:8px 18px;border:1px solid var(--gray-300);border-radius:20px;color:var(--gray-700);transition:all 0.2s;text-decoration:none;"
+               onmouseover="this.style.background='var(--black)';this.style.color='white';this.style.borderColor='var(--black)'"
+               onmouseout="this.style.background='';this.style.color='var(--gray-700)';this.style.borderColor='var(--gray-300)'">
+                ← Prev
+            </a>
+            {% endif %}
+
+            <span style="color:var(--gray-500);">
+                Page {{ articles.number }} of {{ articles.paginator.num_pages }}
+            </span>
+
+            {% if articles.has_next %}
+            <a href="?q={{ query }}&filter={{ filter_type }}&page={{ articles.next_page_number }}"
+               style="padding:8px 18px;border:1px solid var(--gray-300);border-radius:20px;color:var(--gray-700);transition:all 0.2s;text-decoration:none;"
+               onmouseover="this.style.background='var(--black)';this.style.color='white';this.style.borderColor='var(--black)'"
+               onmouseout="this.style.background='';this.style.color='var(--gray-700)';this.style.borderColor='var(--gray-300)'">
+                Next →
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+    <!-- ═══ END SEARCH RESULTS PAGE ═══ -->
+
+    <!-- ═══ FOOTER ═══ -->
+    {% include 'components/footer.html' %}
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

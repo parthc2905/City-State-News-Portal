@@ -19,6 +19,24 @@
 
     <!-- ═══ LOCATION BAR ═══ -->
     {% include 'components/locationBar.html' %}
+    
+    <!-- ═══ NEWS TICKER ═══ -->
+    <div class="news-ticker-container">
+        <div class="ticker-label">LATEST UPDATES</div>
+        <div class="ticker-content">
+            <div class="ticker-track">
+                {% for article in ticker_articles %}
+                <a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a>
+                <span class="ticker-dot"></span>
+                {% endfor %}
+                <!-- Duplicate for seamless loop -->
+                {% for article in ticker_articles %}
+                <a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a>
+                <span class="ticker-dot"></span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
     <!-- ═══ MAIN CONTENT ═══ -->
     <div class="container">
@@ -184,6 +202,7 @@
         </section>
 
         <!-- ═══ CITIZEN JOURNALISM BANNER ═══ -->
+        {% if not user.is_authenticated or user.role == 'reader' or user.role == 'journalist' %}
         <div class="citizen-banner">
             <div class="citizen-icon">📸</div>
             <div class="citizen-content">
@@ -192,8 +211,11 @@
                     We
                     verify and publish within 24 hours.</p>
             </div>
-            <button class="citizen-btn">Submit Your Report →</button>
+            <a href="{% if not user.is_authenticated %}{% url 'login' %}{% elif user.role == 'journalist' %}{% url 'journalist_write_article' %}{% else %}{% url 'journalist_application' %}{% endif %}" style="text-decoration: none;">
+                <button class="citizen-btn">Submit Your Report →</button>
+            </a>
         </div>
+        {% endif %}
 
         <!-- ═══ STATE POLITICS ═══ -->
         <div class="section-divider">
@@ -305,14 +327,14 @@
         </section> -->
 
         <!-- ═══ NEWSLETTER ═══ -->
-        <section class="newsletter-section">
+        <section class="newsletter-section" id="contact">
             <div class="newsletter-inner">
                 <div class="newsletter-icon">📬</div>
                 <h2 class="newsletter-title">Get the best of CIVIX</h2>
                 <p class="newsletter-desc">Join 2.4 million readers who start their day with hyper-local news, analysis,
                     and
                     stories that matter to your community.</p>
-                <form class="newsletter-form">
+                <form class="newsletter-form" action="{% url 'subscription_pricing' %}" method="get">
                     <input type="email" placeholder="Enter your email address">
                     <button type="submit">Subscribe</button>
                 </form>
@@ -328,21 +350,21 @@
 
         <section class="tags-section">
             <div class="tags-grid">
-                <span class="tag-pill">State Politics</span>
-                <span class="tag-pill">Climate & Environment</span>
-                <span class="tag-pill">Public Health</span>
-                <span class="tag-pill">Infrastructure</span>
-                <span class="tag-pill">Technology</span>
-                <span class="tag-pill">Education Policy</span>
-                <span class="tag-pill">Urban Development</span>
-                <span class="tag-pill">Agriculture</span>
-                <span class="tag-pill">Crime & Justice</span>
-                <span class="tag-pill">Arts & Culture</span>
-                <span class="tag-pill">Sports</span>
-                <span class="tag-pill">Business & Economy</span>
-                <span class="tag-pill">Elections 2026</span>
-                <span class="tag-pill">Citizen Journalism</span>
-                <span class="tag-pill">Opinion</span>
+                <a href="{% url 'state_politics' %}" class="tag-pill">State Politics</a>
+                <a href="{% url 'search' %}?q=Climate" class="tag-pill">Climate & Environment</a>
+                <a href="{% url 'search' %}?q=Health" class="tag-pill">Public Health</a>
+                <a href="{% url 'search' %}?q=Infrastructure" class="tag-pill">Infrastructure</a>
+                <a href="{% url 'search' %}?q=Technology" class="tag-pill">Technology</a>
+                <a href="{% url 'search' %}?q=Education" class="tag-pill">Education Policy</a>
+                <a href="{% url 'search' %}?q=Urban" class="tag-pill">Urban Development</a>
+                <a href="{% url 'search' %}?q=Agriculture" class="tag-pill">Agriculture</a>
+                <a href="{% url 'search' %}?q=Crime" class="tag-pill">Crime & Justice</a>
+                <a href="{% url 'search' %}?q=Arts" class="tag-pill">Arts & Culture</a>
+                <a href="{% url 'search' %}?q=Sports" class="tag-pill">Sports</a>
+                <a href="{% url 'search' %}?q=Business" class="tag-pill">Business & Economy</a>
+                <a href="{% url 'search' %}?q=Elections" class="tag-pill">Elections 2026</a>
+                <a href="{% url 'search' %}?q=Citizen Journalism" class="tag-pill">Citizen Journalism</a>
+                <a href="{% url 'search' %}?q=Opinion" class="tag-pill">Opinion</a>
             </div>
         </section>
 

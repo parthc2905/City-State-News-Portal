@@ -58,4 +58,17 @@ def all_states(request):
         print("====== ERROR IN all_states CONTEXT PROCESSOR ======", repr(e))
         return {
             'all_states': []
+        }
+
+from news.models import News_article
+
+def news_ticker(request):
+    try:
+        ticker_articles = News_article.objects.filter(status='approved').order_by('-created_at')[:15]
+        return {
+            'ticker_articles': ticker_articles
+        }
+    except Exception:
+        return {
+            'ticker_articles': []
         }
