@@ -15,6 +15,7 @@
 </head>
 
 <body>
+    <div hidden aria-hidden="true">{% csrf_token %}</div>
 
     <!-- ═══ NAVBAR ═══ -->
     {% include 'components/navbar.html' %}
@@ -151,7 +152,7 @@
 
             <!-- ═══ ARTICLE MIDDLE AD ═══ -->
             {% if middle_ad %}
-            <div class="article-middle-ad-banner" id="adBanner-{{ middle_ad.id }}">
+            <div class="article-middle-ad-banner" id="adBanner-{{ middle_ad.id }}" data-ad-id="{{ middle_ad.id }}">
                 <div class="ad-banner-header">
                     <span class="ad-label">Advertisement</span>
                     <div class="ad-actions">
@@ -159,7 +160,7 @@
                         <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ middle_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                     </div>
                 </div>
-                <a {% if middle_ad.target_url %}href="{{ middle_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+                <a {% if middle_ad.target_url %}href="{{ middle_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content" data-ad-click="{{ middle_ad.id }}">
                     {% if middle_ad.ad_format == 'Video' and middle_ad.media_file %}
                     <video src="{{ middle_ad.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
                     {% elif middle_ad.media_file %}
@@ -260,7 +261,7 @@
 
                 <!-- ═══ SIDEBAR AD ═══ -->
                 {% if sidebar_ad %}
-                <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" style="margin-top: 30px;">
+                <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" data-ad-id="{{ sidebar_ad.id }}" style="margin-top: 30px;">
                     <div class="ad-banner-header">
                         <span class="ad-label">Advertisement</span>
                         <div class="ad-actions">
@@ -268,7 +269,7 @@
                             <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd-{{ sidebar_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                         </div>
                     </div>
-                    <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                    <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content" data-ad-click="{{ sidebar_ad.id }}">
                         {% if sidebar_ad.ad_format == 'Video' and sidebar_ad.media_file %}
                         <video src="{{ sidebar_ad.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
                         {% elif sidebar_ad.media_file %}
@@ -310,6 +311,51 @@
                 alert('✓ Link copied to clipboard!');
             });
         }
+
+        (function recordArticleViewAfterDwell() {
+            const DWELL_MS = 7000;
+            const recordUrl = '{% url "article_record_view" slug=article.slug %}';
+            let done = false;
+            let timerId = null;
+
+            function postRecord() {
+                if (done) return;
+                if (document.visibilityState !== 'visible') return;
+                done = true;
+                const token = typeof getCookie === 'function' ? getCookie('csrftoken') : null;
+                if (!token) return;
+                fetch(recordUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRFToken': token,
+                        'Accept': 'application/json',
+                    },
+                }).catch(function () { /* ignore network errors */ });
+            }
+
+            function clearTimer() {
+                if (timerId !== null) {
+                    clearTimeout(timerId);
+                    timerId = null;
+                }
+            }
+
+            function schedule() {
+                clearTimer();
+                timerId = setTimeout(postRecord, DWELL_MS);
+            }
+
+            window.addEventListener('pagehide', clearTimer);
+            window.addEventListener('pageshow', function (ev) {
+                if (ev.persisted && !done) schedule();
+            });
+            document.addEventListener('visibilitychange', function () {
+                if (document.visibilityState === 'hidden') clearTimer();
+                else if (!done) schedule();
+            });
+            schedule();
+        })();
     </script>
 </body>
 

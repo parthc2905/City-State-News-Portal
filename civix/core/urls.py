@@ -37,6 +37,7 @@ urlpatterns = [
     path('reader/unsave/<int:article_id>/', views.readerUnsaveArticleView, name='reader_unsave_article'),
     path('reader/profile/', views.readerProfileView, name='reader_profile'),
     path('reader/general/', views.readerGeneralView, name='reader_general'),
+    path('article/<slug:slug>/record-view/', views.recordArticleView, name='article_record_view'),
     path('article/<slug:slug>/', views.articleDetailView, name='article_detail'),
     path('article/comment/<int:article_id>/', views.addCommentView, name='add_comment'),
     path('latest/', views.latestStoriesView, name='latest_stories'),

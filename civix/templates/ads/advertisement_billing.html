@@ -144,15 +144,45 @@
     }
 
     .payment-success-text {
-        color: var(--accent-green);
-        font-weight: 800;
-        font-size: 12px;
+        color: #059669;
+        font-weight: 700;
+        font-size: 11px;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: #ecfdf5;
-        padding: 6px 12px;
+        background: transparent;
+        padding: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .receipt-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-receipt {
+        background: white;
+        color: var(--gray-700) !important;
+        border: 1px solid var(--gray-200);
+        padding: 6px 10px;
         border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-receipt:hover {
+        border-color: var(--gray-300);
+        color: var(--black) !important;
+        background: var(--gray-50);
     }
 
     /* Right Side Cards */
@@ -233,11 +263,13 @@
 
 {% block dashboard_title %}Billing & Payments{% endblock %}
 
+{% comment %} 
 {% block dashboard_actions %}
 <button class="btn btn-secondary">
     💳 Manage Methods
 </button>
 {% endblock dashboard_actions %}
+{% endcomment %}
 
 {% block content %}
 <div class="billing-grid">
@@ -272,9 +304,14 @@
                     <td>{{ ad.created_at|date:"d M Y" }}</td>
                     <td>
                         {% if ad.payment_status == 'Paid' %}
-                            <span class="payment-success-text">
-                                <i>✔</i> SUCCESS
-                            </span>
+                            <div class="receipt-actions">
+                                <span class="payment-success-text">
+                                    <i>✔</i> SUCCESS
+                                </span>
+                                <a href="{% url 'payment_receipt' ad.id %}" class="btn-receipt" target="_blank" rel="noopener">
+                                    <span>⤓</span> Receipt
+                                </a>
+                            </div>
                         {% else %}
                             <a href="{% url 'payment_initiate' ad.id %}" class="btn-pay">
                                 <span>Pay Now</span>
@@ -296,12 +333,6 @@
     </div>
 
     <div>
-        <div class="balance-card">
-            <span style="font-size: 13px; opacity: 0.8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Wallet Balance</span>
-            <div class="balance-amount">₹ 0.00</div>
-            <button class="btn-glass">Add Funds</button>
-        </div>
-
         <div class="tax-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
                 <h3 style="font-size: 16px; font-weight: 800; color: var(--black);">Business Info</h3>
@@ -323,7 +354,9 @@
                 <span class="tax-value">{{ application.email }}</span>
             </div>
 
-            <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 10px;">Edit Information</button>
+            <a href="{% url 'advertiser_profile' %}" class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 10px;">
+                See All info
+            </a>
         </div>
     </div>
 </div>

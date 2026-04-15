@@ -9,6 +9,7 @@ urlpatterns = [
     path('campaigns/create/', views.createCampaignView, name='create_campaign'),
     path('campaigns/edit/<int:id>/', views.editCampaignView, name='edit_campaign'),
     path('reports/', views.advertiserReportsView, name='advertiser_reports'),
+    path('reports/download/', views.advertiserDownloadReportView, name='advertiser_download_report'),
     path('billing/', views.advertiserBillingView, name='advertiser_billing'),
     path('profile/', views.advertiserProfileView, name='advertiser_profile'),
     path('general/', views.advertiserGeneralView, name='advertiser_general'),
@@ -18,4 +19,6 @@ urlpatterns = [
     path('payment/initiate/<int:ad_id>/', views.initiatePaymentView, name='payment_initiate'),
     path('payment/success/<int:transaction_id>/', views.paymentSuccessView, name='payment_success'),
     path('payment/failed/<int:transaction_id>/', views.paymentFailedView, name='payment_failed'),
+    path('payment/receipt/<int:ad_id>/', views.downloadReceiptView, name='payment_receipt'),
+    path('track-engagement/', views.trackAdEngagementView, name='track_ad_engagement'),
 ]

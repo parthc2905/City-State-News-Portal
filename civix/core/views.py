@@ -24,6 +24,7 @@ from django.contrib import messages
 from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 def get_active_ads(placement_type, count=1):
     from ads.models import Advertisement
@@ -60,9 +61,7 @@ def articleDetailView(request, slug):
         if not request.user.is_authenticated or (request.user.role != 'admin' and request.user != article.author_id):
             raise Http404()
 
-    # Increment view count
-    News_article.objects.filter(pk=article.pk).update(views_count=F('views_count') + 1)
-    article.views_count += 1
+    # View count is incremented after ~7s dwell via recordArticleView (client POST)
 
     # Compute read time
     word_count = len(article.content.split())
@@ -106,6 +105,22 @@ def articleDetailView(request, slug):
     })
 
 
+@require_POST
+def recordArticleView(request, slug):
+    """Increment views_count after client-side dwell (same visibility rules as article detail)."""
+    article_qs = News_article.objects.select_related('author_id')
+    article = get_object_or_404(article_qs, slug=slug)
+    if article.status != 'approved':
+        if not request.user.is_authenticated or (
+            getattr(request.user, 'role', None) != 'admin' and request.user != article.author_id
+        ):
+            return JsonResponse({'ok': False}, status=404)
+    updated = News_article.objects.filter(pk=article.pk).update(
+        views_count=F('views_count') + 1
+    )
+    if not updated:
+        return JsonResponse({'ok': False}, status=404)
+    return JsonResponse({'ok': True})
 
 
 def latestStoriesView(request):

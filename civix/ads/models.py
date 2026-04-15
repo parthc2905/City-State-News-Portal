@@ -34,6 +34,9 @@ class Advertisement(models.Model):
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
     duration_minutes = models.PositiveIntegerField(default=5, help_text="Duration in minutes (e.g., 5, 10, 15...)")
     amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    impressions_count = models.PositiveIntegerField(default=0)
+    clicks_count = models.PositiveIntegerField(default=0)
+    hovers_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

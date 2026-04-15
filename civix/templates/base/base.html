@@ -127,7 +127,7 @@
 
                     <!-- ═══ SIDEBAR AD ═══ -->
                     {% if sidebar_ad %}
-                    <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" style="margin-top: 40px;">
+                    <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" data-ad-id="{{ sidebar_ad.id }}" style="margin-top: 40px;">
                         <div class="ad-banner-header">
                             <span class="ad-label">Advertisement</span>
                             <div class="ad-actions">
@@ -135,7 +135,7 @@
                                 <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd-{{ sidebar_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                             </div>
                         </div>
-                        <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                        <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content" data-ad-click="{{ sidebar_ad.id }}">
                             {% if sidebar_ad.ad_format == 'Video' and sidebar_ad.media_file %}
                             <video src="{{ sidebar_ad.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
                             {% elif sidebar_ad.media_file %}
@@ -154,7 +154,7 @@
 
         <!-- ═══ ADVERTISEMENT BANNER ═══ -->
         {% if display_ad %}
-        <div class="ad-banner-container" id="adBanner-{{ display_ad.id }}">
+        <div class="ad-banner-container" id="adBanner-{{ display_ad.id }}" data-ad-id="{{ display_ad.id }}">
             <div class="ad-banner-header">
                 <span class="ad-label">Advertisement</span>
                 <div class="ad-actions">
@@ -162,7 +162,7 @@
                     <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                 </div>
             </div>
-            <a {% if display_ad.target_url %}href="{{ display_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+            <a {% if display_ad.target_url %}href="{{ display_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content" data-ad-click="{{ display_ad.id }}">
                 {% if display_ad.ad_format == 'Video' and display_ad.media_file %}
                 <video src="{{ display_ad.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
                 {% elif display_ad.media_file %}
@@ -234,7 +234,7 @@
 
         <!-- ═══ ADVERTISEMENT BANNER 2 ═══ -->
         {% if display_ad_2 %}
-        <div class="ad-banner-container" id="adBanner-{{ display_ad_2.id }}">
+        <div class="ad-banner-container" id="adBanner-{{ display_ad_2.id }}" data-ad-id="{{ display_ad_2.id }}">
             <div class="ad-banner-header">
                 <span class="ad-label">Advertisement</span>
                 <div class="ad-actions">
@@ -242,7 +242,7 @@
                     <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad_2.id }}').style.display='none'" title="Hide Ad">✕</button>
                 </div>
             </div>
-            <a {% if display_ad_2.target_url %}href="{{ display_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+            <a {% if display_ad_2.target_url %}href="{{ display_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content" data-ad-click="{{ display_ad_2.id }}">
                 {% if display_ad_2.ad_format == 'Video' and display_ad_2.media_file %}
                 <video src="{{ display_ad_2.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
                 {% elif display_ad_2.media_file %}
@@ -320,7 +320,7 @@
 
                 <!-- ═══ SIDEBAR AD 2 ═══ -->
                 {% if sidebar_ad_2 %}
-                <div class="sidebar-ad-card" id="sidebarAd2-{{ sidebar_ad_2.id }}" style="margin-top: 40px;">
+                <div class="sidebar-ad-card" id="sidebarAd2-{{ sidebar_ad_2.id }}" data-ad-id="{{ sidebar_ad_2.id }}" style="margin-top: 40px;">
                     <div class="ad-banner-header">
                         <span class="ad-label">Advertisement</span>
                         <div class="ad-actions">
@@ -328,7 +328,7 @@
                             <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd2-{{ sidebar_ad_2.id }}').style.display='none'" title="Hide Ad">✕</button>
                         </div>
                     </div>
-                    <a {% if sidebar_ad_2.target_url %}href="{{ sidebar_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                    <a {% if sidebar_ad_2.target_url %}href="{{ sidebar_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content" data-ad-click="{{ sidebar_ad_2.id }}">
                         {% if sidebar_ad_2.ad_format == 'Video' and sidebar_ad_2.media_file %}
                         <video src="{{ sidebar_ad_2.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
                         {% elif sidebar_ad_2.media_file %}
@@ -408,7 +408,7 @@
 
         <!-- ═══ ADVERTISEMENT BANNER 3 ═══ -->
         {% if display_ad_3 %}
-        <div class="ad-banner-container" id="adBanner-{{ display_ad_3.id }}">
+        <div class="ad-banner-container" id="adBanner-{{ display_ad_3.id }}" data-ad-id="{{ display_ad_3.id }}">
             <div class="ad-banner-header">
                 <span class="ad-label">Advertisement</span>
                 <div class="ad-actions">
@@ -416,7 +416,7 @@
                     <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad_3.id }}').style.display='none'" title="Hide Ad">✕</button>
                 </div>
             </div>
-            <a {% if display_ad_3.target_url %}href="{{ display_ad_3.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+            <a {% if display_ad_3.target_url %}href="{{ display_ad_3.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content" data-ad-click="{{ display_ad_3.id }}">
                 {% if display_ad_3.ad_format == 'Video' and display_ad_3.media_file %}
                 <video src="{{ display_ad_3.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
                 {% elif display_ad_3.media_file %}
