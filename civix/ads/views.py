@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import AdvertiserApplication, Advertisement
+from .models import AdvertiserApplication, Advertisement, PaymentTransaction
+import uuid
 from .forms import AdvertiserApplicationForm, AdvertisementForm
 from django.contrib import messages
 from django.utils import timezone
@@ -269,8 +270,29 @@ def createCampaignView(request):
             ad.advertiser = request.user
             ad.status = 'Active'
             ad.payment_status = 'Pending'
+            
+            # Calculate duration in minutes from date interval (inclusive)
+            if ad.start_date and ad.end_date:
+                days = (ad.end_date - ad.start_date).days + 1
+                if days < 1: days = 1 # Safety check
+                ad.duration_minutes = days * 24 * 60
+            else:
+                ad.duration_minutes = 0
+            
+            # Pricing logic as per new changes
+            rates = {
+                'Homepage Middle': {'Banner': 50, 'Video': 100},
+                'Homepage Sidebar': {'Banner': 40, 'Video': 90},
+                'Article Details Middle': {'Banner': 35, 'Video': 80},
+                'Article Details Sidebar': {'Banner': 30, 'Video': 75},
+            }
+            
+            placement_rates = rates.get(ad.placement, rates['Homepage Middle'])
+            daily_rate = placement_rates.get(ad.ad_format, 50)
+            ad.amount = days * daily_rate
+            
             ad.save()
-            messages.success(request, "Campaign created successfully!")
+            messages.success(request, f"Campaign created! Calculated amount: ₹{ad.amount}")
             return redirect('advertiser_campaigns')
     else:
         form = AdvertisementForm()
@@ -279,3 +301,104 @@ def createCampaignView(request):
         'application': application,
         'form': form
     })
+
+@login_required
+def editCampaignView(request, id):
+    try:
+        application = request.user.advertiser_application
+        if application.status != 'approved':
+            return redirect('advertiser_pending')
+    except AdvertiserApplication.DoesNotExist:
+        return redirect('apply_advertiser')
+
+    ad = get_object_or_404(Advertisement, id=id, advertiser=request.user)
+    
+    # Restriction: Only editable if payment is Pending
+    if ad.payment_status != 'Pending':
+        messages.error(request, "You cannot edit a campaign once payment is completed.")
+        return redirect('advertiser_campaigns')
+
+    if request.method == 'POST':
+        form = AdvertisementForm(request.POST, request.FILES, instance=ad)
+        if form.is_valid():
+            ad = form.save(commit=False)
+            
+            # Recalculate duration and amount
+            if ad.start_date and ad.end_date:
+                days = (ad.end_date - ad.start_date).days + 1
+                if days < 1: days = 1
+                ad.duration_minutes = days * 24 * 60
+                
+                # Pricing logic
+                rates = {
+                    'Homepage Middle': {'Banner': 50, 'Video': 100},
+                    'Homepage Sidebar': {'Banner': 40, 'Video': 90},
+                    'Article Details Middle': {'Banner': 35, 'Video': 80},
+                    'Article Details Sidebar': {'Banner': 30, 'Video': 75},
+                }
+                placement_rates = rates.get(ad.placement, rates['Homepage Middle'])
+                daily_rate = placement_rates.get(ad.ad_format, 50)
+                ad.amount = days * daily_rate
+            
+            ad.save()
+            messages.success(request, "Campaign updated successfully!")
+            return redirect('advertiser_campaigns')
+    else:
+        form = AdvertisementForm(instance=ad)
+
+    return render(request, 'ads/create_campaign.html', {
+        'application': application,
+        'form': form,
+        'is_edit': True,
+        'ad': ad
+    })
+
+@login_required
+def initiatePaymentView(request, ad_id):
+    application = get_object_or_404(AdvertiserApplication, user=request.user)
+    ad = get_object_or_404(Advertisement, id=ad_id, advertiser=request.user)
+    
+    if ad.payment_status == 'Paid':
+        messages.info(request, "This campaign is already paid.")
+        return redirect('advertiser_billing')
+    
+    # Create PENDING transaction
+    transaction = PaymentTransaction.objects.create(
+        advertisement=ad,
+        order_id=f"ORD-{uuid.uuid4().hex[:8].upper()}",
+        status='PENDING',
+        amount=ad.amount
+    )
+    
+    return render(request, 'ads/payment_process.html', {
+        'ad': ad,
+        'transaction': transaction,
+        'application': application
+    })
+
+@login_required
+def paymentSuccessView(request, transaction_id):
+    transaction = get_object_or_404(PaymentTransaction, id=transaction_id, advertisement__advertiser=request.user)
+    
+    transaction.status = 'SUCCESS'
+    transaction.payment_id = f"PAY-{uuid.uuid4().hex[:12].upper()}"
+    transaction.save()
+    
+    # Update advertisement payment status
+    ad = transaction.advertisement
+    ad.payment_status = 'Paid'
+    ad.save()
+    
+    messages.success(request, f"Payment successful! Transaction ID: {transaction.payment_id}")
+    return redirect('advertiser_billing')
+
+@login_required
+def paymentFailedView(request, transaction_id):
+    transaction = get_object_or_404(PaymentTransaction, id=transaction_id, advertisement__advertiser=request.user)
+    
+    transaction.status = 'FAILED'
+    transaction.failure_reason = "Simulated transaction failure."
+    transaction.save()
+    
+    messages.error(request, "Your transaction has failed. Please try again.")
+    return redirect('advertiser_billing')

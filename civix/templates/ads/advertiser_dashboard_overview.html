@@ -8,7 +8,7 @@
 {% block dashboard_title %}Dashboard Overview{% endblock %}
 
 {% block dashboard_actions %}
-<a href="#" class="btn btn-primary">
+<a href="{% url 'create_campaign' %}" class="btn btn-primary">
     <span>➕</span> Create New Campaign
 </a>
 {% endblock %}
@@ -125,7 +125,7 @@
         <div class="empty-icon">📣</div>
         <h3 class="empty-title">No campaigns found</h3>
         <p class="empty-text">You haven't created any advertisement campaigns yet.</p>
-        <a href="#" class="btn btn-primary">Create First Campaign</a>
+        <a href="{% url 'create_campaign' %}" class="btn btn-primary">Create First Campaign</a>
     </div>
     {% endfor %}
 </div>

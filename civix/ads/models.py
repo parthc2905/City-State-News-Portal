@@ -14,10 +14,12 @@ class Advertisement(models.Model):
     )
     ad_format = models.CharField(max_length=20, choices=AD_FORMAT_CHOICES, default='Banner')
     PLACEMENT_CHOICES = (
-        ('Homepage', 'Homepage'),
-        ('Sidebar', 'Sidebar'),
+        ('Homepage Middle', 'Homepage Middle'),
+        ('Homepage Sidebar', 'Homepage Sidebar'),
+        ('Article Details Middle', 'Article Details Middle'),
+        ('Article Details Sidebar', 'Article Details Sidebar'),
     )
-    placement = models.CharField(max_length=50, choices=PLACEMENT_CHOICES)
+    placement = models.CharField(max_length=50, choices=PLACEMENT_CHOICES, default='Homepage Middle')
     start_date = models.DateField(null=False)
     end_date = models.DateField(null=False)
     STATUS_CHOICES = (
@@ -30,6 +32,8 @@ class Advertisement(models.Model):
         ('Pending', 'Pending'),
     )
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
+    duration_minutes = models.PositiveIntegerField(default=5, help_text="Duration in minutes (e.g., 5, 10, 15...)")
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -84,3 +88,28 @@ class AdvertiserApplication(models.Model):
 
     def __str__(self):
         return f"Advertiser Application: {self.company_name} ({self.user.email})"
+
+
+class PaymentTransaction(models.Model):
+    advertisement = models.ForeignKey(Advertisement, on_delete=models.CASCADE, related_name="transactions")
+    
+    order_id = models.CharField(max_length=255, null=True, blank=True)
+    payment_id = models.CharField(max_length=255, null=True, blank=True)
+    
+    STATUS_CHOICES = (
+        ('SUCCESS', 'SUCCESS'),
+        ('FAILED', 'FAILED'),
+        ('PENDING', 'PENDING'),
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    failure_reason = models.TextField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "payment_transaction"
+
+    def __str__(self):
+        return f"Transaction {self.id}: {self.status} for {self.advertisement.title}"

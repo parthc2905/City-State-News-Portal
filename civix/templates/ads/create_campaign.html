@@ -79,7 +79,7 @@
 </style>
 {% endblock page_css %}
 
-{% block dashboard_title %}Create New Ad Campaign{% endblock %}
+{% block dashboard_title %}{% if is_edit %}Edit Ad Campaign{% else %}Create New Ad Campaign{% endif %}{% endblock %}
 
 {% block content %}
 <div class="container" style="max-width: 1400px; margin: 0 auto;">
@@ -128,6 +128,16 @@
                     {{ form.end_date }}
                 </div>
                 
+                <div class="form-group" id="pricing-summary" style="grid-column: span 2; background: var(--green-light); padding: 20px; border-radius: 12px; border: 1px solid var(--green); margin-bottom: 20px; display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-weight: 700; color: var(--green-dark); font-size: 14px;">Estimated Campaign Cost</span>
+                            <p id="duration-text" style="font-size: 13px; color: var(--green-dark); margin: 4px 0 0 0;"></p>
+                        </div>
+                        <div id="amount-text" style="font-size: 24px; font-weight: 800; color: var(--green-dark);">₹ 0.00</div>
+                    </div>
+                </div>
+
                 <div class="form-group full-width">
                     <label class="form-label">Brief Description</label>
                     {{ form.description }}
@@ -136,9 +146,75 @@
             
             <div class="form-footer">
                 <a href="{% url 'advertiser_campaigns' %}" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">Launch Campaign</button>
+                <button type="submit" class="btn btn-primary">{% if is_edit %}Update Campaign{% else %}Launch Campaign{% endif %}</button>
             </div>
         </form>
     </div>
 </div>
 {% endblock content %}
+
+{% block page_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('id_start_date');
+        const endDateInput = document.getElementById('id_end_date');
+        const adFormatSelect = document.getElementById('id_ad_format');
+        const pricingSummary = document.getElementById('pricing-summary');
+        const durationText = document.getElementById('duration-text');
+        const amountText = document.getElementById('amount-text');
+
+        const placementSelect = document.getElementById('id_placement');
+
+        function calculatePricing() {
+            const startStr = startDateInput.value;
+            const endStr = endDateInput.value;
+            const format = adFormatSelect.value;
+            const placement = placementSelect ? placementSelect.value : 'Homepage Middle';
+
+            if (startStr && endStr) {
+                const start = new Date(startStr);
+                const end = new Date(endStr);
+                
+                // Set times to midnight for date-only comparison
+                start.setHours(0,0,0,0);
+                end.setHours(0,0,0,0);
+
+                // Calculate days (inclusive)
+                const diffTime = end - start;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+                if (diffDays >= 1) {
+                    const rates = {
+                        'Homepage Middle': {'Banner': 50, 'Video': 100},
+                        'Homepage Sidebar': {'Banner': 40, 'Video': 90},
+                        'Article Details Middle': {'Banner': 35, 'Video': 80},
+                        'Article Details Sidebar': {'Banner': 30, 'Video': 75},
+                    };
+
+                    const placementRates = rates[placement] || rates['Homepage Middle'];
+                    const dailyRate = placementRates[format] || 50;
+                    const totalAmount = diffDays * dailyRate;
+
+                    durationText.innerText = `${diffDays} Day(s) — @ ₹${dailyRate}/day`;
+                    amountText.innerText = `₹ ${totalAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                    pricingSummary.style.display = 'block';
+                } else {
+                    pricingSummary.style.display = 'none';
+                }
+            } else {
+                pricingSummary.style.display = 'none';
+            }
+        }
+
+        startDateInput.addEventListener('change', calculatePricing);
+        endDateInput.addEventListener('change', calculatePricing);
+        adFormatSelect.addEventListener('change', calculatePricing);
+        if (placementSelect) {
+            placementSelect.addEventListener('change', calculatePricing);
+        }
+        
+        // Initial calculation if values exist
+        calculatePricing();
+    });
+</script>
+{% endblock page_js %}

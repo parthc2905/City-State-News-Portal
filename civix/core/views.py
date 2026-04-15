@@ -25,6 +25,27 @@ from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.urls import reverse
 
+def get_active_ads(placement_type, count=1):
+    from ads.models import Advertisement
+    import random
+    from django.utils import timezone
+    
+    ads_qs = Advertisement.objects.filter(
+        status='Active',
+        payment_status='Paid',
+        placement=placement_type,
+        start_date__lte=timezone.now().date(),
+        end_date__gte=timezone.now().date()
+    )
+    
+    ads_list = list(ads_qs)
+    if not ads_list:
+        return [] if count > 1 else None
+        
+    if count > 1:
+        return random.choices(ads_list, k=count)
+    return random.choice(ads_list)
+
 def articleDetailView(request, slug):
     # Fetch article - allow admin to see non-approved articles
     article_qs = News_article.objects.prefetch_related('media').select_related(
@@ -72,11 +93,16 @@ def articleDetailView(request, slug):
     for a in right_articles:
         a.read_time = max(1, len(a.content.split()) // 200)
 
+    middle_ad = get_active_ads('Article Details Middle')
+    sidebar_ad = get_active_ads('Article Details Sidebar')
+
     return render(request, 'base/articleDetail.html', {
         'article': article,
         'left_articles': left_articles,
         'right_articles': right_articles,
         'comment_form': CommentForm(),
+        'middle_ad': middle_ad,
+        'sidebar_ad': sidebar_ad,
     })
 
 
@@ -98,10 +124,15 @@ def latestStoriesView(request):
     left_articles  = rest[::2][:2]   # Limit to top 2 odd-index articles
     right_articles = rest[1::2][:2]  # Limit to top 2 even-index articles
 
+    middle_ad = get_active_ads('Article Details Middle')
+    sidebar_ad = get_active_ads('Article Details Sidebar')
+
     return render(request, 'base/latestStories.html', {
         'hero': hero,
         'left_articles': left_articles,
         'right_articles': right_articles,
+        'middle_ad': middle_ad,
+        'sidebar_ad': sidebar_ad,
     })
 
 
@@ -148,11 +179,16 @@ def searchResultsView(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    middle_ad = get_active_ads('Article Details Middle')
+    sidebar_ad = get_active_ads('Article Details Sidebar')
+
     return render(request, 'base/searchResults.html', {
         'query': query,
         'filter_type': filter_type,
         'articles': page_obj,
         'total_count': total_count,
+        'middle_ad': middle_ad,
+        'sidebar_ad': sidebar_ad,
     })
 
 
@@ -174,10 +210,15 @@ def statePoliticsView(request):
     left_articles = rest[::2][:3]   # Showing more in see-all
     right_articles = rest[1::2][:3] # Showing more in see-all
 
+    middle_ad = get_active_ads('Article Details Middle')
+    sidebar_ad = get_active_ads('Article Details Sidebar')
+
     return render(request, 'base/statePolitics.html', {
         'hero': hero,
         'left_articles': left_articles,
         'right_articles': right_articles,
+        'middle_ad': middle_ad,
+        'sidebar_ad': sidebar_ad,
     })
 
 
@@ -203,10 +244,13 @@ def categoryArticlesView(request, slug):
         return redirect('home')
 
     # Hero = random article from the category
-    hero = random.choice(all_articles)
-    rest = [a for a in all_articles if a.pk != hero.pk]
+    hero = random.choice(all_articles) if all_articles else None
+    rest = [a for a in all_articles if a.pk != hero.pk] if hero else all_articles
     left_articles  = rest[::2][:3]
     right_articles = rest[1::2][:3]
+
+    middle_ad = get_active_ads('Article Details Middle')
+    sidebar_ad = get_active_ads('Article Details Sidebar')
 
     return render(request, 'base/categoryArticles.html', {
         'category': category,
@@ -214,6 +258,8 @@ def categoryArticlesView(request, slug):
         'left_articles': left_articles,
         'right_articles': right_articles,
         'comment_form': CommentForm(),
+        'middle_ad': middle_ad,
+        'sidebar_ad': sidebar_ad,
     })
 
 
@@ -264,20 +310,15 @@ def homePage(request):
         word_count = len(article.content.split())
         article.read_time = max(1, word_count // 200)
 
-    from ads.models import Advertisement
-    import random
-    
     # Fetch active homepage ads
-    active_ads = list(Advertisement.objects.filter(
-        status='Active',
-        payment_status='Paid',
-        placement='Homepage',
-        start_date__lte=timezone.now().date(),
-        end_date__gte=timezone.now().date()
-    ))
-    
-    # Pick a random ad to display
-    display_ad = random.choice(active_ads) if active_ads else None
+    display_ads = get_active_ads('Homepage Middle', count=3)
+    display_ad = display_ads[0] if len(display_ads) > 0 else None
+    display_ad_2 = display_ads[1] if len(display_ads) > 1 else None
+    display_ad_3 = display_ads[2] if len(display_ads) > 2 else None
+
+    sidebar_ads = get_active_ads('Homepage Sidebar', count=2)
+    sidebar_ad_1 = sidebar_ads[0] if len(sidebar_ads) > 0 else None
+    sidebar_ad_2 = sidebar_ads[1] if len(sidebar_ads) > 1 else None
 
     return render(request, 'base/base.html', {
         'hero_article': hero_article,
@@ -286,6 +327,10 @@ def homePage(request):
         'state_politics_articles': state_politics_articles,
         'politics_sidebar_articles': politics_sidebar_articles,
         'display_ad': display_ad,
+        'display_ad_2': display_ad_2,
+        'display_ad_3': display_ad_3,
+        'sidebar_ad': sidebar_ad_1,   # Keep name for backward compatibility in template
+        'sidebar_ad_2': sidebar_ad_2,
     })
 
 # signup view for user registration

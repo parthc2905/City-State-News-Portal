@@ -118,6 +118,91 @@
         </div>
     </form>
 </div>
+
+<!-- BUSINESS APPLICATION DETAILS -->
+<div class="card" style="background: white; padding: 32px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: 24px;">
+    <div class="card-header" style="margin-bottom: 24px;">
+        <h3 class="card-title" style="font-size: 20px; font-weight: 700;">Business Details</h3>
+        <p class="card-description" style="color: var(--gray-500); margin-top: 4px;">Information provided during your advertiser application</p>
+    </div>
+
+    <!-- Company Information -->
+    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--black); border-bottom: 1px solid var(--gray-200); padding-bottom: 8px;">Company Information</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Company Name</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.company_name }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Business Type</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.business_type|title }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Company Size</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.company_size }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">GST Number</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.gst_number }}</div>
+        </div>
+        {% if application.website %}
+        <div style="grid-column: 1 / -1;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Website</label>
+            <a href="{{ application.website }}" target="_blank" style="color: var(--blue); font-size: 16px; text-decoration: none;">{{ application.website }}</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Contact Person Details -->
+    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--black); border-bottom: 1px solid var(--gray-200); padding-bottom: 8px;">Contact Person</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Contact Name</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.contact_name }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Designation / Title</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.designation }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Contact Email</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.email }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Contact Phone</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.phone }}</div>
+        </div>
+    </div>
+
+    <!-- Campaign Preferences -->
+    <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 16px; color: var(--black); border-bottom: 1px solid var(--gray-200); padding-bottom: 8px;">Advertising Preferences</h4>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Expected Budget</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.budget_range }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Intended Campaign Duration</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.campaign_duration }}</div>
+        </div>
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Target Cities</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.target_cities }}</div>
+        </div>
+        {% if application.ad_format_preference %}
+        <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 4px;">Ad Format Preference</label>
+            <div style="color: var(--black); font-size: 16px;">{{ application.ad_format_preference }}</div>
+        </div>
+        {% endif %}
+        <div style="grid-column: 1 / -1; margin-top: 8px;">
+            <label style="display: block; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 8px;">Campaign Objectives</label>
+            <div style="color: var(--gray-700); font-size: 15px; line-height: 1.6; background: var(--gray-50); padding: 16px; border-radius: 8px; border: 1px solid var(--gray-200);">
+                {{ application.campaign_objectives|linebreaksbr }}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
 
 {% block page_js %}

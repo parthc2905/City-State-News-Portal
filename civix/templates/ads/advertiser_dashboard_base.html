@@ -13,6 +13,72 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/journalistDashboard.css' %}">
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <style>
+        /* ═══ TOAST NOTIFICATION ═══ */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            transform: translateX(120%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid var(--green);
+            position: relative;
+        }
+
+        .toast.active {
+            transform: translateX(0);
+        }
+
+        .toast-error {
+            border-left-color: var(--red);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--black);
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .toast-close {
+            cursor: pointer;
+            font-size: 18px;
+            color: var(--gray-400);
+            transition: color 0.2s;
+        }
+
+        .toast-close:hover {
+            color: var(--black);
+        }
+    </style>
     {% block page_css %}
 
     {% endblock page_css %}
@@ -44,7 +110,41 @@
         </main>
 
     </div>
+
+    {% if messages %}
+        <div class="toast-container" id="toastContainer">
+            {% for message in messages %}
+                <div class="toast {% if message.tags == 'error' %}toast-error{% endif %}" id="toast-{{ forloop.index }}">
+                    <div class="toast-icon">
+                        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% else %}ℹ️{% endif %}
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">
+                            {% if message.tags == 'success' %}Success{% elif message.tags == 'error' %}Error{% else %}Notice{% endif %}
+                        </div>
+                        <div class="toast-message">{{ message }}</div>
+                    </div>
+                    <div class="toast-close" onclick="this.parentElement.classList.remove('active')">&times;</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <script src="{% static 'js/journalistDashboard.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach((toast, index) => {
+                setTimeout(() => {
+                    toast.classList.add('active');
+                }, index * 200 + 100);
+
+                setTimeout(() => {
+                    toast.classList.remove('active');
+                }, 5000 + (index * 200));
+            });
+        });
+    </script>
     {% block page_js %}
         
     {% endblock page_js %}

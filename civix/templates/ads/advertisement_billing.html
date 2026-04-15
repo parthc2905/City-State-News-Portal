@@ -6,53 +6,227 @@
 {% endblock title %}
 
 {% block page_css %}
-<link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
 <style>
-    /* Billing specific styles */
+    :root {
+        --card-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        --accent-green: #10b981;
+    }
+
+    .billing-grid {
+        display: grid; 
+        grid-template-columns: 2.2fr 1fr; 
+        gap: 32px;
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     .billing-card {
         background: white;
         padding: 32px;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        margin-top: 24px;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--gray-100);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .billing-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--green);
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .billing-card:hover::before {
+        opacity: 1;
     }
 
     .billing-title {
-        font-size: 20px;
-        font-weight: 700;
+        font-family: 'Spectral', serif;
+        font-size: 24px;
+        font-weight: 800;
         color: var(--black);
-        margin-bottom: 24px;
+        margin-bottom: 28px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        letter-spacing: -0.5px;
     }
 
     .invoice-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 24px;
-    }
-
-    .invoice-table th, .invoice-table td {
-        padding: 16px;
-        text-align: left;
-        border-bottom: 1px solid var(--gray-100);
     }
 
     .invoice-table th {
+        padding: 14px 16px;
+        text-align: left;
         font-weight: 700;
         color: var(--gray-500);
-        font-size: 12px;
+        font-size: 11px;
         text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid var(--gray-100);
+    }
+
+    .invoice-table td {
+        padding: 18px 16px;
+        font-size: 14px;
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-50);
+        vertical-align: middle;
+    }
+
+    .invoice-table tr:hover {
+        background: var(--gray-50);
     }
 
     .invoice-id {
-        font-weight: 600;
-        color: var(--blue);
+        font-weight: 700;
+        color: var(--green);
+        font-family: 'Inter', sans-serif;
     }
 
-    .status-badge.paid { background: #d1fae5; color: #065f46; border: 1px solid #065f46; }
-    .status-badge.pending { background: #fef3c7; color: #92400e; border: 1px solid #92400e; }
+    .campaign-name {
+        font-weight: 600;
+        color: var(--black);
+    }
+
+    .amount-text {
+        font-weight: 800;
+        color: var(--black);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Status Badges */
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 30px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-pill.paid { background: #ecfdf5; color: #059669; }
+    .status-pill.pending { background: #fffbeb; color: #d97706; }
+
+    /* Buttons */
+    .btn-pay {
+        background: var(--green);
+        color: white !important;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-pay:hover {
+        background: var(--green-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .payment-success-text {
+        color: var(--accent-green);
+        font-weight: 800;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #ecfdf5;
+        padding: 6px 12px;
+        border-radius: 6px;
+    }
+
+    /* Right Side Cards */
+    .balance-card {
+        background: linear-gradient(135deg, var(--black) 0%, #2d2d2d 100%);
+        color: white;
+        padding: 32px;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .balance-card::after {
+        content: '₹';
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        font-size: 120px;
+        color: rgba(255,255,255,0.05);
+        font-weight: 900;
+    }
+
+    .balance-amount {
+        font-size: 36px;
+        font-weight: 800;
+        margin: 12px 0 24px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .tax-card {
+        background: white;
+        padding: 28px;
+        border-radius: 16px;
+        border: 1px solid var(--gray-100);
+        box-shadow: var(--card-shadow);
+    }
+
+    .tax-item {
+        margin-bottom: 20px;
+    }
+
+    .tax-label {
+        color: var(--gray-500);
+        font-size: 11px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .tax-value {
+        color: var(--black);
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .btn-glass {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 10px;
+        border-radius: 10px;
+        width: 100%;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .btn-glass:hover {
+        background: rgba(255,255,255,0.2);
+    }
 
 </style>
 {% endblock page_css %}
@@ -60,21 +234,23 @@
 {% block dashboard_title %}Billing & Payments{% endblock %}
 
 {% block dashboard_actions %}
-<button class="btn btn-primary">
-    💳 Manage Payment Methods
+<button class="btn btn-secondary">
+    💳 Manage Methods
 </button>
 {% endblock dashboard_actions %}
 
 {% block content %}
-<!-- BILLING SUMMARY -->
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+<div class="billing-grid">
     <div class="billing-card">
-        <h2 class="billing-title">Payment History</h2>
+        <h2 class="billing-title">
+            Recent Transactions
+            <i style="color: var(--gray-300); font-style: normal; font-size: 16px;">History</i>
+        </h2>
         
         <table class="invoice-table">
             <thead>
                 <tr>
-                    <th>Invoice ID</th>
+                    <th>ID</th>
                     <th>Campaign</th>
                     <th>Amount</th>
                     <th>Status</th>
@@ -86,22 +262,32 @@
                 {% for ad in my_ads %}
                 <tr>
                     <td class="invoice-id">#INV-{{ ad.id|add:1000 }}</td>
-                    <td>{{ ad.title }}</td>
-                    <td>₹ 0.00</td>
+                    <td class="campaign-name">{{ ad.title }}</td>
+                    <td class="amount-text">₹ {{ ad.amount }}</td>
                     <td>
-                        <span class="status-badge {{ ad.payment_status|lower }}">
+                        <span class="status-pill {{ ad.payment_status|lower }}">
                             {{ ad.payment_status }}
                         </span>
                     </td>
                     <td>{{ ad.created_at|date:"d M Y" }}</td>
                     <td>
-                        <button class="action-btn" title="Download Invoice">📊</button>
+                        {% if ad.payment_status == 'Paid' %}
+                            <span class="payment-success-text">
+                                <i>✔</i> SUCCESS
+                            </span>
+                        {% else %}
+                            <a href="{% url 'payment_initiate' ad.id %}" class="btn-pay">
+                                <span>Pay Now</span>
+                                <i>→</i>
+                            </a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="padding: 40px; text-align: center; color: var(--gray-500);">
-                        No payment history found yet.
+                    <td colspan="6" style="padding: 60px; text-align: center; color: var(--gray-400);">
+                        <div style="font-size: 40px; margin-bottom: 12px;">📄</div>
+                        No transaction history available.
                     </td>
                 </tr>
                 {% endfor %}
@@ -109,24 +295,35 @@
         </table>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 24px;">
-        <div class="billing-card" style="padding: 24px;">
-            <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--gray-600);">Available Balance</h3>
-            <div style="font-size: 32px; font-weight: 800; color: var(--black);">₹ 0.00</div>
-            <button class="btn btn-primary" style="width: 100%; margin-top: 24px; justify-content: center;">Add Funds</button>
+    <div>
+        <div class="balance-card">
+            <span style="font-size: 13px; opacity: 0.8; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Wallet Balance</span>
+            <div class="balance-amount">₹ 0.00</div>
+            <button class="btn-glass">Add Funds</button>
         </div>
 
-        <div class="billing-card" style="padding: 24px;">
-            <h3 style="font-size: 16px; margin-bottom: 16px; color: var(--gray-600);">Tax Information</h3>
-            <div style="font-size: 14px; border-bottom: 1px solid var(--gray-100); padding-bottom: 12px; margin-bottom: 12px;">
-                <span style="font-weight: 600;">GST Number:</span><br>
-                <span style="color: var(--gray-700);">{{ application.gst_number }}</span>
+        <div class="tax-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--black);">Business Info</h3>
+                <span style="background: var(--green-light); color: var(--green); font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: 800;">VERIFIED</span>
             </div>
-            <div style="font-size: 14px;">
-                <span style="font-weight: 600;">Address:</span><br>
-                <span style="color: var(--gray-700);">{{ application.company_name }}</span>
+
+            <div class="tax-item">
+                <span class="tax-label">Company Name</span>
+                <span class="tax-value">{{ application.company_name }}</span>
             </div>
-            <button class="btn btn-secondary" style="width: 100%; margin-top: 24px; justify-content: center;">Update Details</button>
+
+            <div class="tax-item">
+                <span class="tax-label">GST Number</span>
+                <span class="tax-value">{{ application.gst_number }}</span>
+            </div>
+
+            <div class="tax-item">
+                <span class="tax-label">Registered Email</span>
+                <span class="tax-value">{{ application.email }}</span>
+            </div>
+
+            <button class="btn btn-secondary" style="width: 100%; justify-content: center; margin-top: 10px;">Edit Information</button>
         </div>
     </div>
 </div>

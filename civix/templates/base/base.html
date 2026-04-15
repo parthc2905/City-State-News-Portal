@@ -25,15 +25,7 @@
         <div class="ticker-label">LATEST UPDATES</div>
         <div class="ticker-content">
             <div class="ticker-track">
-                {% for article in ticker_articles %}
-                <a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a>
-                <span class="ticker-dot"></span>
-                {% endfor %}
-                <!-- Duplicate for seamless loop -->
-                {% for article in ticker_articles %}
-                <a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a>
-                <span class="ticker-dot"></span>
-                {% endfor %}
+                {% for article in ticker_articles %}<a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a><span class="ticker-dot"></span>{% endfor %}{% for article in ticker_articles %}<a href="{% url 'article_detail' slug=article.slug %}" class="ticker-item">{{ article.title }}</a><span class="ticker-dot"></span>{% endfor %}
             </div>
         </div>
     </div>
@@ -132,6 +124,30 @@
                         </div>
                     </div>
                     {% endfor %}
+
+                    <!-- ═══ SIDEBAR AD ═══ -->
+                    {% if sidebar_ad %}
+                    <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" style="margin-top: 40px;">
+                        <div class="ad-banner-header">
+                            <span class="ad-label">Advertisement</span>
+                            <div class="ad-actions">
+                                <button class="ad-action-btn" title="Report Ad">🚩</button>
+                                <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd-{{ sidebar_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
+                            </div>
+                        </div>
+                        <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                            {% if sidebar_ad.ad_format == 'Video' and sidebar_ad.media_file %}
+                            <video src="{{ sidebar_ad.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
+                            {% elif sidebar_ad.media_file %}
+                            <img src="{{ sidebar_ad.media_file.url }}" alt="{{ sidebar_ad.title }}" class="sidebar-ad-media">
+                            {% else %}
+                            <div class="sidebar-ad-placeholder">
+                                <h4>{{ sidebar_ad.title }}</h4>
+                            </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    {% endif %}
                 </aside>
             </div>
         </section>
@@ -146,7 +162,6 @@
                     <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                 </div>
             </div>
-            
             <a {% if display_ad.target_url %}href="{{ display_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
                 {% if display_ad.ad_format == 'Video' and display_ad.media_file %}
                 <video src="{{ display_ad.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
@@ -217,6 +232,31 @@
         </div>
         {% endif %}
 
+        <!-- ═══ ADVERTISEMENT BANNER 2 ═══ -->
+        {% if display_ad_2 %}
+        <div class="ad-banner-container" id="adBanner-{{ display_ad_2.id }}">
+            <div class="ad-banner-header">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-actions">
+                    <button class="ad-action-btn" title="Report Ad">🚩</button>
+                    <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad_2.id }}').style.display='none'" title="Hide Ad">✕</button>
+                </div>
+            </div>
+            <a {% if display_ad_2.target_url %}href="{{ display_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+                {% if display_ad_2.ad_format == 'Video' and display_ad_2.media_file %}
+                <video src="{{ display_ad_2.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
+                {% elif display_ad_2.media_file %}
+                <img src="{{ display_ad_2.media_file.url }}" alt="{{ display_ad_2.title }}" class="ad-media">
+                {% else %}
+                <div class="ad-placeholder">
+                    <h3>{{ display_ad_2.title }}</h3>
+                    <p>{{ display_ad_2.description }}</p>
+                </div>
+                {% endif %}
+            </a>
+        </div>
+        {% endif %}
+
         <!-- ═══ STATE POLITICS ═══ -->
         <div class="section-divider">
             <h2 class="section-title">State Politics</h2>
@@ -277,6 +317,30 @@
                     </div>
                 </div>
                 {% endfor %}
+
+                <!-- ═══ SIDEBAR AD 2 ═══ -->
+                {% if sidebar_ad_2 %}
+                <div class="sidebar-ad-card" id="sidebarAd2-{{ sidebar_ad_2.id }}" style="margin-top: 40px;">
+                    <div class="ad-banner-header">
+                        <span class="ad-label">Advertisement</span>
+                        <div class="ad-actions">
+                            <button class="ad-action-btn" title="Report Ad">🚩</button>
+                            <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd2-{{ sidebar_ad_2.id }}').style.display='none'" title="Hide Ad">✕</button>
+                        </div>
+                    </div>
+                    <a {% if sidebar_ad_2.target_url %}href="{{ sidebar_ad_2.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                        {% if sidebar_ad_2.ad_format == 'Video' and sidebar_ad_2.media_file %}
+                        <video src="{{ sidebar_ad_2.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
+                        {% elif sidebar_ad_2.media_file %}
+                        <img src="{{ sidebar_ad_2.media_file.url }}" alt="{{ sidebar_ad_2.title }}" class="sidebar-ad-media">
+                        {% else %}
+                        <div class="sidebar-ad-placeholder">
+                            <h4>{{ sidebar_ad_2.title }}</h4>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
             </aside>
         </section>
 
@@ -341,6 +405,31 @@
                 <p style="font-size:12px;color:var(--gray-600);margin-top:12px;">Free forever. Unsubscribe anytime.</p>
             </div>
         </section>
+
+        <!-- ═══ ADVERTISEMENT BANNER 3 ═══ -->
+        {% if display_ad_3 %}
+        <div class="ad-banner-container" id="adBanner-{{ display_ad_3.id }}">
+            <div class="ad-banner-header">
+                <span class="ad-label">Advertisement</span>
+                <div class="ad-actions">
+                    <button class="ad-action-btn" title="Report Ad">🚩</button>
+                    <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ display_ad_3.id }}').style.display='none'" title="Hide Ad">✕</button>
+                </div>
+            </div>
+            <a {% if display_ad_3.target_url %}href="{{ display_ad_3.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+                {% if display_ad_3.ad_format == 'Video' and display_ad_3.media_file %}
+                <video src="{{ display_ad_3.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
+                {% elif display_ad_3.media_file %}
+                <img src="{{ display_ad_3.media_file.url }}" alt="{{ display_ad_3.title }}" class="ad-media">
+                {% else %}
+                <div class="ad-placeholder">
+                    <h3>{{ display_ad_3.title }}</h3>
+                    <p>{{ display_ad_3.description }}</p>
+                </div>
+                {% endif %}
+            </a>
+        </div>
+        {% endif %}
 
         <!-- ═══ TAGS ═══ -->
         <div class="section-divider">

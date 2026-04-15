@@ -9,7 +9,7 @@
 
 {% block dashboard_actions %}
 <a href="{% url 'create_campaign' %}" class="btn btn-primary">
-    <span>+</span> Create New Campaign
+    <span>➕</span> Create New Campaign
 </a>
 {% endblock %}
 
@@ -18,32 +18,34 @@
     /* ═══ CAMPAIGN LIST & CARDS ═══ */
     .campaign-list {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-        gap: 32px;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 24px;
     }
 
     .campaign-card {
         background: var(--white);
-        border-radius: 20px;
+        border-radius: 12px;
         overflow: hidden;
         border: 1px solid var(--gray-200);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: flex;
         flex-direction: column;
         position: relative;
+        height: 300px;
     }
 
     .campaign-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
-        border-color: var(--green-light);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+        border-color: var(--green);
     }
 
     .campaign-media-wrapper {
         position: relative;
-        height: 220px;
+        height: 120px; /* Reduced from 140px */
         overflow: hidden;
         background: #000;
+        flex-shrink: 0;
     }
 
     .campaign-media {
@@ -54,19 +56,19 @@
     }
 
     .campaign-card:hover .campaign-media {
-        transform: scale(1.1);
+        transform: scale(1.08);
     }
 
     .campaign-overlay-badge {
         position: absolute;
-        top: 16px;
-        left: 16px;
+        top: 10px;
+        left: 10px;
         z-index: 10;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(8px);
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 9px;
         font-weight: 800;
         color: var(--black);
         text-transform: uppercase;
@@ -74,47 +76,52 @@
     }
 
     .campaign-body {
-        padding: 24px;
+        padding: 12px 14px; /* Slightly reduced padding */
         flex: 1;
         display: flex;
         flex-direction: column;
+        min-height: 0;
     }
 
     .campaign-title {
         font-family: 'Spectral', serif;
-        font-size: 22px;
+        font-size: 18px; /* High contrast title */
         font-weight: 700;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         color: var(--black);
         line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     .campaign-meta {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        margin-bottom: 24px;
+        gap: 5px;
+        margin-bottom: 10px;
     }
 
     .meta-item {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 13px;
+        gap: 8px;
+        font-size: 11px;
         color: var(--gray-600);
         font-weight: 500;
     }
 
     .meta-icon {
         color: var(--green);
-        font-size: 16px;
+        font-size: 14px;
     }
 
     .campaign-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding-top: 20px;
+        padding-top: 10px;
         border-top: 1px solid var(--gray-100);
         margin-top: auto;
     }
@@ -123,9 +130,9 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 6px 14px;
+        padding: 3px 10px;
         border-radius: 30px;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: 700;
     }
 
@@ -141,8 +148,8 @@
 
     .status-active::before {
         content: '';
-        width: 6px;
-        height: 6px;
+        width: 5px;
+        height: 5px;
         background: #10b981;
         border-radius: 50%;
         animation: pulseGreen 2s infinite;
@@ -150,7 +157,7 @@
 
     @keyframes pulseGreen {
         0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-        70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+        70% { box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
         100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
@@ -158,7 +165,7 @@
         color: var(--green);
         text-decoration: none;
         font-weight: 700;
-        font-size: 14px;
+        font-size: 11px;
         transition: color 0.2s;
     }
 
@@ -193,14 +200,6 @@
 
 {% block content %}
 
-
-{% if messages %}
-    {% for message in messages %}
-        <div class="message {% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
 
 <!-- CAMPAIGN LIST -->
 <div class="campaign-list">
@@ -243,7 +242,9 @@
                 <span class="status-badge {% if ad.payment_status == 'Paid' %}status-active{% else %}status-pending{% endif %}">
                     {% if ad.payment_status == 'Paid' %}Active{% else %}Pending Payment{% endif %}
                 </span>
-                <a href="#" class="btn-edit">Edit Details</a>
+                {% if ad.payment_status == 'Pending' %}
+                <a href="{% url 'edit_campaign' ad.id %}" class="btn-edit">Edit Details</a>
+                {% endif %}
             </div>
         </div>
     </div>

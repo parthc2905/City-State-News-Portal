@@ -60,7 +60,7 @@
                     <h1 class="page-title">Dashboard Overview</h1>
                     <p style="color: var(--gray-700); margin-top: 4px;">Welcome, {{ application.company_name }}</p>
                 </div>
-                <a href="#" class="btn-new-ad">Create New Campaign</a>
+                <a href="{% url 'create_campaign' %}" class="btn-new-ad">Create New Campaign</a>
             </header>
             
             <section class="stats-grid">

@@ -148,6 +148,31 @@
                 </footer> -->
 
             </article>
+
+            <!-- ═══ ARTICLE MIDDLE AD ═══ -->
+            {% if middle_ad %}
+            <div class="article-middle-ad-banner" id="adBanner-{{ middle_ad.id }}">
+                <div class="ad-banner-header">
+                    <span class="ad-label">Advertisement</span>
+                    <div class="ad-actions">
+                        <button class="ad-action-btn" title="Report Ad">🚩</button>
+                        <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ middle_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
+                    </div>
+                </div>
+                <a {% if middle_ad.target_url %}href="{{ middle_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="ad-banner-content">
+                    {% if middle_ad.ad_format == 'Video' and middle_ad.media_file %}
+                    <video src="{{ middle_ad.media_file.url }}" autoplay loop muted playsinline class="ad-media"></video>
+                    {% elif middle_ad.media_file %}
+                    <img src="{{ middle_ad.media_file.url }}" alt="{{ middle_ad.title }}" class="ad-media">
+                    {% else %}
+                    <div class="ad-placeholder">
+                        <h3>{{ middle_ad.title }}</h3>
+                        <p>{{ middle_ad.description }}</p>
+                    </div>
+                    {% endif %}
+                </a>
+            </div>
+            {% endif %}
             
             <!-- ═══ COMMENTS SECTION ═══ -->
             <section class="comments-section">
@@ -231,9 +256,31 @@
                         </div>
                     </a>
                 </div>
-                {% empty %}
-                <p style="color:var(--gray-500);font-size:14px;">No latest articles found.</p>
                 {% endfor %}
+
+                <!-- ═══ SIDEBAR AD ═══ -->
+                {% if sidebar_ad %}
+                <div class="sidebar-ad-card" id="sidebarAd-{{ sidebar_ad.id }}" style="margin-top: 30px;">
+                    <div class="ad-banner-header">
+                        <span class="ad-label">Advertisement</span>
+                        <div class="ad-actions">
+                            <button class="ad-action-btn" title="Report Ad">🚩</button>
+                            <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd-{{ sidebar_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
+                        </div>
+                    </div>
+                    <a {% if sidebar_ad.target_url %}href="{{ sidebar_ad.target_url }}" target="_blank" rel="noopener"{% endif %} class="sidebar-ad-content">
+                        {% if sidebar_ad.ad_format == 'Video' and sidebar_ad.media_file %}
+                        <video src="{{ sidebar_ad.media_file.url }}" autoplay loop muted playsinline class="sidebar-ad-media"></video>
+                        {% elif sidebar_ad.media_file %}
+                        <img src="{{ sidebar_ad.media_file.url }}" alt="{{ sidebar_ad.title }}" class="sidebar-ad-media">
+                        {% else %}
+                        <div class="sidebar-ad-placeholder">
+                            <h4>{{ sidebar_ad.title }}</h4>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                {% endif %}
             </div>
         </aside>
 

@@ -1,12 +1,8 @@
-<div class="location-bar">
-    <div class="location-inner">
-        <span class="loc-label">📍 Browse by state:</span>
-        <a href="{% url 'search' %}?q=" class="loc-chip {% if not query %}active{% endif %}">All India</a>
-        {% for state in all_states %}
-            <a href="{% url 'search' %}?q={{ state.state_name }}&filter=state" 
-               class="loc-chip {% if query == state.state_name %}active{% endif %}">
-                {{ state.state_name }}
-            </a>
-        {% endfor %}
+<div class="location-ticker-container">
+    <div class="ticker-content">
+        <div class="location-ticker-track">
+            {% for state in all_states %}<a href="{% url 'search' %}?q={{ state.state_name }}&filter=state" class="loc-chip">{{ state.state_name }}</a>{% endfor %}{% for state in all_states %}<a href="{% url 'search' %}?q={{ state.state_name }}&filter=state" class="loc-chip">{{ state.state_name }}</a>{% endfor %}
+        </div>
     </div>
+    <div class="location-ticker-label">📍 Browse by state</div>
 </div>
