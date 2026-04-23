@@ -35,6 +35,80 @@
     </div>
 </div>
 
+<div class="nav-title" style="margin: 32px 0 16px; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 700; letter-spacing: 0.05em;">Advertisement Summary</div>
+
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="stat-card">
+        <div class="stat-label">Total Campaigns</div>
+        <div class="stat-value">{{ stats.ads.total }}</div>
+        <div class="stat-change positive">{{ stats.ads.active }} Active</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Ad Revenue</div>
+        <div class="stat-value">₹{{ stats.ads.revenue|floatformat:0 }}</div>
+        <div class="stat-change positive">{{ stats.ads.paid }} Paid</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Impressions</div>
+        <div class="stat-value">{{ stats.ads.impressions }}</div>
+        <div class="stat-change">Across platform</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Clicks</div>
+        <div class="stat-value">{{ stats.ads.clicks }}</div>
+        <div class="stat-change positive">Interactive</div>
+    </div>
+</div>
+
+<div class="nav-title" style="margin: 32px 0 16px; font-size: 14px; text-transform: uppercase; color: #6b7280; font-weight: 700; letter-spacing: 0.05em;">Recent Ad Campaigns</div>
+
+<div class="table-container" style="margin-bottom: 32px; background: white; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden;">
+    <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background: #f9fafb; border-bottom: 1px solid #edf2f7;">
+                <th style="padding: 16px; text-align: left; font-size: 12px; font-weight: 600; color: #4a5568; text-transform: uppercase;">Campaign</th>
+                <th style="padding: 16px; text-align: left; font-size: 12px; font-weight: 600; color: #4a5568; text-transform: uppercase;">Advertiser</th>
+                <th style="padding: 16px; text-align: left; font-size: 12px; font-weight: 600; color: #4a5568; text-transform: uppercase;">Status</th>
+                <th style="padding: 16px; text-align: left; font-size: 12px; font-weight: 600; color: #4a5568; text-transform: uppercase;">Performance</th>
+                <th style="padding: 16px; text-align: left; font-size: 12px; font-weight: 600; color: #4a5568; text-transform: uppercase;">Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ad in recent_ads %}
+            <tr style="border-bottom: 1px solid #edf2f7;">
+                <td style="padding: 16px;">
+                    <div style="font-weight: 600; color: #2d3748;">{{ ad.title }}</div>
+                    <div style="font-size: 11px; color: #718096;">{{ ad.get_ad_format_display }} • {{ ad.get_placement_display }}</div>
+                </td>
+                <td style="padding: 16px;">
+                    <div style="font-size: 13px; color: #4a5568;">{{ ad.advertiser.first_name }} {{ ad.advertiser.last_name }}</div>
+                </td>
+                <td style="padding: 16px;">
+                    {% if ad.status == 'Active' %}
+                    <span style="padding: 4px 8px; background: #e6fffa; color: #2c7a7b; border-radius: 9999px; font-size: 11px; font-weight: 600;">Active</span>
+                    {% else %}
+                    <span style="padding: 4px 8px; background: #fff5f5; color: #c53030; border-radius: 9999px; font-size: 11px; font-weight: 600;">{{ ad.status }}</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 16px;">
+                    <div style="font-size: 12px; color: #4a5568;">
+                        👁️ {{ ad.impressions_count }} | 🖱️ {{ ad.clicks_count }}
+                    </div>
+                </td>
+                <td style="padding: 16px; font-weight: 700; color: #2d3748;">₹{{ ad.amount }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 32px; text-align: center; color: #a0aec0; font-size: 14px;">No recent campaigns found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div style="padding: 12px 16px; background: #f9fafb; border-top: 1px solid #edf2f7; text-align: right;">
+        <a href="{% url 'admin_panel_payments' %}" style="font-size: 12px; color: #3182ce; font-weight: 600; text-decoration: none;">View All Payments →</a>
+    </div>
+</div>
+
 <!-- ═══ CHARTS SECTION ═══ -->
 <div class="charts-container" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 32px;">
     

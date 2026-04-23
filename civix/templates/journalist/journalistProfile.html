@@ -141,6 +141,95 @@
             </div>
         </form>
     </div>
+    <!-- APPLICATION DOCUMENTS -->
+    {% if application %}
+    <div class="card" style="margin-top: 24px;">
+        <div class="card-header">
+            <h3 class="card-title">Application Documents</h3>
+            <p class="card-description">Verification documents submitted during your journalist application</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+            <!-- Aadhaar Card -->
+            <div style="padding: 16px; background: var(--gray-100); border-radius: 10px; border: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--black);">Aadhaar Card</div>
+                        <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">Identity Verification</div>
+                    </div>
+                    {% if application.aadhaar_verified %}
+                    <span style="background: #ecfdf5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">✓ Verified</span>
+                    {% else %}
+                    <span style="background: #fffbeb; color: #d97706; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">○ Pending</span>
+                    {% endif %}
+                </div>
+                <a href="{{ application.aadhaar_file.url }}" target="_blank" style="display: flex; align-items: center; gap: 8px; color: var(--green); text-decoration: none; font-size: 13px; font-weight: 600;">
+                    <span>📂</span> View Document
+                </a>
+            </div>
+
+            <!-- Portfolio -->
+            {% if application.portfolio_file %}
+            <div style="padding: 16px; background: var(--gray-100); border-radius: 10px; border: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--black);">Portfolio / CV</div>
+                        <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">Professional Experience</div>
+                    </div>
+                    {% if application.portfolio_verified %}
+                    <span style="background: #ecfdf5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">✓ Verified</span>
+                    {% else %}
+                    <span style="background: #fffbeb; color: #d97706; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">○ Pending</span>
+                    {% endif %}
+                </div>
+                <a href="{{ application.portfolio_file.url }}" target="_blank" style="display: flex; align-items: center; gap: 8px; color: var(--green); text-decoration: none; font-size: 13px; font-weight: 600;">
+                    <span>📂</span> View Document
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Press Card -->
+            {% if application.press_card_file %}
+            <div style="padding: 16px; background: var(--gray-100); border-radius: 10px; border: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--black);">Press Card</div>
+                        <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">Accreditation</div>
+                    </div>
+                    {% if application.press_card_verified %}
+                    <span style="background: #ecfdf5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">✓ Verified</span>
+                    {% else %}
+                    <span style="background: #fffbeb; color: #d97706; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">○ Pending</span>
+                    {% endif %}
+                </div>
+                <a href="{{ application.press_card_file.url }}" target="_blank" style="display: flex; align-items: center; gap: 8px; color: var(--green); text-decoration: none; font-size: 13px; font-weight: 600;">
+                    <span>📂</span> View Document
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Recommendation Letter -->
+            {% if application.recommendation_file %}
+            <div style="padding: 16px; background: var(--gray-100); border-radius: 10px; border: 1px solid var(--gray-200);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <div style="font-size: 14px; font-weight: 700; color: var(--black);">Recommendation Letter</div>
+                        <div style="font-size: 11px; color: var(--gray-500); margin-top: 2px;">References</div>
+                    </div>
+                    {% if application.recommendation_verified %}
+                    <span style="background: #ecfdf5; color: #059669; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">✓ Verified</span>
+                    {% else %}
+                    <span style="background: #fffbeb; color: #d97706; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;">○ Pending</span>
+                    {% endif %}
+                </div>
+                <a href="{{ application.recommendation_file.url }}" target="_blank" style="display: flex; align-items: center; gap: 8px; color: var(--green); text-decoration: none; font-size: 13px; font-weight: 600;">
+                    <span>📂</span> View Document
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 
 </div>
 {% endblock content %}

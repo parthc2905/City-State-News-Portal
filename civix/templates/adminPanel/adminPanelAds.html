@@ -1,0 +1,139 @@
+{% extends 'adminPanel/adminPanelDashboard.html' %}
+
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Advertisement Management</h1>
+{% endblock topbar_title %}
+
+{% block content %}
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Advertisements</div>
+        <div class="stat-value">{{ stats.total }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active</div>
+        <div class="stat-value">{{ stats.active }}</div>
+        <div class="stat-change positive">Showing</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Reported</div>
+        <div class="stat-value">{{ stats.reported }}</div>
+        {% if stats.reported > 0 %}
+        <div class="stat-change negative">Check Reasons</div>
+        {% endif %}
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Expired/Hidden</div>
+        <div class="stat-value">{{ stats.expired }}</div>
+    </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <form id="searchForm" class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" placeholder="Search by title, advertiser, or email" value="{{ current.q }}">
+    </form>
+
+    <div class="filter-group">
+        <a href="?status=all{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'all' %}active{% endif %}">All</a>
+        <a href="?status=reported{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'reported' %}active{% endif %}">⚠️ Reported</a>
+        <a href="?status=Active{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'Active' %}active{% endif %}">✓ Active</a>
+        <a href="?status=Expired{% if current.q %}&q={{ current.q }}{% endif %}" class="filter-btn {% if current.status == 'Expired' %}active{% endif %}">🚫 Hidden</a>
+    </div>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Advertiser</th>
+                <th>Ad Campaign</th>
+                <th>Type & Placement</th>
+                <th>Stats</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ad in ads %}
+            <tr>
+                <td>
+                    <div class="user-info">
+                        <h4>{{ ad.advertiser.first_name }} {{ ad.advertiser.last_name }}</h4>
+                        <p>{{ ad.advertiser.email }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-weight: 600; color: var(--gray-800);">{{ ad.title }}</div>
+                    <div style="font-size: 11px; color: var(--gray-500);">ID: #{{ ad.id }}</div>
+                </td>
+                <td>
+                    <div style="font-size: 13px; color: var(--gray-700);">{{ ad.ad_format }}</div>
+                    <div style="font-size: 11px; color: var(--gray-500);">{{ ad.placement }}</div>
+                </td>
+                <td>
+                    <div style="font-size: 12px; color: var(--gray-700);">
+                        👁️ {{ ad.impressions_count }} <br>
+                        🖱️ {{ ad.clicks_count }}
+                    </div>
+                </td>
+                <td>
+                    {% if ad.status == 'Active' %}
+                    <span class="status-badge status-approved">✓ Active</span>
+                    {% else %}
+                    <span class="status-badge status-rejected">🚫 Hidden</span>
+                    {% endif %}
+
+                    {% if ad.ad_reports.exists %}
+                    <div style="margin-top: 8px;">
+                        <span class="status-badge" 
+                              style="background: #fff3cd; color: #856404; font-size: 10px; padding: 2px 6px; border: 1px solid #ffeeba; cursor: pointer;"
+                              onclick="alert('Report Reasons for Ad &quot;{{ ad.title|escapejs }}&quot;:\n\n{% for report in ad.ad_reports.all %}{{ forloop.counter }}. {{ report.reason|escapejs }}\n{% endfor %}')"
+                              title="Click to view report reasons">
+                            ⚠️ {{ ad.ad_reports.count }} Reports
+                        </span>
+                        {% with first_report=ad.ad_reports.first %}
+                        <p style="font-size: 10px; margin: 4px 0 0 0; color: #856404; line-height: 1.2;">
+                            <b>Last:</b> {{ first_report.reason|truncatechars:30 }}
+                        </p>
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        {% if ad.status == 'Active' %}
+                        <a href="{% url 'admin_panel_ads_block' ad.id %}" class="btn-icon btn-reject"
+                            onclick="return confirm('Hide this advertisement platform-wide?')" title="Hide Ad">
+                            🚫
+                        </a>
+                        {% else %}
+                        <a href="{% url 'admin_panel_ads_unblock' ad.id %}" class="btn-icon btn-approve"
+                            onclick="return confirm('Make this advertisement active again?')" title="Show Ad">
+                            ✓
+                        </a>
+                        {% endif %}
+
+                        <a href="{% url 'admin_panel_ads_delete' ad.id %}" class="btn-icon btn-reject"
+                            onclick="return confirm('Permanently delete this advertisement? This cannot be undone.')" title="Delete">
+                            🗑️
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px 20px; color: var(--gray-500);">
+                    No advertisements found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

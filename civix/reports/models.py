@@ -7,7 +7,7 @@ class CitizenReport(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reports")
     article = models.ForeignKey(News_article, on_delete=models.SET_NULL, null=True, blank=True, related_name="article_reports")
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    reason = models.TextField()
     state = models.ForeignKey(State, on_delete=models.CASCADE)
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     
@@ -36,3 +36,15 @@ class CommentReport(models.Model):
 
     def __str__(self):
         return f"Report on Comment {self.comment.id} by {self.user}"
+
+class AdReport(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ad_reports")
+    ad = models.ForeignKey('ads.Advertisement', on_delete=models.CASCADE, related_name="ad_reports")
+    reason = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "ad_report"
+
+    def __str__(self):
+        return f"Report on Ad {self.ad.id} by {self.user}"

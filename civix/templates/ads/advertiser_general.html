@@ -8,6 +8,15 @@
 {% block page_css %}
 <link rel="stylesheet" href="{% static 'css/journalistProfile.css' %}">
 <style>
+    /* Reset inherited profile styles to match standard dashboard top-bar */
+    .page-title {
+        font-size: 24px !important;
+        margin-bottom: 0 !important;
+    }
+    .container {
+        padding: 32px 24px !important;
+    }
+
     .card {
         background: white;
         padding: 32px;
@@ -77,113 +86,113 @@
 {% block dashboard_title %}General Settings{% endblock %}
 
 {% block content %}
-{% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}" id="successAlert">
-        {% if message.tags == 'error' %}⚠{% else %}✓{% endif %} {{ message }}
-    </div>
-    {% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" id="successAlert">
+            {% if message.tags == 'error' %}⚠{% else %}✓{% endif %} {{ message }}
+        </div>
+        {% endfor %}
+    {% endif %}
 
-<!-- NOTIFICATION PREFERENCES -->
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Notification Preferences</h3>
-        <p class="card-description">Manage how you receive updates and alerts from CIVIX</p>
-    </div>
-
-    <form method="POST" action="{% url 'advertiser_general' %}">
-        {% csrf_token %}
-        <input type="hidden" name="update_notifications" value="1">
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Email Notifications</h4>
-                <p>Receive email updates about campaign status and news</p>
-            </div>
-            <div>
-                <input type="checkbox" name="email_notifications" {% if profile.email_notifications %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-            </div>
+    <!-- NOTIFICATION PREFERENCES -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Notification Preferences</h3>
+            <p class="card-description">Manage how you receive updates and alerts from CIVIX</p>
         </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Breaking News Alerts</h4>
-                <p>Get instant notifications for breaking news impacting your local area</p>
-            </div>
-            <div>
-                <input type="checkbox" name="breaking_news_alerts" {% if profile.breaking_news_alerts %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-            </div>
-        </div>
-
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Weekly Newsletter</h4>
-                <p>Receive a weekly digest of top stories and platform updates</p>
-            </div>
-            <div>
-                <input type="checkbox" name="weekly_newsletter" {% if profile.weekly_newsletter %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-            </div>
-        </div>
-
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <h4>Marketing Content</h4>
-                <p>Receive recommendations and tips for your advertising campaigns</p>
-            </div>
-            <div>
-                <input type="checkbox" name="article_recommendations" {% if profile.article_recommendations %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
-            </div>
-        </div>
-
-        <div class="form-actions" style="margin-top: 24px; display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary">Save Preferences</button>
-        </div>
-    </form>
-</div>
-
-<!-- PRIVACY & SECURITY -->
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Privacy & Security</h3>
-        <p class="card-description">Manage your account security and authentication</p>
-    </div>
-
-    <form method="POST" action="{% url 'advertiser_general' %}">
-        {% csrf_token %}
-        <input type="hidden" name="update_password" value="1">
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-            <div class="form-group">
-                <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Change Password</label>
-                <input type="password" name="new_password" class="form-input" placeholder="Enter new password" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
-            </div>
-            <div class="form-group">
-                <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Confirm New Password</label>
-                <input type="password" name="confirm_password" class="form-input" placeholder="Confirm new password" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
-            </div>
-        </div>
-
-        <div class="form-actions" style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary">Update Password</button>
-        </div>
-    </form>
-</div>
-
-<!-- DANGER ZONE -->
-<div class="card" style="border: 1px solid #fee2e2;">
-    <div class="card-header">
-        <h3 class="card-title" style="color: var(--red);">Danger Zone</h3>
-        <p class="card-description">Careful: these actions are permanent and cannot be undone</p>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <div style="color: var(--gray-600); font-size: 14px;">
-            <strong>Deactivate Campaign Account</strong><br>
-            Once you deactivate your account, all your campaigns will be paused and billing will stop.
-        </div>
-        <form method="POST" action="{% url 'advertiser_withdraw' %}" onsubmit="return confirm('WARNING: Are you sure you want to withdraw your advertiser application and delete your campaign account? This action is permanent and cannot be undone.');">
+        <form method="POST" action="{% url 'advertiser_general' %}">
             {% csrf_token %}
-            <button type="submit" class="btn-danger">Withdraw Account</button>
+            <input type="hidden" name="update_notifications" value="1">
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Email Notifications</h4>
+                    <p>Receive email updates about campaign status and news</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="email_notifications" {% if profile.email_notifications %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Breaking News Alerts</h4>
+                    <p>Get instant notifications for breaking news impacting your local area</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="breaking_news_alerts" {% if profile.breaking_news_alerts %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Weekly Newsletter</h4>
+                    <p>Receive a weekly digest of top stories and platform updates</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="weekly_newsletter" {% if profile.weekly_newsletter %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+            </div>
+
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <h4>Marketing Content</h4>
+                    <p>Receive recommendations and tips for your advertising campaigns</p>
+                </div>
+                <div>
+                    <input type="checkbox" name="article_recommendations" {% if profile.article_recommendations %}checked{% endif %} style="width: 20px; height: 20px; cursor: pointer;">
+                </div>
+            </div>
+
+            <div class="form-actions" style="margin-top: 24px; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+            </div>
         </form>
     </div>
-</div>
+
+    <!-- PRIVACY & SECURITY -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Privacy & Security</h3>
+            <p class="card-description">Manage your account security and authentication</p>
+        </div>
+
+        <form method="POST" action="{% url 'advertiser_general' %}">
+            {% csrf_token %}
+            <input type="hidden" name="update_password" value="1">
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Change Password</label>
+                    <input type="password" name="new_password" class="form-input" placeholder="Enter new password" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 8px;">Confirm New Password</label>
+                    <input type="password" name="confirm_password" class="form-input" placeholder="Confirm new password" required style="width: 100%; padding: 10px; border: 1px solid var(--gray-300); border-radius: 8px;">
+                </div>
+            </div>
+
+            <div class="form-actions" style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary">Update Password</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- DANGER ZONE -->
+    <div class="card" style="border: 1px solid #fee2e2;">
+        <div class="card-header">
+            <h3 class="card-title" style="color: var(--red);">Danger Zone</h3>
+            <p class="card-description">Careful: these actions are permanent and cannot be undone</p>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="color: var(--gray-600); font-size: 14px;">
+                <strong>Deactivate Campaign Account</strong><br>
+                Once you deactivate your account, all your campaigns will be paused and billing will stop.
+            </div>
+            <form method="POST" action="{% url 'advertiser_withdraw' %}" onsubmit="return confirm('WARNING: Are you sure you want to withdraw your advertiser application and delete your campaign account? This action is permanent and cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger">Withdraw Account</button>
+            </form>
+        </div>
+    </div>
 {% endblock content %}

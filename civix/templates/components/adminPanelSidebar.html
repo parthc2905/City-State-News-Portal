@@ -23,9 +23,17 @@
                 <span class="nav-icon">📰</span>
                 Articles
             </a>
+            <a href="{% url 'admin_panel_ads' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_ads' %}active{% endif %}">
+                <span class="nav-icon">📢</span>
+                Ads
+            </a>
             <a href="{% url 'admin_panel_comments' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_comments' %}active{% endif %}">
                 <span class="nav-icon">💬</span>
                 Comments
+            </a>
+            <a href="{% url 'admin_panel_payments' %}" class="nav-item {% if request.resolver_match.url_name == 'admin_panel_payments' %}active{% endif %}">
+                <span class="nav-icon">💰</span>
+                Payments
             </a>
         </div>
 

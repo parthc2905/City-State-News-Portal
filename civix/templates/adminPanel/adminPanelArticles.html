@@ -96,17 +96,27 @@
                     <span class="status-badge status-draft">📝 Draft</span>
                     {% endif %}
                     
-                    {% if article.rejection_reason %}
-                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #dc3545; line-height: 1.3; max-width: 180px;">
-                        <strong style="display: block; font-size: 10px; text-transform: uppercase; opacity: 0.8;">Reason:</strong>
-                        {{ article.rejection_reason }}
-                    </div>
-                    {% endif %}
                     {% if article.article_reports.exists %}
-                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #f39c12; line-height: 1.3;">
-                        <span class="status-badge status-pending" style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba;">
+                    <div style="margin-top: 8px;">
+                        <span class="status-badge status-pending" 
+                              style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; cursor: pointer; display: inline-block;"
+                              onclick="alert('Report Reasons for &quot;{{ article.title|escapejs }}&quot;:\n\n{% for report in article.article_reports.all %}{{ forloop.counter }}. {{ report.reason|escapejs }}\n{% endfor %}')"
+                              title="Click to view all report reasons">
                             ⚠️ {{ article.article_reports.count }} Reports
                         </span>
+                        {% with last_report=article.article_reports.last %}
+                        <p style="font-size: 10px; margin: 4px 0 0 0; color: #856404; line-height: 1.2;">
+                            <strong style="text-transform: uppercase; font-size: 9px;">Latest Report:</strong><br>
+                            {{ last_report.reason|truncatechars:50 }}
+                        </p>
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+
+                    {% if article.rejection_reason %}
+                    <div class="status-reason" style="font-size: 11px; margin-top: 6px; color: #dc3545; line-height: 1.3; max-width: 180px;">
+                        <strong style="display: block; font-size: 10px; text-transform: uppercase; opacity: 0.8;">Admin Rejection:</strong>
+                        {{ article.rejection_reason }}
                     </div>
                     {% endif %}
                 </td>

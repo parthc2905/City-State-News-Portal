@@ -16,117 +16,134 @@
 {% block page_css %}
 <link rel="stylesheet" href="{% static 'css/journalistMyArticles.css' %}">
 <style>
-    /* Campaign-specific status overrides to keep green theme */
-    .status-badge.active { background: #ecfdf5; color: #059669; }
-    .status-badge.pending { background: #fffbeb; color: #d97706; }
     .status-badge.expired { background: #fef2f2; color: #991b1b; }
 </style>
 {% endblock page_css %}
 
 {% block content %}
-<div style="margin-bottom: 32px;">
-    <p style="color: var(--gray-600); font-size: 16px;">Welcome back, <strong>{{ application.company_name }}</strong></p>
-</div>
-
-<!-- STATS GRID -->
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Total Campaigns</span>
-            <span class="stat-icon">📣</span>
-        </div>
-        <div class="stat-value">{{ stats.total_campaigns }}</div>
-        <div class="stat-change">Lifetime across all time</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Active Now</span>
-            <span class="stat-icon">🟢</span>
-        </div>
-        <div class="stat-value">{{ stats.active_campaigns }}</div>
-        <div class="stat-change positive">Currently running</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Total Impressions</span>
-            <span class="stat-icon">👁️</span>
-        </div>
-        <div class="stat-value">{{ stats.total_impressions }}</div>
-        <div class="stat-change">Across all campaigns</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-header">
-            <span class="stat-label">Total Clicks</span>
-            <span class="stat-icon">🖱️</span>
-        </div>
-        <div class="stat-value">{{ stats.total_clicks }}</div>
-        <div class="stat-change">Direct traffic generated</div>
-    </div>
-</div>
-
-<!-- FILTERS BAR -->
-<div class="filters-bar">
-    <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" placeholder="Search campaigns... (Press Enter to Search)">
+    <div style="margin-bottom: 32px;">
+        <p style="color: var(--gray-600); font-size: 16px;">Welcome back, <strong>{{ application.company_name }}</strong></p>
     </div>
     
-    <div class="filter-group">
-        <label class="filter-label">Status:</label>
-        <select class="filter-select">
-            <option>All Campaigns</option>
-            <option>Active</option>
-            <option>Pending</option>
-            <option>Expired</option>
-        </select>
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Campaigns</span>
+                <span class="stat-icon">📣</span>
+            </div>
+            <div class="stat-value">{{ stats.total_campaigns }}</div>
+            <div class="stat-change">Lifetime across all time</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Active Now</span>
+                <span class="stat-icon">🟢</span>
+            </div>
+            <div class="stat-value">{{ stats.active_campaigns }}</div>
+            <div class="stat-change positive">Currently running</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Impressions</span>
+                <span class="stat-icon">👁️</span>
+            </div>
+            <div class="stat-value">{{ stats.total_impressions }}</div>
+            <div class="stat-change">Across all campaigns</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-label">Total Clicks</span>
+                <span class="stat-icon">🖱️</span>
+            </div>
+            <div class="stat-value">{{ stats.total_clicks }}</div>
+            <div class="stat-change">Direct traffic generated</div>
+        </div>
     </div>
 
-    <div class="filter-group">
-        <label class="filter-label">Sort by:</label>
-        <select class="filter-select">
-            <option>Newest First</option>
-            <option>Oldest First</option>
-            <option>Most Impressions</option>
-        </select>
-    </div>
-</div>
-
-<!-- CAMPAIGNS LIST (Using Articles List Structure) -->
-<div class="articles-section">
-    {% for ad in my_ads %}
-    <div class="article-item">
-        <div class="article-thumbnail-placeholder">
-            {% if ad.ad_format == 'Video' %}📹{% else %}🖼️{% endif %}
+    <!-- FILTERS BAR -->
+    <form method="GET" class="filters-bar" id="filterForm">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="q" class="search-input" placeholder="Search campaigns... (Press Enter to Search)" value="{{ current.q }}">
         </div>
         
-        <div class="article-content">
-            <div class="article-header">
-                <span class="status-badge {{ ad.status|lower }}">{{ ad.status }}</span>
-            </div>
-            <div class="article-title">{{ ad.title }}</div>
-            <div class="article-meta">
-                <div class="meta-item">📅 {{ ad.start_date|date:"d M Y" }} - {{ ad.end_date|date:"d M Y" }}</div>
-                <div class="meta-item">📍 {{ ad.placement }}</div>
-                <div class="meta-item">📊 {{ ad.impressions_count }} impressions</div>
-            </div>
+        <div class="filter-group">
+            <label class="filter-label">Status:</label>
+            <select name="status" class="filter-select" onchange="this.form.submit()">
+                <option value="all" {% if current.status == 'all' %}selected{% endif %}>All Campaigns</option>
+                <option value="Active" {% if current.status == 'Active' %}selected{% endif %}>Active</option>
+                <option value="Expired" {% if current.status == 'Expired' %}selected{% endif %}>Expired</option>
+            </select>
         </div>
 
-        <div class="article-actions">
-            <button class="action-btn preview" title="View Insights">📊</button>
-            <button class="action-btn edit" title="Edit Campaign">✏️</button>
-            <button class="action-btn delete" title="Delete">🗑️</button>
+        <div class="filter-group">
+            <label class="filter-label">Sort by:</label>
+            <select name="sort" class="filter-select" onchange="this.form.submit()">
+                <option value="newest" {% if current.sort == 'newest' %}selected{% endif %}>Newest First</option>
+                <option value="oldest" {% if current.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                <option value="impressions" {% if current.sort == 'impressions' %}selected{% endif %}>Most Impressions</option>
+            </select>
         </div>
+    </form>
+
+    <!-- CAMPAIGNS LIST -->
+    <div class="articles-section">
+        {% for ad in my_ads %}
+        <div class="article-item">
+            <div class="article-thumbnail-placeholder">
+                {% if ad.ad_format == 'Video' %}📹{% else %}🖼️{% endif %}
+            </div>
+            
+            <div class="article-content">
+                <div class="article-header">
+                    <span class="status-badge {{ ad.status|lower }}">{{ ad.status }}</span>
+                    {% if ad.payment_status == 'Paid' %}
+                    <span style="font-size: 11px; background: #eff6ff; color: #2563eb; padding: 2px 8px; border-radius: 4px; margin-left: 8px;">Paid</span>
+                    {% endif %}
+                </div>
+                <div class="article-title">{{ ad.title }}</div>
+                <div class="article-meta">
+                    <div class="meta-item">📅 {{ ad.start_date|date:"d M Y" }} - {{ ad.end_date|date:"d M Y" }}</div>
+                    <div class="meta-item">📍 {{ ad.placement }}</div>
+                    <div class="meta-item">📊 {{ ad.impressions_count }} impressions</div>
+                </div>
+            </div>
+
+            <div class="article-actions">
+                <button class="action-btn preview" title="View Details" data-url="{% url 'campaign_preview' ad.id %}" onclick="previewCampaign(this.dataset.url)">📊</button>
+                
+                {% if ad.payment_status != 'Paid' %}
+                <a href="{% url 'edit_campaign' ad.id %}" class="action-btn edit" title="Edit Campaign" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">✏️</a>
+                {% else %}
+                <button class="action-btn edit" title="Cannot edit paid campaign" disabled style="opacity: 0.5; cursor: not-allowed;">✏️</button>
+                {% endif %}
+                
+                <button class="action-btn delete" title="Delete">🗑️</button>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state">
+            <div class="empty-icon">📣</div>
+            <h3 class="empty-title">No campaigns found</h3>
+            <p class="empty-text">Try adjusting your filters or create a new campaign.</p>
+            <a href="{% url 'create_campaign' %}" class="btn btn-primary">Create New Campaign</a>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="empty-state">
-        <div class="empty-icon">📣</div>
-        <h3 class="empty-title">No campaigns found</h3>
-        <p class="empty-text">You haven't created any advertisement campaigns yet.</p>
-        <a href="{% url 'create_campaign' %}" class="btn btn-primary">Create First Campaign</a>
-    </div>
-    {% endfor %}
-</div>
 {% endblock content %}
+
+{% block page_js %}
+<script>
+function previewCampaign(url) {
+    const width = 1000;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+    window.open(url, 'campaignPreview', 'width=' + width + ',height=' + height + ',top=' + top + ',left=' + left + ',scrollbars=yes,resizable=yes');
+}
+</script>
+{% endblock page_js %}

@@ -8,6 +8,7 @@ urlpatterns = [
     path('campaigns/', views.advertiserCampaignsView, name='advertiser_campaigns'),
     path('campaigns/create/', views.createCampaignView, name='create_campaign'),
     path('campaigns/edit/<int:id>/', views.editCampaignView, name='edit_campaign'),
+    path('campaigns/preview/<int:id>/', views.campaignPreviewView, name='campaign_preview'),
     path('reports/', views.advertiserReportsView, name='advertiser_reports'),
     path('reports/download/', views.advertiserDownloadReportView, name='advertiser_download_report'),
     path('billing/', views.advertiserBillingView, name='advertiser_billing'),

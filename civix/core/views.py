@@ -9,7 +9,8 @@ from .forms import (
     JournalistApplicationDocumentsForm,
 )
 from .models import User, Profile, JournalistApplication
-from ads.models import AdvertiserApplication
+from ads.models import AdvertiserApplication, Advertisement
+from reports.models import AdReport
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .decorators import role_required
@@ -419,6 +420,9 @@ def logoutView(request):
 
 @role_required(allowed_roles=["admin"])
 def adminPanelDashboardView(request):
+    from ads.models import Advertisement, PaymentTransaction
+    from django.db.models import Sum
+    
     # --- Applications Stats ---
     apps_qs = User.objects.filter(role__in=['journalist', 'advertiser'])
     app_stats = {
@@ -452,6 +456,19 @@ def adminPanelDashboardView(request):
         'reported': comments_qs.filter(comment_reports__isnull=False).distinct().count(),
     }
 
+    # --- Ads Stats ---
+    ads_qs = Advertisement.objects.all()
+    ads_stats = {
+        'total': ads_qs.count(),
+        'active': ads_qs.filter(status='Active').count(),
+        'paid': ads_qs.filter(payment_status='Paid').count(),
+        'revenue': ads_qs.filter(payment_status='Paid').aggregate(Sum('amount'))['amount__sum'] or 0,
+        'impressions': ads_qs.aggregate(Sum('impressions_count'))['impressions_count__sum'] or 0,
+        'clicks': ads_qs.aggregate(Sum('clicks_count'))['clicks_count__sum'] or 0,
+    }
+
+    recent_ads = Advertisement.objects.select_related('advertiser').order_by('-created_at')[:5]
+
     # --- Timeline Data ---
     from datetime import timedelta
     six_months_ago = timezone.now() - timedelta(days=180)
@@ -477,7 +494,9 @@ def adminPanelDashboardView(request):
             'apps': app_stats,
             'articles': article_stats,
             'comments': comment_stats,
+            'ads': ads_stats,
         },
+        'recent_ads': recent_ads,
         'charts': {
             'app_roles': app_roles,
             'app_status': app_status,
@@ -849,6 +868,44 @@ def adminPanelReadersView(request):
 
 
 @role_required(allowed_roles=["admin"])
+def adminPanelPaymentsView(request):
+    from ads.models import PaymentTransaction
+    from django.db.models import Sum
+    query = request.GET.get("q", "").strip()
+    
+    transactions = PaymentTransaction.objects.select_related('advertisement', 'advertisement__advertiser').order_by('-created_at')
+    
+    if query:
+        transactions = transactions.filter(
+            Q(order_id__icontains=query) |
+            Q(payment_id__icontains=query) |
+            Q(advertisement__title__icontains=query) |
+            Q(advertisement__advertiser__email__icontains=query) |
+            Q(advertisement__advertiser__first_name__icontains=query) |
+            Q(advertisement__advertiser__last_name__icontains=query)
+        )
+    
+    # Stats for payments
+    total_revenue = transactions.filter(status='SUCCESS').aggregate(Sum('amount'))['amount__sum'] or 0
+    success_count = transactions.filter(status='SUCCESS').count()
+    failed_count = transactions.filter(status='FAILED').count()
+    pending_count = transactions.filter(status='PENDING').count()
+    
+    stats = {
+        'total_revenue': total_revenue,
+        'success_count': success_count,
+        'failed_count': failed_count,
+        'pending_count': pending_count,
+    }
+    
+    return render(request, 'adminPanel/adminPanelPayments.html', {
+        'transactions': transactions,
+        'stats': stats,
+        'current': {'q': query}
+    })
+
+
+@role_required(allowed_roles=["admin"])
 def adminPanelArticlesView(request):
     q = request.GET.get("q", "").strip()
     status = request.GET.get("status", "all").strip()
@@ -971,6 +1028,69 @@ def adminPanelCommentsView(request):
             "current": {"q": q, "status": status},
         },
     )
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelAdsView(request):
+    q = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "all").strip()
+
+    base_qs = Advertisement.objects.select_related("advertiser")
+
+    if q:
+        base_qs = base_qs.filter(
+            Q(title__icontains=q) |
+            Q(advertiser__first_name__icontains=q) |
+            Q(advertiser__last_name__icontains=q) |
+            Q(advertiser__email__icontains=q)
+        )
+
+    stats = {
+        "total": base_qs.count(),
+        "active": base_qs.filter(status="Active").count(),
+        "reported": base_qs.filter(ad_reports__isnull=False).distinct().count(),
+        "expired": base_qs.filter(status="Expired").count(),
+    }
+
+    ads_qs = base_qs
+    if status == "reported":
+        ads_qs = ads_qs.filter(ad_reports__isnull=False).distinct()
+    elif status != "all":
+        ads_qs = ads_qs.filter(status=status)
+
+    ads = ads_qs.order_by("-created_at")
+
+    return render(
+        request,
+        "adminPanel/adminPanelAds.html",
+        {
+            "ads": ads,
+            "stats": stats,
+            "current": {"q": q, "status": status},
+        },
+    )
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelAdBlockView(request, id):
+    ad = get_object_or_404(Advertisement, id=id)
+    ad.status = "Expired"  # Using Expired as a way to hide it
+    ad.save()
+    return redirect("admin_panel_ads")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelAdUnblockView(request, id):
+    ad = get_object_or_404(Advertisement, id=id)
+    ad.status = "Active"
+    ad.save()
+    return redirect("admin_panel_ads")
+
+
+@role_required(allowed_roles=["admin"])
+def adminPanelAdDeleteView(request, id):
+    Advertisement.objects.filter(id=id).delete()
+    return redirect("admin_panel_ads")
 
 
 @role_required(allowed_roles=["admin"])
@@ -1169,7 +1289,7 @@ def reportArticleView(request, article_id):
             user=request.user,
             article=article,
             title=f"Article Report: {article.title[:50]}",
-            description=description,
+            reason=description,
             state=article.city_id.state_id,
             city=article.city_id
         )
@@ -1248,6 +1368,29 @@ def addCommentView(request, article_id):
         return redirect('article_detail', slug=article.slug)
     
     return redirect('home')
+
+
+def reportAdView(request, ad_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'message': 'Please log in to report advertisements.'}, status=403)
+    
+    if request.method == 'POST':
+        from ads.models import Advertisement
+        from reports.models import AdReport
+        ad = get_object_or_404(Advertisement, id=ad_id)
+        reason = request.POST.get('description', '').strip()
+        
+        if not reason:
+            return JsonResponse({'message': 'Reporting reason is required.'}, status=400)
+            
+        AdReport.objects.create(
+            user=request.user,
+            ad=ad,
+            reason=reason
+        )
+        return JsonResponse({'message': 'Thank you. The advertisement has been reported and will be reviewed.'})
+    
+    return JsonResponse({'message': 'Invalid request method.'}, status=405)
 
 # @login_required(login_url='login')
 def journalistApplicationView(request):

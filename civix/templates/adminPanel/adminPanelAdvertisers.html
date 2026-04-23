@@ -107,6 +107,10 @@
                         <button class="btn-icon btn-view" onclick="viewApplication('{{ user.id }}')"
                             title="View Details">👁️</button>
 
+                        <a href="{% url 'admin_panel_payments' %}?q={{ user.email }}" class="btn-icon" style="background: #ebf8ff; color: #2b6cb0; display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; text-decoration: none; font-size: 14px;" title="View Payments">
+                            💰
+                        </a>
+
 
                         {% if user.approval_status == "pending" %}
 

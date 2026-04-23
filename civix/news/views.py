@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
 from location.models import State, City
-from core.models import Profile
+from core.models import Profile, JournalistApplication
 from reports.models import CitizenReport
 from .models import News_article, ArticleMedia, Category, SavedArticle
 from .forms import ArticleWriteForm, ArticleMediaForm
@@ -340,10 +340,13 @@ def journalistProfileView(request):
     states = State.objects.all()
     cities = City.objects.all()
     
+    application = JournalistApplication.objects.filter(user=request.user).first()
+    
     return render(request, "journalist/journalistProfile.html", {
         "states": states,
         "cities": cities,
         "profile": profile,
+        "application": application,
     })
 
 
@@ -415,7 +418,7 @@ def report_article_view(request, article_id):
         user=request.user,
         article=article,
         title=f"Report: {article.title}",
-        description=reason,
+        reason=reason,
         state=article.city_id.state_id,
         city=article.city_id,
         status='pending'

@@ -195,70 +195,70 @@
         .form-grid { grid-template-columns: 1fr; }
         .form-group.full-width { grid-column: 1; }
     }
+
+    }
 </style>
 {% endblock page_css %}
 
 {% block content %}
-
-
-<!-- CAMPAIGN LIST -->
-<div class="campaign-list">
-    {% for ad in my_ads %}
-    <div class="campaign-card">
-        <div class="campaign-media-wrapper">
-            <div class="campaign-overlay-badge">{{ ad.ad_format }}</div>
-            {% if ad.media_file %}
-                {% if ad.ad_format == 'Video' %}
-                <video class="campaign-media" src="{{ ad.media_file.url }}" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
+    <!-- CAMPAIGN LIST -->
+    <div class="campaign-list">
+        {% for ad in my_ads %}
+        <div class="campaign-card">
+            <div class="campaign-media-wrapper">
+                <div class="campaign-overlay-badge">{{ ad.ad_format }}</div>
+                {% if ad.media_file %}
+                    {% if ad.ad_format == 'Video' %}
+                    <video class="campaign-media" src="{{ ad.media_file.url }}" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>
+                    {% else %}
+                    <img class="campaign-media" src="{{ ad.media_file.url }}" alt="{{ ad.title }}">
+                    {% endif %}
                 {% else %}
-                <img class="campaign-media" src="{{ ad.media_file.url }}" alt="{{ ad.title }}">
-                {% endif %}
-            {% else %}
-                <div class="campaign-media" style="display:flex; align-items:center; justify-content:center; color:#555; background: #111;">
-                    <span style="font-size: 40px; opacity: 0.3;">🖼️</span>
-                </div>
-            {% endif %}
-        </div>
-        
-        <div class="campaign-body">
-            <div class="campaign-title">{{ ad.title }}</div>
-            <div class="campaign-meta">
-                <div class="meta-item">
-                    <span class="meta-icon">📍</span>
-                    <span>{{ ad.placement }}</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-icon">📅</span>
-                    <span>{{ ad.start_date|date:"d M Y" }} — {{ ad.end_date|date:"d M Y" }}</span>
-                </div>
-                {% if ad.target_url %}
-                <div class="meta-item">
-                    <span class="meta-icon">🔗</span>
-                    <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ ad.target_url }}</span>
-                </div>
+                    <div class="campaign-media" style="display:flex; align-items:center; justify-content:center; color:#555; background: #111;">
+                        <span style="font-size: 40px; opacity: 0.3;">🖼️</span>
+                    </div>
                 {% endif %}
             </div>
-            <div class="campaign-footer">
-                <span class="status-badge {% if ad.payment_status == 'Paid' %}status-active{% else %}status-pending{% endif %}">
-                    {% if ad.payment_status == 'Paid' %}Active{% else %}Pending Payment{% endif %}
-                </span>
-                {% if ad.payment_status == 'Pending' %}
-                <a href="{% url 'edit_campaign' ad.id %}" class="btn-edit">Edit Details</a>
-                {% endif %}
+            
+            <div class="campaign-body">
+                <div class="campaign-title">{{ ad.title }}</div>
+                <div class="campaign-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">📍</span>
+                        <span>{{ ad.placement }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>{{ ad.start_date|date:"d M Y" }} — {{ ad.end_date|date:"d M Y" }}</span>
+                    </div>
+                    {% if ad.target_url %}
+                    <div class="meta-item">
+                        <span class="meta-icon">🔗</span>
+                        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ ad.target_url }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="campaign-footer">
+                    <span class="status-badge {% if ad.payment_status == 'Paid' %}status-active{% else %}status-pending{% endif %}">
+                        {% if ad.payment_status == 'Paid' %}Active{% else %}Pending Payment{% endif %}
+                    </span>
+                    {% if ad.payment_status == 'Pending' %}
+                    <a href="{% url 'edit_campaign' ad.id %}" class="btn-edit">Edit Details</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        {% empty %}
+        <div class="empty-state" style="grid-column: 1 / -1;">
+            <span class="empty-icon">📣</span>
+            <h3 style="font-family: 'Spectral', serif; font-size: 24px; margin-bottom: 8px;">No campaigns yet</h3>
+            <p style="color:var(--gray-600); margin-bottom:24px; font-size: 15px;">Your active and upcoming advertisement campaigns will appear here.</p>
+            <a href="{% url 'create_campaign' %}" class="btn btn-primary" style="margin: 0 auto;">
+                <span>+</span> Create First Campaign
+            </a>
+        </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="empty-state" style="grid-column: 1 / -1;">
-        <span class="empty-icon">📣</span>
-        <h3 style="font-family: 'Spectral', serif; font-size: 24px; margin-bottom: 8px;">No campaigns yet</h3>
-        <p style="color:var(--gray-600); margin-bottom:24px; font-size: 15px;">Your active and upcoming advertisement campaigns will appear here.</p>
-        <a href="{% url 'create_campaign' %}" class="btn btn-primary" style="margin: 0 auto;">
-            <span>+</span> Create First Campaign
-        </a>
-    </div>
-    {% endfor %}
-</div>
 {% endblock content %}
 
 {% block page_js %}

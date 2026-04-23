@@ -85,13 +85,33 @@ def advertiserDashboardView(request):
     except AdvertiserApplication.DoesNotExist:
         return redirect('apply_advertiser')
         
-    my_ads = Advertisement.objects.filter(advertiser=request.user).order_by('-created_at')
+    my_ads = Advertisement.objects.filter(advertiser=request.user)
+
+    # Filtering & Searching
+    q = request.GET.get('q', '')
+    status = request.GET.get('status', 'all')
+    sort = request.GET.get('sort', 'newest')
+
+    if q:
+        my_ads = my_ads.filter(title__icontains=q)
     
-    # Simple stats for overview
-    total_campaigns = my_ads.count()
-    active_campaigns = my_ads.filter(status='Active').count()
-    total_impressions = my_ads.aggregate(total=Sum('impressions_count'))['total'] or 0
-    total_clicks = my_ads.aggregate(total=Sum('clicks_count'))['total'] or 0
+    if status != 'all':
+        my_ads = my_ads.filter(status=status)
+
+    # Sorting
+    if sort == 'newest':
+        my_ads = my_ads.order_by('-created_at')
+    elif sort == 'oldest':
+        my_ads = my_ads.order_by('created_at')
+    elif sort == 'impressions':
+        my_ads = my_ads.order_by('-impressions_count')
+
+    # All ads for stats (unfiltered)
+    all_ads_stats = Advertisement.objects.filter(advertiser=request.user)
+    total_campaigns = all_ads_stats.count()
+    active_campaigns = all_ads_stats.filter(status='Active').count()
+    total_impressions = all_ads_stats.aggregate(total=Sum('impressions_count'))['total'] or 0
+    total_clicks = all_ads_stats.aggregate(total=Sum('clicks_count'))['total'] or 0
     
     context = {
         'application': application,
@@ -101,9 +121,19 @@ def advertiserDashboardView(request):
             'active_campaigns': active_campaigns,
             'total_impressions': total_impressions,
             'total_clicks': total_clicks,
+        },
+        'current': {
+            'q': q,
+            'status': status,
+            'sort': sort
         }
     }
     return render(request, 'ads/advertiser_dashboard_overview.html', context)
+
+@login_required
+def campaignPreviewView(request, id):
+    ad = get_object_or_404(Advertisement, id=id, advertiser=request.user)
+    return render(request, 'ads/campaign_preview.html', {'ad': ad})
 
 @login_required
 def advertiserReportsView(request):

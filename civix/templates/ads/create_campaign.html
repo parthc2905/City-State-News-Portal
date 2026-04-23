@@ -76,80 +76,79 @@
             grid-column: auto;
         }
     }
+
 </style>
 {% endblock page_css %}
 
 {% block dashboard_title %}{% if is_edit %}Edit Ad Campaign{% else %}Create New Ad Campaign{% endif %}{% endblock %}
 
 {% block content %}
-<div class="container" style="max-width: 1400px; margin: 0 auto;">
-    <div class="card">
-        <div style="margin-bottom: 32px;">
-            <h3 style="font-size: 20px; font-weight: 700;">Campaign Details</h3>
-            <p style="color: var(--gray-500); margin-top: 4px;">Provide the visuals and target metrics for your new advertisement.</p>
-        </div>
-
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            
-            <div class="form-grid">
-                <div class="form-group full-width">
-                    <label class="form-label">Campaign Title</label>
-                    {{ form.title }}
-                </div>
-                
-                <div class="form-group full-width">
-                    <label class="form-label">Target URL (Landing Page)</label>
-                    {{ form.target_url }}
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Ad Format</label>
-                    {{ form.ad_format }}
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Placement</label>
-                    {{ form.placement }}
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Media File (Image/Video)</label>
-                    {{ form.media_file }}
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Start Date</label>
-                    {{ form.start_date }}
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">End Date</label>
-                    {{ form.end_date }}
-                </div>
-                
-                <div class="form-group" id="pricing-summary" style="grid-column: span 2; background: var(--green-light); padding: 20px; border-radius: 12px; border: 1px solid var(--green); margin-bottom: 20px; display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span style="font-weight: 700; color: var(--green-dark); font-size: 14px;">Estimated Campaign Cost</span>
-                            <p id="duration-text" style="font-size: 13px; color: var(--green-dark); margin: 4px 0 0 0;"></p>
-                        </div>
-                        <div id="amount-text" style="font-size: 24px; font-weight: 800; color: var(--green-dark);">₹ 0.00</div>
-                    </div>
-                </div>
-
-                <div class="form-group full-width">
-                    <label class="form-label">Brief Description</label>
-                    {{ form.description }}
-                </div>
-            </div>
-            
-            <div class="form-footer">
-                <a href="{% url 'advertiser_campaigns' %}" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">{% if is_edit %}Update Campaign{% else %}Launch Campaign{% endif %}</button>
-            </div>
-        </form>
+<div class="card" style="max-width: 1400px; margin: 24px auto;">
+    <div style="margin-bottom: 32px;">
+        <h3 style="font-size: 20px; font-weight: 700;">Campaign Details</h3>
+        <p style="color: var(--gray-500); margin-top: 4px;">Provide the visuals and target metrics for your new advertisement.</p>
     </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-grid">
+            <div class="form-group full-width">
+                <label class="form-label">Campaign Title</label>
+                {{ form.title }}
+            </div>
+            
+            <div class="form-group full-width">
+                <label class="form-label">Target URL (Landing Page)</label>
+                {{ form.target_url }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Ad Format</label>
+                {{ form.ad_format }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Placement</label>
+                {{ form.placement }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Media File (Image/Video)</label>
+                {{ form.media_file }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Start Date</label>
+                {{ form.start_date }}
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">End Date</label>
+                {{ form.end_date }}
+            </div>
+            
+            <div class="form-group" id="pricing-summary" style="grid-column: span 2; background: var(--green-light); padding: 20px; border-radius: 12px; border: 1px solid var(--green); margin-bottom: 20px; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-weight: 700; color: var(--green-dark); font-size: 14px;">Estimated Campaign Cost</span>
+                        <p id="duration-text" style="font-size: 13px; color: var(--green-dark); margin: 4px 0 0 0;"></p>
+                    </div>
+                    <div id="amount-text" style="font-size: 24px; font-weight: 800; color: var(--green-dark);">₹ 0.00</div>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label class="form-label">Brief Description</label>
+                {{ form.description }}
+            </div>
+        </div>
+        
+        <div class="form-footer">
+            <a href="{% url 'advertiser_campaigns' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">{% if is_edit %}Update Campaign{% else %}Launch Campaign{% endif %}</button>
+        </div>
+    </form>
 </div>
 {% endblock content %}
 

@@ -159,6 +159,38 @@ async function handleReportComment(commentId) {
     }
 }
 
+async function handleReportAd(adId) {
+    const reason = prompt('Please tell us why you are reporting this advertisement:');
+    if (!reason) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('description', reason);
+
+        const response = await fetch(`/ad/report/${adId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: formData
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert(data.message);
+        } else {
+            if (response.status === 403) {
+                alert('Please log in to report advertisements.');
+                window.location.href = '/login/';
+            } else {
+                alert(data.message || 'Something went wrong.');
+            }
+        }
+    } catch (error) {
+        console.error('Error reporting advertisement:', error);
+    }
+}
+
 // Location chip interaction
 document.querySelectorAll('.loc-chip').forEach(chip => {
     chip.addEventListener('click', () => {

@@ -1,0 +1,100 @@
+{% extends 'adminPanel/adminPanelDashboard.html' %}
+
+{% block topbar_title %}
+<h1 class="page-title" style="margin-bottom: 0; font-size: 24px;">Payment History</h1>
+{% endblock topbar_title %}
+
+{% block content %}
+
+<!-- STATS -->
+<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+    <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value">₹{{ stats.total_revenue|floatformat:2 }}</div>
+        <div class="stat-change positive">✓ Approved Payments</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Successful</div>
+        <div class="stat-value">{{ stats.success_count }}</div>
+        <div class="stat-change positive">Completed</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value">{{ stats.pending_count }}</div>
+        <div class="stat-change warning">Awaiting Action</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Failed</div>
+        <div class="stat-value">{{ stats.failed_count }}</div>
+        <div class="stat-change negative">Declined/Error</div>
+    </div>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+    <form id="searchForm" class="search-box" method="GET">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" placeholder="Search by Order ID, Payment ID, or User" value="{{ current.q }}">
+    </form>
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction Details</th>
+                <th>Advertiser</th>
+                <th>Campaign</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for txn in transactions %}
+            <tr>
+                <td>
+                    <div style="font-weight: 600; color: var(--gray-800);">{{ txn.payment_id|default:txn.order_id }}</div>
+                    <div style="font-size: 11px; color: var(--gray-500);">Order: {{ txn.order_id }}</div>
+                </td>
+                <td>
+                    <div class="user-info">
+                        <h4 style="margin: 0; font-size: 14px;">{{ txn.advertisement.advertiser.first_name }} {{ txn.advertisement.advertiser.last_name }}</h4>
+                        <p style="margin: 0; font-size: 12px; color: var(--gray-500);">{{ txn.advertisement.advertiser.email }}</p>
+                    </div>
+                </td>
+                <td>
+                    <div style="font-size: 14px; color: var(--gray-700);">{{ txn.advertisement.title }}</div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--gray-400);">{{ txn.advertisement.ad_format }}</div>
+                </td>
+                <td style="font-weight: 700; color: var(--gray-900);">₹{{ txn.amount }}</td>
+                <td>
+                    <div style="font-size: 13px;">{{ txn.created_at|date:"d M Y" }}</div>
+                    <div style="font-size: 11px; color: var(--gray-400);">{{ txn.created_at|date:"H:i" }}</div>
+                </td>
+                <td>
+                    {% if txn.status == 'SUCCESS' %}
+                    <span class="status-badge status-approved">✓ Success</span>
+                    {% elif txn.status == 'PENDING' %}
+                    <span class="status-badge status-pending">⏱ Pending</span>
+                    {% else %}
+                    <span class="status-badge status-rejected">✕ Failed</span>
+                    {% if txn.failure_reason %}
+                    <div style="font-size: 10px; color: var(--red); margin-top: 4px; max-width: 120px;">{{ txn.failure_reason }}</div>
+                    {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-400);">
+                    No payment transactions found.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

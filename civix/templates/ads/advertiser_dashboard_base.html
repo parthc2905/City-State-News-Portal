@@ -78,6 +78,23 @@
         .toast-close:hover {
             color: var(--black);
         }
+
+        /* ═══ GLOBAL DASHBOARD ANIMATION ═══ */
+        .dashboard-animate {
+            animation: dashboardFadeIn 0.6s ease-out;
+            will-change: opacity, transform;
+        }
+
+        @keyframes dashboardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
     {% block page_css %}
 
@@ -102,7 +119,7 @@
                 </div>
             </header>
 
-            <div class="container">
+            <div class="container dashboard-animate">
                 {% block content %}
 
                 {% endblock content %}

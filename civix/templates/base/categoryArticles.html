@@ -137,7 +137,7 @@
                 <div class="ad-banner-header">
                     <span class="ad-label">Advertisement</span>
                     <div class="ad-actions">
-                        <button class="ad-action-btn" title="Report Ad">🚩</button>
+                        <button class="ad-action-btn" title="Report Ad" onclick="handleReportAd('{{ middle_ad.id }}')">🚩</button>
                         <button class="ad-action-btn close" onclick="document.getElementById('adBanner-{{ middle_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                     </div>
                 </div>
@@ -255,7 +255,7 @@
                 <div class="ad-banner-header">
                     <span class="ad-label">Advertisement</span>
                     <div class="ad-actions">
-                        <button class="ad-action-btn" title="Report Ad">🚩</button>
+                        <button class="ad-action-btn" title="Report Ad" onclick="handleReportAd('{{ sidebar_ad.id }}')">🚩</button>
                         <button class="ad-action-btn close" onclick="document.getElementById('sidebarAd-{{ sidebar_ad.id }}').style.display='none'" title="Hide Ad">✕</button>
                     </div>
                 </div>
