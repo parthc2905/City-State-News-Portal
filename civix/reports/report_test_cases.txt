@@ -1,0 +1,64 @@
+Test Cases for Report Models
+
+Test Case 1: Verify CitizenReport default status
+Description: Ensure that when a new CitizenReport instance is instantiated without specifying a status, its default status is 'pending'.
+
+Test Case 2: Verify CitizenReport string representation
+Description: Ensure that the string representation (__str__) of a CitizenReport instance correctly returns its title attribute.
+
+Test Case 3: Verify CitizenReport title max length
+Description: Verify that the max_length attribute of the title field in CitizenReport is exactly 255.
+
+Test Case 4: Verify CitizenReport article can be null
+Description: Ensure that the article relationship field in CitizenReport has null=True.
+
+Test Case 5: Verify CitizenReport article can be blank
+Description: Ensure that the article relationship field in CitizenReport allows blank=True.
+
+Test Case 6: Verify CitizenReport status choices
+Description: Check that the status field in CitizenReport provides exactly the ('pending', 'approved', 'rejected') choices.
+
+Test Case 7: Verify CitizenReport database table name
+Description: Ensure that the custom db_table for CitizenReport is correctly set to 'citizen_report'.
+
+Test Case 8: Verify CitizenReport created_at property
+Description: Check that the created_at field in CitizenReport has auto_now_add set to True.
+
+Test Case 9: Verify CitizenReport user relationship
+Description: Ensure the user field on CitizenReport is a ForeignKey.
+
+Test Case 10: Verify CitizenReport state relationship
+Description: Ensure the state field on CitizenReport is a ForeignKey.
+
+Test Case 11: Verify CitizenReport city relationship
+Description: Ensure the city field on CitizenReport is a ForeignKey.
+
+Test Case 12: Verify CommentReport string representation
+Description: Ensure that the string representation (__str__) of a CommentReport instance correctly displays the related comment ID and user.
+
+Test Case 13: Verify CommentReport database table name
+Description: Ensure that the custom db_table for CommentReport is correctly set to 'comment_report'.
+
+Test Case 14: Verify CommentReport reason field type
+Description: Ensure the reason field in CommentReport is instantiated as a TextField.
+
+Test Case 15: Verify CommentReport created_at property
+Description: Check that the created_at field in CommentReport has auto_now_add set to True.
+
+Test Case 16: Verify CommentReport user relationship
+Description: Ensure the user field on CommentReport is a ForeignKey.
+
+Test Case 17: Verify CommentReport comment relationship
+Description: Ensure the comment field on CommentReport is a ForeignKey.
+
+Test Case 18: Verify AdReport string representation
+Description: Ensure that the string representation (__str__) of an AdReport instance correctly displays the related advertisement ID and user.
+
+Test Case 19: Verify AdReport database table name
+Description: Ensure that the custom db_table for AdReport is correctly set to 'ad_report'.
+
+Test Case 20: Verify AdReport created_at property
+Description: Check that the created_at field in AdReport has auto_now_add set to True.
+
+Test Case 21: Verify AdReport ad relationship
+Description: Ensure the ad field on AdReport is a ForeignKey.
