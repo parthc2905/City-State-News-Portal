@@ -2,40 +2,8 @@
 let termsAccepted = false;
 
 document.addEventListener("DOMContentLoaded", function () {
-
-    if (window.activeTab === "signin") {
-        switchTab("signin", document.getElementById("signinTab"));
-    } else {
-        switchTab("signup", document.getElementById("signupTab"));
-    }
-
+    // Utilities like password strength can be initialized here if needed
 });
-
-function switchTab(tab, element) {
-
-    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
-    element.classList.add("active");
-
-    document.querySelectorAll(".form-view").forEach(view => view.classList.remove("active"));
-
-    if (tab === "signin") {
-        document.getElementById("signinView").classList.add("active");
-        document.getElementById("formTitle").innerText = "Welcome Back";
-        document.getElementById("formSubtitle").innerText = "Sign in to your account";
-        document.getElementById("infoBox").style.display = "none";     // ✅ hide info box
-    } else {
-        document.getElementById("signupView").classList.add("active");
-        document.getElementById("formTitle").innerText = "Create your CIVIX account";
-        document.getElementById("formSubtitle").innerText = "Join the citizen journalism network";
-        document.getElementById("infoBox").style.display = "block";    // ✅ show info box
-    }
-
-    // ✅ Update the URL so browser reflects the active tab without reloading
-    const url = element.dataset.url;
-    if (window.location.pathname !== url) {
-        window.location.href = url;
-    }
-}
 
 
 // Toggle password visibility
@@ -173,5 +141,4 @@ document.getElementById('signupEmail')?.addEventListener('blur', function () {
     }
 });
 
-// Hide info box initially if on signin
-document.getElementById('infoBox').style.display = 'none';
+

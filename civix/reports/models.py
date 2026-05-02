@@ -48,3 +48,36 @@ class AdReport(models.Model):
 
     def __str__(self):
         return f"Report on Ad {self.ad.id} by {self.user}"
+
+# SIGNALS FOR AUTOMATED BLOCKING
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.db.models import Count
+
+@receiver(post_save, sender=CitizenReport)
+@receiver(post_save, sender=CommentReport)
+@receiver(post_save, sender=AdReport)
+def handle_user_report(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    target_user = None
+    if isinstance(instance, CitizenReport) and instance.article:
+        target_user = instance.article.author_id
+    elif isinstance(instance, CommentReport):
+        target_user = instance.comment.user
+    elif isinstance(instance, AdReport):
+        target_user = instance.ad.advertiser
+
+    if target_user:
+        # Check total reports against this user
+        citizen_reports = CitizenReport.objects.filter(article__author_id=target_user).count()
+        comment_reports = CommentReport.objects.filter(comment__user=target_user).count()
+        ad_reports = AdReport.objects.filter(ad__advertiser=target_user).count()
+        
+        total_reports = citizen_reports + comment_reports + ad_reports
+        
+        if total_reports >= 10:
+            target_user.account_status = 'blocked'
+            target_user.is_active = False
+            target_user.save()

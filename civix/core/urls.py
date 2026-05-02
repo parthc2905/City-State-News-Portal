@@ -5,11 +5,14 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('', views.homePage, name='home'),
     path('signup/', views.userSignupView, name='signup'), 
+    path('signup/verify/', views.signupVerifyOTPView, name='signup_verify_otp'), 
     path('login/', views.userLoginView, name='login'),
     path('logout/', views.logoutView, name='logout'),
     
-    # Simplified Password Reset URL (Testing only)
-    path('password_reset/', views.simplifiedPasswordResetView, name='password_reset'),
+    # New Password Reset Flow
+    path('password_reset/', views.forgotPasswordView, name='password_reset'),
+    path('password_reset/verify/', views.verifyOTPView, name='verify_otp'),
+    path('password_reset/new-password/', views.resetPasswordView, name='reset_password'),
     path('password_reset/complete/', auth_views.PasswordResetCompleteView.as_view(template_name='auth/password_reset_complete.html'), name='password_reset_complete'),
 
     path('adminpanel/dashboard/', views.adminPanelDashboardView, name='admin_panel_dashboard'),

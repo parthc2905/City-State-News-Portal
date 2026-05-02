@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+import random
 from django.http import JsonResponse, Http404
 from .forms import (
     UserSignupForm,
@@ -7,6 +8,9 @@ from .forms import (
     JournalistIdentityForm,
     JournalistProfileLocationForm,
     JournalistApplicationDocumentsForm,
+    ForgotPasswordEmailForm,
+    OTPVerifyForm,
+    SetNewPasswordForm,
 )
 from .models import User, Profile, JournalistApplication
 from ads.models import AdvertiserApplication, Advertisement
@@ -358,27 +362,63 @@ def userSignupView(request):
     
         if form.is_valid():
 
-            #email send
-            email = form.cleaned_data['email']
-            send_mail(subject="welcome to find my newspaper",message="Thank you for registering with CIVIX.",from_email=settings.EMAIL_HOST_USER,recipient_list=[email])
-            
             user = form.save(commit=False)
-            # ADD approval status for reader to not_required in db while sigup
+            user.is_active = False  # Deactivate until OTP is verified
             if user.role == 'reader':
                 user.approval_status = 'not_required'
-
             user.save()
 
-            # It Will return to login urls
-            return redirect('login') 
+            # Generate OTP
+            otp = str(random.randint(100000, 999999))
+            request.session['signup_otp'] = otp
+            request.session['signup_user_id'] = user.id
+
+            # Send OTP email
+            send_mail(
+                subject="Verify your CIVIX Account",
+                message=f"Thank you for registering. Your verification OTP is: {otp}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user.email]
+            )
+            print(f"Signup OTP for {user.email}: {otp}")
+
+            return redirect('signup_verify_otp')
         else:
-            return render(request,'auth/signupsignin.html',{'form':form ,"active_tab": active_tab })
+            return render(request,'auth/signup.html',{'form':form })
     else:
         form = UserSignupForm()
-        return render(request, 'auth/signupsignin.html', {'form': form, "active_tab": active_tab})
+        return render(request, 'auth/signup.html', {'form': form})
 
 
 # login view for user authentication
+def signupVerifyOTPView(request):
+    user_id = request.session.get('signup_user_id')
+    if not user_id:
+        return redirect('signup')
+
+    if request.method == 'POST':
+        form = OTPVerifyForm(request.POST)
+        if form.is_valid():
+            entered_otp = form.cleaned_data['otp']
+            if entered_otp == request.session.get('signup_otp'):
+                user = User.objects.get(id=user_id)
+                user.is_active = True
+                user.save()
+
+                # Clear session
+                del request.session['signup_otp']
+                del request.session['signup_user_id']
+
+                messages.success(request, "Account created successfully! Please sign in.")
+                return redirect('login')
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+    else:
+        form = OTPVerifyForm()
+    
+    return render(request, 'auth/signup_verify_otp.html', {'form': form})
+
+
 def userLoginView(request):
     active_tab = "signin"
     if request.method == 'POST':
@@ -408,10 +448,14 @@ def userLoginView(request):
                 elif user.role == 'advertiser':
                     return redirect('advertiser_dashboard')
             else:
-                return render(request,'auth/signupsignin.html',{'form':form,"active_tab": active_tab}) 
+                if not User.objects.filter(email=email).exists():
+                    messages.info(request, "No account found with this email. Please create one.")
+                    return redirect('signup')
+                
+                return render(request,'auth/login.html',{'form':form, 'login_error': "Invalid password. Please try again."}) 
     else:
         form = UserLoginForm()
-        return render(request, 'auth/signupsignin.html', {'form': form ,"active_tab": active_tab})   
+        return render(request, 'auth/login.html', {'form': form})   
 
 
 def logoutView(request):
@@ -1321,36 +1365,73 @@ def reportCommentView(request, comment_id):
     return JsonResponse({'message': 'Invalid request method.'}, status=405)
 
 
-def simplifiedPasswordResetView(request):
+def forgotPasswordView(request):
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        form = ForgotPasswordEmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                otp = str(random.randint(100000, 999999))
+                request.session['reset_email'] = email
+                request.session['reset_otp'] = otp
+                
+                # In a real app, send this via email. For now, print to terminal and show message.
+                send_mail(
+                    subject="Your Password Reset OTP",
+                    message=f"Your OTP for password reset is: {otp}",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[email]
+                )
+                print(f"OTP for {email}: {otp}") # Debugging
+                
+                messages.success(request, "OTP has been sent to your email.")
+                return redirect('verify_otp')
+            else:
+                messages.error(request, "No account found with this email.")
+    else:
+        form = ForgotPasswordEmailForm()
+    return render(request, 'auth/forgot_password_email.html', {'form': form})
 
-        if not email or not password or not confirm_password:
-            return render(request, 'auth/password_reset_form.html', {
-                'error': 'All fields are required.',
-                'email': email
-            })
+def verifyOTPView(request):
+    if 'reset_email' not in request.session or 'reset_otp' not in request.session:
+        return redirect('password_reset')
 
-        if password != confirm_password:
-            return render(request, 'auth/password_reset_form.html', {
-                'error': 'Passwords do not match.',
-                'email': email
-            })
+    if request.method == 'POST':
+        form = OTPVerifyForm(request.POST)
+        if form.is_valid():
+            entered_otp = form.cleaned_data['otp']
+            if entered_otp == request.session['reset_otp']:
+                request.session['otp_verified'] = True
+                return redirect('reset_password')
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+    else:
+        form = OTPVerifyForm()
+    return render(request, 'auth/verify_otp.html', {'form': form})
 
-        try:
+def resetPasswordView(request):
+    if not request.session.get('otp_verified'):
+        return redirect('password_reset')
+
+    if request.method == 'POST':
+        form = SetNewPasswordForm(request.POST)
+        if form.is_valid():
+            email = request.session['reset_email']
             user = User.objects.get(email=email)
-            user.set_password(password)
+            user.set_password(form.cleaned_data['password1'])
             user.save()
-            return render(request, 'auth/password_reset_complete.html')
-        except User.DoesNotExist:
-            return render(request, 'auth/password_reset_form.html', {
-                'error': 'No account found with this email.',
-                'email': email
-            })
-    
-    return render(request, 'auth/password_reset_form.html')
+            
+            # Clear session
+            del request.session['reset_email']
+            del request.session['reset_otp']
+            del request.session['otp_verified']
+            
+            messages.success(request, "Password changed successfully. Please login.")
+            return redirect('login')
+    else:
+        form = SetNewPasswordForm()
+    return render(request, 'auth/reset_password.html', {'form': form})
+
 
 # @login_required(login_url='login')
 def addCommentView(request, article_id):

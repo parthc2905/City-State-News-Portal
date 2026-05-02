@@ -1,0 +1,181 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVIX — Sign Up</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/signupsignin.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <div class="auth-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <a href="{% url 'home' %}" class="logo-link">
+                <div class="logo">CIVIX</div>
+            </a>
+            <a href="{% url 'home' %}" class="back-home">← Back to Home</a>
+        </div>
+
+        <!-- INFO BOX -->
+        <div class="info-box" id="infoBox">
+            <div class="info-box-title">🎉 Join Informed Citizens</div>
+            <div class="info-box-text">Get hyper-local news, contribute stories, and stay connected with your community.
+            </div>
+        </div>
+
+        <!-- AUTH CARD -->
+        <div class="auth-card">
+
+            <!-- FORM HEADER -->
+            <div class="form-header">
+                <h1 class="form-title">Create your CIVIX account</h1>
+                <p class="form-subtitle">Join the citizen journalism network</p>
+            </div>
+
+            {% if messages %}
+                <div class="messages-container" style="margin-bottom: 20px;">
+                    {% for message in messages %}
+                        <div class="error-text show" style="color: {% if 'success' in message.tags %}#1a8917{% elif 'info' in message.tags %}#0066cc{% else %}#dc2626{% endif %}; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; border: 1px solid currentColor; font-weight: 500;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- TABS -->
+            <div class="auth-tabs">
+                <a href="{% url 'login' %}" class="tab-btn">Sign In</a>
+                <a href="{% url 'signup' %}" class="tab-btn active">Sign Up</a>
+            </div>
+
+            <!-- FORMS CONTAINER -->
+            <div class="forms-container">
+
+                <!-- ═══ SIGN UP FORM ═══ -->
+                <div class="form-view active" id="signupView">
+                    <form onsubmit="return handleSignup(event)" method="POST" action="{% url 'signup' %}">
+                        {% csrf_token %}
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="error-text show">{{ form.first_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="error-text show">{{ form.last_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                            <div class="error-text" id="emailError">Please enter a valid email</div>
+                            {% if form.email.errors %}
+                                <div class="error-text show">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="error-text show">{{ form.phone_number.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                {{ form.role }}
+                                {% if form.role.errors %}
+                                    <div class="error-text show">{{ form.role.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password1 }}
+                                <span class="input-icon" onclick="togglePassword('signupPassword')">👀</span>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bars">
+                                    <div class="strength-bar" id="bar1"></div>
+                                    <div class="strength-bar" id="bar2"></div>
+                                    <div class="strength-bar" id="bar3"></div>
+                                    <div class="strength-bar" id="bar4"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText">Enter a password</div>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="error-text show">{{ form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Confirm Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password2 }}
+                                <span class="input-icon" onclick="togglePassword('confirmPassword')">👀</span>
+                            </div>
+                            <div class="error-text" id="passwordMatchError">Passwords do not match</div>
+                            {% if form.password2.errors %}
+                                <div class="error-text show">{{ form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="checkbox-group">
+                            <div class="custom-checkbox" id="termsCheckbox" onclick="toggleCheckbox('termsCheckbox')">
+                            </div>
+                            <label class="checkbox-label" for="termsCheckbox">
+                                I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="signupBtn" name="signup_submit">
+                            Create Account
+                        </button>
+                    </form>
+                </div>
+
+                <!-- ═══ SUCCESS VIEW ═══ -->
+                <div class="success-view" id="successView">
+                    <div class="success-icon">✅</div>
+                    <h2 class="success-title">Welcome to CIVIX!</h2>
+                    <p class="success-text">Your account has been created successfully. You'll be redirected to the
+                        Login page in a
+                        moment.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/signupsignin.js' %}"></script>
+
+</body>
+
+</html>

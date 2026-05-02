@@ -1042,34 +1042,27 @@ html {
     margin-bottom: 28px;
 }
 
-.newsletter-form {
-    display: flex;
-    gap: 12px;
-    max-width: 480px;
-    margin: 0 auto;
-}
-
-.newsletter-form input {
-    flex: 1;
-    padding: 14px 20px;
-    border: 2px solid var(--green);
-    border-radius: 28px;
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    outline: none;
-}
-
-.newsletter-form button {
+.newsletter-btn {
+    display: inline-block;
     padding: 14px 32px;
     background: var(--green);
-    color: white;
+    color: white !important;
     border: none;
     border-radius: 28px;
     font-family: 'Inter', sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
+    text-decoration: none;
     cursor: pointer;
     white-space: nowrap;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(26, 137, 23, 0.2);
+}
+
+.newsletter-btn:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(26, 137, 23, 0.3);
 }
 
 /* ═══ TAGS SECTION ═══ */

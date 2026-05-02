@@ -153,94 +153,98 @@
 
   .pricing-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-top: -40px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    margin: -40px auto 0;
+    max-width: 1000px;
+    align-items: stretch;
   }
 
   .pricing-card {
     background: var(--white);
-    border-radius: 16px;
-    padding: 40px 32px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    transition: all 0.3s;
+    border-radius: 20px;
+    padding: 48px 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     position: relative;
-    border: 2px solid transparent;
+    border: 1px solid var(--gray-200);
+    display: flex;
+    flex-direction: column;
   }
 
   .pricing-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   }
 
   .pricing-card.popular {
-    border-color: var(--green);
-    transform: scale(1.05);
-  }
-
-  .pricing-card.popular:hover {
-    transform: scale(1.05) translateY(-8px);
+    border: 2px solid var(--green);
+    box-shadow: 0 10px 30px rgba(26, 137, 23, 0.1);
   }
 
   .popular-badge {
     position: absolute;
-    top: -12px;
+    top: -14px;
     left: 50%;
     transform: translateX(-50%);
     background: var(--green);
     color: white;
-    padding: 6px 20px;
+    padding: 6px 24px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(26, 137, 23, 0.2);
   }
 
   .plan-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--gray-600);
-    margin-bottom: 12px;
+    letter-spacing: 1.5px;
+    color: var(--gray-500);
+    margin-bottom: 16px;
   }
 
   .plan-price {
     display: flex;
     align-items: baseline;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
   .currency {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--gray-700);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-600);
   }
 
   .amount {
-    font-size: 56px;
+    font-size: 48px;
     font-weight: 800;
     color: var(--black);
     line-height: 1;
   }
 
   .period {
-    font-size: 16px;
-    color: var(--gray-600);
+    font-size: 15px;
+    color: var(--gray-500);
+    font-weight: 500;
   }
 
   .plan-description {
-    font-size: 14px;
+    font-size: 15px;
     color: var(--gray-600);
-    margin-bottom: 24px;
-    min-height: 40px;
+    margin-bottom: 32px;
+    line-height: 1.5;
   }
 
   .plan-features {
     list-style: none;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    flex-grow: 1;
   }
 
   .plan-features li {
@@ -587,7 +591,7 @@
 
 <!-- PRICING CARDS -->
 <section class="pricing-container">
-  <div class="pricing-grid">
+  <div class="pricing-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 900px;">
     
     <!-- FREE PLAN -->
     <div class="pricing-card">
@@ -596,90 +600,48 @@
         <span class="currency">₹</span>
         <span class="amount">0</span>
       </div>
-      <div class="plan-description">Perfect for casual readers</div>
-      
-      <ul class="plan-features">
-        <li><span class="feature-icon">✓</span> 5 articles per month</li>
-        <li><span class="feature-icon">✓</span> Basic city news</li>
-        <li><span class="feature-icon">✓</span> Newsletter access</li>
-        <li><span class="feature-icon disabled">✕</span> Unlimited articles</li>
-        <li><span class="feature-icon disabled">✕</span> Ad-free experience</li>
-        <li><span class="feature-icon disabled">✕</span> Premium content</li>
-        <li><span class="feature-icon disabled">✕</span> Save & bookmark</li>
-      </ul>
-      
-      <a href="{% url 'signup' %}" class="btn-subscribe btn-subscribe-secondary" style="text-align: center; display: block; text-decoration: none; width: 100%; box-sizing: border-box;">Get Started</a>
-    </div>
-
-    <!-- MONTHLY PLAN -->
-    <div class="pricing-card popular" id="monthlyPlan">
-      <div class="popular-badge">Most Popular</div>
-      <div class="plan-name">Monthly</div>
-      <div class="plan-price">
-        <span class="currency">₹</span>
-        <span class="amount" id="monthlyPrice">99</span>
-        <span class="period">/month</span>
-      </div>
-      <div class="plan-description">Full access, billed monthly</div>
+      <div class="plan-description">Essential access for everyone</div>
       
       <ul class="plan-features">
         <li><span class="feature-icon">✓</span> Unlimited articles</li>
-        <li><span class="feature-icon">✓</span> All 500+ cities</li>
-        <li><span class="feature-icon">✓</span> Ad-free reading</li>
-        <li><span class="feature-icon">✓</span> Premium investigations</li>
-        <li><span class="feature-icon">✓</span> Save & bookmark</li>
         <li><span class="feature-icon">✓</span> Personalized dashboard</li>
-        <li><span class="feature-icon">✓</span> Cancel anytime</li>
+        <li><span class="feature-icon">✓</span> All 500+ cities</li>
+        <li><span class="feature-icon">✓</span> Newsletter access</li>
+        <li><span class="feature-icon disabled">✕</span> Ad-free experience</li>
+        <li><span class="feature-icon disabled">✕</span> Premium investigations</li>
       </ul>
       
-      <button class="btn-subscribe btn-subscribe-primary" onclick="subscribe('monthly');">Subscribe Now</button>
+      <a href="{% url 'home' %}" class="btn-subscribe btn-subscribe-secondary" style="text-align: center; display: block; text-decoration: none; width: 100%; box-sizing: border-box;">Get Started</a>
     </div>
 
-    <!-- YEARLY PLAN -->
-    <div class="pricing-card" id="yearlyPlan" style="display: none;">
-      <div class="popular-badge">Best Value</div>
-      <div class="plan-name">Yearly</div>
-      <div class="plan-price">
+    <!-- PREMIUM PLAN (Combined Monthly/Yearly) -->
+    <div class="pricing-card popular" id="premiumCard">
+      <div class="popular-badge">Best Experience</div>
+      <div class="plan-name">Premium</div>
+      
+      <!-- Option Selector -->
+      <div class="plan-price" id="monthlyPriceDisplay">
+        <span class="currency">₹</span>
+        <span class="amount">99</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="plan-price" id="yearlyPriceDisplay" style="display: none;">
         <span class="currency">₹</span>
         <span class="amount">799</span>
         <span class="period">/year</span>
       </div>
-      <div class="plan-description">Save ₹389 — just ₹66/month</div>
-      
-      <ul class="plan-features">
-        <li><span class="feature-icon">✓</span> Unlimited articles</li>
-        <li><span class="feature-icon">✓</span> All 500+ cities</li>
-        <li><span class="feature-icon">✓</span> Ad-free reading</li>
-        <li><span class="feature-icon">✓</span> Premium investigations</li>
-        <li><span class="feature-icon">✓</span> Save & bookmark</li>
-        <li><span class="feature-icon">✓</span> Personalized dashboard</li>
-        <li><span class="feature-icon">✓</span> Priority support</li>
-      </ul>
-      
-      <button class="btn-subscribe btn-subscribe-primary" onclick="subscribe('yearly');">Subscribe Now</button>
-    </div>
 
-    <!-- STUDENT PLAN -->
-    <div class="pricing-card">
-      <div class="plan-name">Student</div>
-      <div class="plan-price">
-        <span class="currency">₹</span>
-        <span class="amount" id="studentPrice">49</span>
-        <span class="period">/month</span>
-      </div>
-      <div class="plan-description">50% off with valid student ID</div>
+      <div class="plan-description" id="premiumDesc">Support local journalism and go ad-free</div>
       
       <ul class="plan-features">
-        <li><span class="feature-icon">✓</span> Unlimited articles</li>
-        <li><span class="feature-icon">✓</span> All 500+ cities</li>
-        <li><span class="feature-icon">✓</span> Ad-free reading</li>
-        <li><span class="feature-icon">✓</span> Premium investigations</li>
-        <li><span class="feature-icon">✓</span> Save & bookmark</li>
-        <li><span class="feature-icon">✓</span> Personalized dashboard</li>
-        <li><span class="feature-icon">✓</span> Valid for 1 year</li>
+        <li><span class="feature-icon">✓</span> <strong>Everything in Free</strong></li>
+        <li><span class="feature-icon">✓</span> Ad-free reading experience</li>
+        <li><span class="feature-icon">✓</span> Premium investigative reports</li>
+        <li><span class="feature-icon">✓</span> Save & bookmark articles</li>
+        <li><span class="feature-icon">✓</span> Priority customer support</li>
       </ul>
       
-      <button class="btn-subscribe btn-subscribe-secondary" onclick="subscribe('student');">Verify Student Status</button>
+      <button class="btn-subscribe btn-subscribe-primary" id="subscribeBtn" onclick="subscribe('monthly');">Subscribe Now</button>
     </div>
 
   </div>
@@ -805,21 +767,24 @@
     const toggle = document.getElementById('toggleSwitch');
     const monthlyLabel = document.getElementById('monthlyLabel');
     const yearlyLabel = document.getElementById('yearlyLabel');
-    const monthlyPlan = document.getElementById('monthlyPlan');
-    const yearlyPlan = document.getElementById('yearlyPlan');
+    const monthlyDisplay = document.getElementById('monthlyPriceDisplay');
+    const yearlyDisplay = document.getElementById('yearlyPriceDisplay');
+    const subscribeBtn = document.getElementById('subscribeBtn');
 
     if (plan === 'monthly' || (!plan && toggle.classList.contains('active'))) {
       toggle.classList.remove('active');
       monthlyLabel.classList.add('active');
       yearlyLabel.classList.remove('active');
-      monthlyPlan.style.display = 'block';
-      yearlyPlan.style.display = 'none';
+      if(monthlyDisplay) monthlyDisplay.style.display = 'flex';
+      if(yearlyDisplay) yearlyDisplay.style.display = 'none';
+      if(subscribeBtn) subscribeBtn.setAttribute('onclick', "subscribe('Monthly')");
     } else {
       toggle.classList.add('active');
       monthlyLabel.classList.remove('active');
       yearlyLabel.classList.add('active');
-      monthlyPlan.style.display = 'none';
-      yearlyPlan.style.display = 'block';
+      if(monthlyDisplay) monthlyDisplay.style.display = 'none';
+      if(yearlyDisplay) yearlyDisplay.style.display = 'flex';
+      if(subscribeBtn) subscribeBtn.setAttribute('onclick', "subscribe('Yearly')");
     }
   }
 
@@ -829,8 +794,7 @@
   }
 
   function subscribe(plan) {
-    alert('Thank you for choosing the ' + plan + ' plan! Redirecting to secure checkout...');
-    // Logic for redirection to payment gateway
+    window.location.href = `/subscriptions/initiate/${plan}/`;
   }
 </script>
 </body>

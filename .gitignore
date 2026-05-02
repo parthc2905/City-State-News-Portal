@@ -1,0 +1,26 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Secrets & Config
+.env
+*.json
+!client_secret_*.json # Wait, actually we WANT to ignore client secrets
+client_secret_*.json
+
+# Environments
+.venv/
+venv/
+ENV/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo

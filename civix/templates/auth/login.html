@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVIX — Sign In</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/signupsignin.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+</head>
+
+<body>
+
+    <div class="bg-pattern"></div>
+    <div class="bg-grid"></div>
+
+    <div class="auth-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <a href="{% url 'home' %}" class="logo-link">
+                <div class="logo">CIVIX</div>
+            </a>
+            <a href="{% url 'home' %}" class="back-home">← Back to Home</a>
+        </div>
+
+        <!-- AUTH CARD -->
+        <div class="auth-card">
+
+            <!-- FORM HEADER -->
+            <div class="form-header">
+                <h1 class="form-title">Welcome Back</h1>
+                <p class="form-subtitle">Sign in to your account</p>
+            </div>
+
+            {% if messages %}
+                <div class="messages-container" style="margin-bottom: 20px;">
+                    {% for message in messages %}
+                        <div class="error-text show" style="color: {% if 'success' in message.tags %}#1a8917{% elif 'info' in message.tags %}#0066cc{% else %}#dc2626{% endif %}; background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; border: 1px solid currentColor; font-weight: 500;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- TABS -->
+            <div class="auth-tabs">
+                <a href="{% url 'login' %}" class="tab-btn active">Sign In</a>
+                <a href="{% url 'signup' %}" class="tab-btn">Sign Up</a>
+            </div>
+
+            <!-- FORMS CONTAINER -->
+            <div class="forms-container">
+
+                <!-- ═══ SIGN IN FORM ═══ -->
+                <div class="form-view active" id="signinView">
+                    <form method="POST" action="{% url 'login' %}" onsubmit="handleSignin()">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="error-text show">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="input-wrapper">
+                                {{ form.password }}
+                                <span class="input-icon" onclick="togglePassword('signinPassword')">👀</span>
+                            </div>
+                            {% if form.password.errors %}
+                                <div class="error-text show">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        {% if login_error %}
+                            <div class="error-text show" style="margin-bottom:10px;">{{ login_error }}</div>
+                        {% endif %}
+                        
+                        <div class="forgot-link">
+                            <a href="{% url 'password_reset' %}">Forgot password?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="signinBtn" name="signin_submit">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{% static 'js/signupsignin.js' %}"></script>
+
+</body>
+
+</html>

@@ -395,13 +395,16 @@
             <div class="newsletter-inner">
                 <div class="newsletter-icon">📬</div>
                 <h2 class="newsletter-title">Get the best of CIVIX</h2>
-                <p class="newsletter-desc">Join 2.4 million readers who start their day with hyper-local news, analysis,
+                <p class="newsletter-desc">Join readers who start their day with hyper-local news, analysis,
                     and
                     stories that matter to your community.</p>
-                <form class="newsletter-form" action="{% url 'subscription_pricing' %}" method="get">
-                    <input type="email" placeholder="Enter your email address">
-                    <button type="submit">Subscribe</button>
-                </form>
+                <div class="newsletter-cta-wrapper" style="display: flex; justify-content: center; margin-top: 24px;">
+                    {% if not request.user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="newsletter-btn">Sign In to Subscribe</a>
+                    {% else %}
+                        <a href="{% url 'subscription_pricing' %}" class="newsletter-btn">View Subscription Plans</a>
+                    {% endif %}
+                </div>
                 <p style="font-size:12px;color:var(--gray-600);margin-top:12px;">Free forever. Unsubscribe anytime.</p>
             </div>
         </section>

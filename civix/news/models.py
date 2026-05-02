@@ -69,8 +69,11 @@ class ArticleMedia(models.Model):
     ]
     media_type = models.CharField(max_length=10, choices=MEDIA_TYPES, default="image")  # e.g., 'image', 'video'
     file = models.FileField(upload_to='newsArticleMedia/')
+    file_url = models.TextField(default='')
+    file_size = models.IntegerField(null=True, blank=True)
+    duration = models.IntegerField(null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         db_table = "article_media"
     
@@ -100,4 +103,4 @@ class Comment(models.Model):
         db_table = "comment"
 
     def __str__(self):
-        return f"Comment by {self.user} on {self.article}"
+        return f"Comment by {self.user} on {self.article}"
