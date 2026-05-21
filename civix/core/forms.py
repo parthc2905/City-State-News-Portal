@@ -176,6 +176,14 @@ class JournalistIdentityForm(forms.ModelForm):
         model = User
         fields = ["first_name", "last_name", "phone"]
 
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone:
+            phone = phone.replace(" ", "").replace("-", "")
+            if not phone.isdigit() or len(phone) != 10 or phone.startswith('0'):
+                raise forms.ValidationError("Enter a valid 10-digit phone number not starting with 0.")
+        return phone
+
 
 class JournalistProfileLocationForm(forms.ModelForm):
     class Meta:
@@ -196,6 +204,26 @@ class JournalistApplicationDocumentsForm(forms.ModelForm):
             "press_card_file",
             "recommendation_file",
         ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+        aadhaar = cleaned_data.get('aadhaar_file')
+        portfolio = cleaned_data.get('portfolio_file')
+        presscard = cleaned_data.get('press_card_file')
+        recommendation = cleaned_data.get('recommendation_file')
+
+        for file in [aadhaar, portfolio, presscard, recommendation]:
+            if file:
+                if file.size > 10 * 1024 * 1024:
+                    raise forms.ValidationError(f"File {file.name} is too large. Max size is 10MB.")
+                
+                valid_extensions = ['.pdf', '.jpg', '.jpeg', '.png', '.zip']
+                import os
+                ext = os.path.splitext(file.name)[1].lower()
+                if ext not in valid_extensions:
+                    raise forms.ValidationError(f"File {file.name} has an invalid extension. Allowed: {', '.join(valid_extensions)}")
+        
+        return cleaned_data
 
 
 class ForgotPasswordEmailForm(forms.Form):

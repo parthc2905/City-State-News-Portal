@@ -302,6 +302,42 @@
     border-color: var(--gray-400);
   }
 
+  /* ═══ SUBSCRIPTION STATUS ═══ */
+  .plan-status {
+    background: var(--green-light);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    text-align: center;
+    border: 1px dashed var(--green);
+  }
+
+  .status-badge {
+    display: block;
+    font-weight: 700;
+    color: var(--green-dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .status-expiry {
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+
+  .btn-cancel {
+    color: #dc2626;
+    border-color: #fecaca;
+    background: #fff5f5;
+  }
+
+  .btn-cancel:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+  }
+
+
   /* ═══ FEATURES SECTION ═══ */
   .features-section {
     background: var(--white);
@@ -641,8 +677,25 @@
         <li><span class="feature-icon">✓</span> Priority customer support</li>
       </ul>
       
-      <button class="btn-subscribe btn-subscribe-primary" id="subscribeBtn" onclick="subscribe('monthly');">Subscribe Now</button>
+      {% if active_subscription %}
+        <div class="plan-status">
+          <span class="status-badge">Current Plan: {{ active_subscription.plan_type }}</span>
+          <p class="status-expiry">Active until {{ active_subscription.end_date|date:"M d, Y" }}</p>
+        </div>
+        <a href="{% url 'cancel_subscription' active_subscription.id %}" class="btn-subscribe btn-subscribe-secondary btn-cancel" style="text-align: center; display: block; text-decoration: none;" onclick="return confirm('Are you sure you want to cancel your subscription? You will still have access until the end of your billing period.')">Cancel Subscription</a>
+      {% elif canceled_subscription %}
+        <div class="plan-status" style="border-color: #fbbf24; background: #fffbeb;">
+          <span class="status-badge" style="color: #b45309;">Plan Canceled</span>
+          <p class="status-expiry">Access until {{ canceled_subscription.end_date|date:"M d, Y" }}</p>
+        </div>
+        <button class="btn-subscribe btn-subscribe-primary" id="subscribeBtn" onclick="subscribe('Monthly');">Renew Subscription</button>
+      {% else %}
+        <button class="btn-subscribe btn-subscribe-primary" id="subscribeBtn" onclick="subscribe('Monthly');">Subscribe Now</button>
+      {% endif %}
+
+
     </div>
+
 
   </div>
 </section>
@@ -651,7 +704,7 @@
 <section class="features-section">
   <div class="features-container">
     <h2 class="section-title">Why Subscribe to CIVIX?</h2>
-    <p class="section-subtitle">Join 2.4M readers supporting local journalism</p>
+    <p class="section-subtitle">Join readers supporting local journalism</p>
     
     <div class="features-grid">
       <div class="feature-item">

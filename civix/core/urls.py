@@ -58,4 +58,6 @@ urlpatterns = [
     path('ad/report/<int:ad_id>/', views.reportAdView, name='report_ad'),
     path('comment/report/<int:comment_id>/', views.reportCommentView, name='report_comment'),
     path('adminpanel/applications/document-action/<int:user_id>/<str:doc_slug>/<str:action>/', views.adminPanelDocumentActionView, name='admin_panel_document_action'),
+    path('article/read/<int:article_id>/', views.read_article_tts_view, name='read_article_tts'),
 ]
+

@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import RegexValidator
 from .models import AdvertiserApplication
 
 class AdvertiserApplicationForm(forms.ModelForm):
@@ -66,14 +67,47 @@ class AdvertiserApplicationForm(forms.ModelForm):
             'contact_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Amit Sharma'}),
             'designation': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Marketing Manager'}),
             'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'contact@techvision.com'}),
-            'phone': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '+91 98765 43210'}),
+            'phone': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '9876543210', 'pattern': '[1-9][0-9]{9}', 'title': 'Phone number must be exactly 10 digits and cannot start with 0.'}),
             'website': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://www.techvision.com'}),
-            'gst_number': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '29ABCDE1234F1Z5'}),
+            'gst_number': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '29ABCDE1234F1Z5', 'pattern': '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$', 'title': 'Enter a valid 15-digit GST number.'}),
             'campaign_objectives': forms.Textarea(attrs={'class': 'form-textarea', 'placeholder': 'Describe your marketing goals...', 'rows': 4}),
             # target_cities and ad_format_preference will be handled as comma-separated from the frontend checkboxes
             'target_cities': forms.HiddenInput(),
             'ad_format_preference': forms.HiddenInput(),
         }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if phone:
+            phone = phone.replace(" ", "").replace("-", "")
+            if not phone.isdigit() or len(phone) != 10 or phone.startswith('0'):
+                raise forms.ValidationError("Enter a valid 10-digit phone number not starting with 0.")
+        return phone
+
+    def clean_gst_number(self):
+        gst = self.cleaned_data.get('gst_number')
+        if gst:
+            import re
+            pattern = r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$'
+            if not re.match(pattern, gst.upper()):
+                raise forms.ValidationError("Enter a valid 15-digit GST identification number.")
+        return gst.upper()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        registration_certificate = cleaned_data.get('registration_certificate')
+        gst_certificate = cleaned_data.get('gst_certificate')
+        pan_card = cleaned_data.get('pan_card')
+        bank_details = cleaned_data.get('bank_details')
+
+        for file in [registration_certificate, gst_certificate, pan_card, bank_details]:
+            if file:
+                if file.size > 10 * 1024 * 1024:
+                    raise forms.ValidationError(f"File {file.name} is too large. Max size is 10MB.")
+                if not file.name.lower().endswith('.pdf'):
+                    raise forms.ValidationError(f"File {file.name} must be a PDF.")
+        
+        return cleaned_data
 
 from .models import Advertisement
 

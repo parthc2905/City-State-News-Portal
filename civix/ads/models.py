@@ -3,7 +3,7 @@ from django.conf import settings
 
 # Create your models here.
 class Advertisement(models.Model):
-    advertiser = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ads")
+    advertiser = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="ads")
     title = models.CharField(max_length=200, null=False)
     description = models.TextField(null=True, blank=True)
     target_url = models.URLField(max_length=500, null=True, blank=True)

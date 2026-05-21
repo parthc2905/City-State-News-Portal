@@ -1,4 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
+import pyttsx3
+import os
+import threading
+from django.utils.html import strip_tags
+
 import random
 from django.http import JsonResponse, Http404
 from .forms import (
@@ -30,6 +35,19 @@ from django.core.files.storage import FileSystemStorage
 from django.utils import timezone
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+
+def is_user_subscriber(user):
+    """Helper to check if user has an active premium subscription."""
+    if not user or not user.is_authenticated:
+        return False
+    from subscriptions.models import Subscription
+    return Subscription.objects.filter(
+        user=user, 
+        status__in=['Active', 'Canceled'],
+        end_date__gte=timezone.now()
+    ).exists()
+
+
 
 def get_active_ads(placement_type, count=1):
     from ads.models import Advertisement
@@ -97,10 +115,13 @@ def articleDetailView(request, slug):
     for a in right_articles:
         a.read_time = max(1, len(a.content.split()) // 200)
 
-    middle_ad = get_active_ads('Article Details Middle')
-    sidebar_ad = get_active_ads('Article Details Sidebar')
+    # Ad removal for subscribers
+    is_subscriber = is_user_subscriber(request.user)
+    middle_ad = get_active_ads('Article Details Middle') if not is_subscriber else None
+    sidebar_ad = get_active_ads('Article Details Sidebar') if not is_subscriber else None
 
     return render(request, 'base/articleDetail.html', {
+
         'article': article,
         'left_articles': left_articles,
         'right_articles': right_articles,
@@ -144,10 +165,13 @@ def latestStoriesView(request):
     left_articles  = rest[::2][:2]   # Limit to top 2 odd-index articles
     right_articles = rest[1::2][:2]  # Limit to top 2 even-index articles
 
-    middle_ad = get_active_ads('Article Details Middle')
-    sidebar_ad = get_active_ads('Article Details Sidebar')
+    # Ad removal for subscribers
+    is_subscriber = is_user_subscriber(request.user)
+    middle_ad = get_active_ads('Article Details Middle') if not is_subscriber else None
+    sidebar_ad = get_active_ads('Article Details Sidebar') if not is_subscriber else None
 
     return render(request, 'base/latestStories.html', {
+
         'hero': hero,
         'left_articles': left_articles,
         'right_articles': right_articles,
@@ -199,10 +223,13 @@ def searchResultsView(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    middle_ad = get_active_ads('Article Details Middle')
-    sidebar_ad = get_active_ads('Article Details Sidebar')
+    # Ad removal for subscribers
+    is_subscriber = is_user_subscriber(request.user)
+    middle_ad = get_active_ads('Article Details Middle') if not is_subscriber else None
+    sidebar_ad = get_active_ads('Article Details Sidebar') if not is_subscriber else None
 
     return render(request, 'base/searchResults.html', {
+
         'query': query,
         'filter_type': filter_type,
         'articles': page_obj,
@@ -230,10 +257,13 @@ def statePoliticsView(request):
     left_articles = rest[::2][:3]   # Showing more in see-all
     right_articles = rest[1::2][:3] # Showing more in see-all
 
-    middle_ad = get_active_ads('Article Details Middle')
-    sidebar_ad = get_active_ads('Article Details Sidebar')
+    # Ad removal for subscribers
+    is_subscriber = is_user_subscriber(request.user)
+    middle_ad = get_active_ads('Article Details Middle') if not is_subscriber else None
+    sidebar_ad = get_active_ads('Article Details Sidebar') if not is_subscriber else None
 
     return render(request, 'base/statePolitics.html', {
+
         'hero': hero,
         'left_articles': left_articles,
         'right_articles': right_articles,
@@ -269,10 +299,13 @@ def categoryArticlesView(request, slug):
     left_articles  = rest[::2][:3]
     right_articles = rest[1::2][:3]
 
-    middle_ad = get_active_ads('Article Details Middle')
-    sidebar_ad = get_active_ads('Article Details Sidebar')
+    # Ad removal for subscribers
+    is_subscriber = is_user_subscriber(request.user)
+    middle_ad = get_active_ads('Article Details Middle') if not is_subscriber else None
+    sidebar_ad = get_active_ads('Article Details Sidebar') if not is_subscriber else None
 
     return render(request, 'base/categoryArticles.html', {
+
         'category': category,
         'hero': hero,
         'left_articles': left_articles,
@@ -331,16 +364,25 @@ def homePage(request):
         article.read_time = max(1, word_count // 200)
 
     # Fetch active homepage ads
-    display_ads = get_active_ads('Homepage Middle', count=3)
-    display_ad = display_ads[0] if len(display_ads) > 0 else None
-    display_ad_2 = display_ads[1] if len(display_ads) > 1 else None
-    display_ad_3 = display_ads[2] if len(display_ads) > 2 else None
+    is_subscriber = is_user_subscriber(request.user)
+    display_ad = None
+    display_ad_2 = None
+    display_ad_3 = None
+    sidebar_ad_1 = None
+    sidebar_ad_2 = None
 
-    sidebar_ads = get_active_ads('Homepage Sidebar', count=2)
-    sidebar_ad_1 = sidebar_ads[0] if len(sidebar_ads) > 0 else None
-    sidebar_ad_2 = sidebar_ads[1] if len(sidebar_ads) > 1 else None
+    if not is_subscriber:
+        display_ads = get_active_ads('Homepage Middle', count=3)
+        display_ad = display_ads[0] if len(display_ads) > 0 else None
+        display_ad_2 = display_ads[1] if len(display_ads) > 1 else None
+        display_ad_3 = display_ads[2] if len(display_ads) > 2 else None
+
+        sidebar_ads = get_active_ads('Homepage Sidebar', count=2)
+        sidebar_ad_1 = sidebar_ads[0] if len(sidebar_ads) > 0 else None
+        sidebar_ad_2 = sidebar_ads[1] if len(sidebar_ads) > 1 else None
 
     return render(request, 'base/base.html', {
+
         'hero_article': hero_article,
         'trending_articles': trending_articles,
         'latest_articles': latest_articles,
@@ -1616,3 +1658,46 @@ def adminPanelDocumentActionView(request, user_id, doc_slug, action):
         return JsonResponse({"status": "success", "message": f"{doc_slug} rejected"})
     
     return JsonResponse({"error": "Invalid action"}, status=400)
+
+def read_article_tts_view(request, article_id):
+    """
+    Backend implementation of TTS using pyttsx3 logic from test.py.
+    Generates an audio file and returns the URL.
+    """
+    article = get_object_or_404(News_article, id=article_id)
+    
+    # Combine title and content, then strip HTML
+    full_text = f"{article.title}. {article.content}"
+    clean_text = strip_tags(full_text)
+    
+    # Define output path in media directory
+    audio_dir = os.path.join(settings.MEDIA_ROOT, 'tts_audio')
+    if not os.path.exists(audio_dir):
+        os.makedirs(audio_dir)
+        
+    filename = f"article_{article.id}.mp3"
+    filepath = os.path.join(audio_dir, filename)
+    
+    try:
+        # Initialize engine (using logic from test.py)
+        # Note: pyttsx3 might have issues with concurrency in some servers
+        engine = pyttsx3.init()
+        engine.setProperty('rate', 150)
+        engine.setProperty('volume', 1.0)
+        
+        voices = engine.getProperty('voices')
+        if len(voices) > 1:
+            engine.setProperty('voice', voices[1].id)
+            
+        # Save to file
+        engine.save_to_file(clean_text, filepath)
+        engine.runAndWait()
+        engine.stop()
+        
+        audio_url = f"{settings.MEDIA_URL}tts_audio/{filename}"
+        return JsonResponse({'status': 'success', 'audio_url': audio_url})
+        
+    except Exception as e:
+        print(f"TTS Error: {e}")
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+

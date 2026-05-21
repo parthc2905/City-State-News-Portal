@@ -8,13 +8,34 @@ from .models import Subscription, SubscriptionTransaction
 
 @login_required
 def pricingView(request):
-    return render(request, 'subscriptions/pricing.html')
+    active_subscription = Subscription.objects.filter(
+        user=request.user, 
+        status='Active', 
+        end_date__gte=timezone.now()
+    ).first()
+    
+    canceled_subscription = Subscription.objects.filter(
+        user=request.user,
+        status='Canceled',
+        end_date__gte=timezone.now()
+    ).first()
+
+    return render(request, 'subscriptions/pricing.html', {
+        'active_subscription': active_subscription,
+        'canceled_subscription': canceled_subscription
+    })
+
+
 
 @login_required
 def initiateSubscriptionPaymentView(request, plan_type):
+    # Normalize plan_type
+    plan_type = plan_type.capitalize()
+    
     if plan_type not in ['Monthly', 'Yearly']:
-        messages.error(request, "Invalid subscription plan.")
+        messages.error(request, f"Invalid subscription plan: {plan_type}")
         return redirect('subscription_pricing')
+
 
     # Pricing mapping
     prices = {
@@ -73,8 +94,40 @@ def subscriptionPaymentSuccessView(request, transaction_id):
     
     subscription.save()
 
+    # Send confirmation email
+    try:
+        from django.core.mail import send_mail
+        from django.conf import settings
+        
+        subject = "Welcome to CIVIX Premium!"
+        message = f"Hello {request.user.first_name or 'Reader'},\n\nThank you for subscribing to the {subscription.plan_type} plan! Your premium access is now active until {subscription.end_date.strftime('%B %d, %Y')}.\n\nEnjoy an ad-free experience and unlimited access to local news across India.\n\nBest regards,\nThe CIVIX Team"
+        
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[request.user.email],
+            fail_silently=True
+        )
+    except Exception as e:
+        print(f"Error sending subscription email: {e}")
+
     messages.success(request, f"Subscription activated successfully! Enjoy premium features until {subscription.end_date.strftime('%B %d, %Y')}.")
     return redirect('home')
+
+@login_required
+def cancelSubscriptionView(request, subscription_id):
+    subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
+    
+    if subscription.status == 'Active':
+        subscription.status = 'Canceled'
+        subscription.save()
+        messages.success(request, "Your subscription has been canceled. You will still have access until the end of your billing period.")
+    else:
+        messages.error(request, "This subscription cannot be canceled.")
+        
+    return redirect('subscription_pricing')
+
 
 @login_required
 def subscriptionPaymentFailedView(request, transaction_id):

@@ -76,9 +76,13 @@
                             </button>
                             <div class="more-options-dropdown">
                                 <ul class="more-options-list">
+                                    <li class="more-options-item" onclick="handleReadArticle('{{ article.id }}')">
+                                        <i id="read-icon">🔊</i> <span id="read-text">Read Article</span>
+                                    </li>
                                     <li class="more-options-item" onclick="handleSaveArticle('{{ article.id }}')">
                                         <i>🔖</i> Save Article
                                     </li>
+
                                     <li class="more-options-item report" onclick="handleReportArticle('{{ article.id }}')">
                                         <i>🚩</i> Report Article
                                     </li>
@@ -293,7 +297,52 @@
 
     <script src="{% static 'js/main.js' %}"></script>
     <script>
+        let currentAudio = null;
+        function handleReadArticle(articleId) {
+            const btnText = document.getElementById('read-text');
+            const btnIcon = document.getElementById('read-icon');
+            
+            if (currentAudio && !currentAudio.paused) {
+                currentAudio.pause();
+                btnText.textContent = 'Read Article';
+                btnIcon.textContent = '🔊';
+                return;
+            }
+
+            const originalText = btnText.textContent;
+            btnText.textContent = 'Generating...';
+            btnIcon.textContent = '⏳';
+
+            fetch(`/article/read/${articleId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (currentAudio) currentAudio.pause();
+                        currentAudio = new Audio(data.audio_url);
+                        currentAudio.play();
+                        btnText.textContent = 'Stop Reading';
+                        btnIcon.textContent = '⏹';
+                        
+                        currentAudio.onended = () => {
+                            btnText.textContent = 'Read Article';
+                            btnIcon.textContent = '🔊';
+                        };
+                    } else {
+                        alert('Error: ' + data.message);
+                        btnText.textContent = 'Read Article';
+                        btnIcon.textContent = '🔊';
+                    }
+                })
+                .catch(error => {
+                    console.error('TTS Error:', error);
+                    alert('Failed to generate audio.');
+                    btnText.textContent = 'Read Article';
+                    btnIcon.textContent = '🔊';
+                });
+        }
+
         function artShareOn(platform) {
+
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.querySelector('.art-title').textContent.trim());
             let shareUrl = '';

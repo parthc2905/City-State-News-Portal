@@ -426,6 +426,16 @@
     <p class="page-subtitle">Join CIVIX's network of citizen journalists and contribute to hyper-local news coverage across India.</p>
   </div>
 
+  {% if messages %}
+  <div style="max-width: 800px; margin: 0 auto 24px;">
+    {% for message in messages %}
+    <div style="padding: 16px; border-radius: 8px; margin-bottom: 12px; background: {% if message.tags == 'error' %}#fef2f2; color: #991b1b; border: 1px solid #fee2e2;{% else %}#f0fdf4; color: #166534; border: 1px solid #dcfce7;{% endif %}; font-size: 14px; font-weight: 500;">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- PROGRESS STEPS -->
   <div class="progress-steps">
     <div class="step active" id="step1">
@@ -438,7 +448,7 @@
     </div>
   </div>
 
-  <form id="journalistForm" action="{% url 'journalist_application' %}" method="POST" enctype="multipart/form-data">
+  <form id="journalistForm" action="{% url 'journalist_application' %}" method="POST" enctype="multipart/form-data" onsubmit="return validateJournalistForm(event)" novalidate>
     {% csrf_token %}
     
     <!-- ═══ SECTION 1: PERSONAL INFORMATION ═══ -->
@@ -468,7 +478,7 @@
           </div>
           <div class="form-group">
             <label class="form-label">Phone Number <span class="required">*</span></label>
-            <input type="tel" class="form-input" name="phone" value="{{ request.user.phone|default:'' }}" required placeholder="+91 98765 43210">
+            <input type="tel" class="form-input" name="phone" value="{{ request.user.phone|default:'' }}" required placeholder="9876543210" pattern="[1-9][0-9]{9}" title="Phone number must be 10 digits and cannot start with 0">
           </div>
         </div>
 
@@ -613,6 +623,19 @@ function nextSection(sectionNum) {
         isValid = false;
         break; // Show tooltip for first empty required field
       }
+      
+      // Custom phone validation if it's the phone field
+      if (field.name === 'phone') {
+        const phonePattern = /^[1-9][0-9]{9}$/;
+        if (!phonePattern.test(field.value)) {
+            field.setCustomValidity('Phone number must be 10 digits and cannot start with 0');
+            field.reportValidity();
+            isValid = false;
+            break;
+        } else {
+            field.setCustomValidity('');
+        }
+      }
     }
     if (!isValid) return;
   }
@@ -636,6 +659,38 @@ function nextSection(sectionNum) {
 
 function prevSection(sectionNum) {
   nextSection(sectionNum);
+}
+
+function validateJournalistForm(event) {
+  // Basic fields validation for all sections
+  const form = document.getElementById('journalistForm');
+  const requiredFields = form.querySelectorAll('[required]:not([type="file"])');
+  for (const field of requiredFields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      const section = field.closest('.section');
+      if (section) {
+        const sectionId = section.id.replace('section', '');
+        nextSection(parseInt(sectionId));
+      }
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  // Check if ID is uploaded (mandatory)
+  const idInput = document.getElementById('aadhaar');
+  const hasPreviouslyUploaded = {% if request.user.journalist_application.aadhaar_file %}true{% else %}false{% endif %};
+  
+  if (!idInput.files.length && !hasPreviouslyUploaded) {
+    alert('required documents must upload');
+    nextSection(2);
+    event.preventDefault();
+    return false;
+  }
+  
+  alert('Your application is received! We will review your documents and update you soon.');
+  return true;
 }
 
 // File upload handler
@@ -673,8 +728,24 @@ function removeDocument(inputId) {
     document.getElementById(inputId + '-upload').classList.remove('has-file');
     document.getElementById(inputId + '-name').textContent = 'Removed';
     document.getElementById('remove_' + inputId).value = 'true';
-    document.getElementById('btn-remove-' + inputId).style.display = 'none';
+    const removeBtn = document.getElementById('btn-remove-' + inputId);
+    if (removeBtn) removeBtn.style.display = 'none';
 }
+
+// Add real-time phone validation
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.querySelector('input[name="phone"]');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            const phonePattern = /^[1-9][0-9]{9}$/;
+            if (this.value && !phonePattern.test(this.value)) {
+                this.setCustomValidity('Phone number must be 10 digits and cannot start with 0');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+});
 </script>
 
 </body>

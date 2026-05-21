@@ -455,6 +455,16 @@
     <p class="page-subtitle">Reach millions of engaged readers across India's cities with CIVIX's hyper-local advertising platform.</p>
   </div>
 
+  {% if messages %}
+  <div style="max-width: 800px; margin: 0 auto 24px;">
+    {% for message in messages %}
+    <div style="padding: 16px; border-radius: 8px; margin-bottom: 12px; background: {% if message.tags == 'error' %}#fef2f2; color: #991b1b; border: 1px solid #fee2e2;{% else %}#f0fdf4; color: #166534; border: 1px solid #dcfce7;{% endif %}; font-size: 14px; font-weight: 500;">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <!-- PROGRESS STEPS -->
   <div class="progress-steps">
     <div class="step active" id="step1">
@@ -471,7 +481,7 @@
     </div>
   </div>
 
-  <form id="advertiserForm" method="POST" enctype="multipart/form-data" onsubmit="return validateBeforeSubmit(event)">
+  <form id="advertiserForm" method="POST" enctype="multipart/form-data" onsubmit="return validateBeforeSubmit(event)" novalidate>
     {% csrf_token %}
     
     <!-- Hidden fields for multi-select -->
@@ -537,7 +547,7 @@
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-primary" onclick="nextSection(2)">Continue →</button>
+        <button type="button" class="btn btn-primary" onclick="validateAndNext(2)">Continue →</button>
       </div>
     </div>
 
@@ -593,7 +603,7 @@
 
       <div class="form-actions">
         <button type="button" class="btn btn-secondary" onclick="prevSection(1)">← Back</button>
-        <button type="button" class="btn btn-primary" onclick="nextSection(3)">Continue →</button>
+        <button type="button" class="btn btn-primary" onclick="validateAndNext(3)">Continue →</button>
       </div>
     </div>
 
@@ -618,44 +628,52 @@
 
         <div class="form-group">
           <label class="form-label">Company Registration Certificate <span class="required">*</span></label>
-          <div class="file-upload" onclick="document.getElementById('id_registration_certificate').click()" id="registration-upload">
+          <div class="file-upload {% if application.registration_certificate %}has-file{% endif %}" onclick="document.getElementById('id_registration_certificate').click()" id="registration-upload">
             <div class="upload-icon">🏢</div>
-            <div class="upload-text">Click to upload Registration Certificate</div>
+            <div class="upload-text">{% if application.registration_certificate %}Click to upload a new Certificate instead{% else %}Click to upload Registration Certificate{% endif %}</div>
             <div class="upload-hint">PDF format (max 10MB)</div>
-            <div class="file-name" id="registration-name"></div>
+            <div class="file-name" id="registration-name">
+                {% if application.registration_certificate %}✓ Previously uploaded file exists{% endif %}
+            </div>
           </div>
           {{ form.registration_certificate }}
         </div>
 
         <div class="form-group">
           <label class="form-label">GST Registration Certificate <span class="required">*</span></label>
-          <div class="file-upload" onclick="document.getElementById('id_gst_certificate').click()" id="gst-upload">
+          <div class="file-upload {% if application.gst_certificate %}has-file{% endif %}" onclick="document.getElementById('id_gst_certificate').click()" id="gst-upload">
             <div class="upload-icon">💼</div>
-            <div class="upload-text">Click to upload GST Certificate</div>
+            <div class="upload-text">{% if application.gst_certificate %}Click to upload a new GST Certificate instead{% else %}Click to upload GST Certificate{% endif %}</div>
             <div class="upload-hint">PDF format (max 10MB)</div>
-            <div class="file-name" id="gst-name"></div>
+            <div class="file-name" id="gst-name">
+                {% if application.gst_certificate %}✓ Previously uploaded file exists{% endif %}
+            </div>
           </div>
           {{ form.gst_certificate }}
         </div>
 
         <div class="form-group">
           <label class="form-label">PAN Card (Company) <span class="required">*</span></label>
-          <div class="file-upload" onclick="document.getElementById('id_pan_card').click()" id="pan-upload">
+          <div class="file-upload {% if application.pan_card %}has-file{% endif %}" onclick="document.getElementById('id_pan_card').click()" id="pan-upload">
             <div class="upload-icon">📋</div>
-            <div class="upload-text">Click to upload PAN Card</div>
+            <div class="upload-text">{% if application.pan_card %}Click to upload a new PAN Card instead{% else %}Click to upload PAN Card{% endif %}</div>
             <div class="upload-hint">PDF format (max 10MB)</div>
-            <div class="file-name" id="pan-name"></div>
+            <div class="file-name" id="pan-name">
+                {% if application.pan_card %}✓ Previously uploaded file exists{% endif %}
+            </div>
           </div>
           {{ form.pan_card }}
         </div>
 
         <div class="form-group">
           <label class="form-label">Bank Account Details <span class="required">*</span></label>
-          <div class="file-upload" onclick="document.getElementById('id_bank_details').click()" id="bank-upload">
+          <div class="file-upload {% if application.bank_details %}has-file{% endif %}" onclick="document.getElementById('id_bank_details').click()" id="bank-upload">
             <div class="upload-icon">🏦</div>
-            <div class="upload-text">Click to upload Bank Details</div>
+            <div class="upload-text">{% if application.bank_details %}Click to upload new Bank Details instead{% else %}Click to upload Bank Details{% endif %}</div>
             <div class="upload-hint">Cancelled cheque or bank statement (PDF, max 10MB)</div>
-            <div class="file-name" id="bank-name"></div>
+            <div class="file-name" id="bank-name">
+                {% if application.bank_details %}✓ Previously uploaded file exists{% endif %}
+            </div>
           </div>
           {{ form.bank_details }}
         </div>
@@ -673,6 +691,33 @@
 
 <script>
 // Section navigation
+function validateAndNext(sectionNum) {
+    const currentSection = document.querySelector('.section.active');
+    const requiredFields = currentSection.querySelectorAll('[required]:not([type="file"]):not([type="hidden"])');
+    for (const field of requiredFields) {
+        if (!field.checkValidity()) {
+            field.reportValidity();
+            return;
+        }
+    }
+    
+    // Custom check for cities in section 2
+    if (sectionNum === 3) {
+        const cities = [];
+        document.querySelectorAll('#section2 input[id]:not([name])').forEach(cb => {
+            if (cb.checked && ['mumbai','delhi','bengaluru','pune','ahmedabad','hyderabad','chennai','kolkata'].includes(cb.id)) {
+                cities.push(cb.value);
+            }
+        });
+        if (cities.length === 0) {
+            alert('Please select at least one target city');
+            return;
+        }
+    }
+    
+    nextSection(sectionNum);
+}
+
 function nextSection(sectionNum) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'completed'));
@@ -728,6 +773,22 @@ Object.keys(fileFields).forEach(id => {
 });
 
 function validateBeforeSubmit(event) {
+    const form = document.getElementById('advertiserForm');
+    const requiredFields = form.querySelectorAll('[required]:not([type="file"]):not([type="hidden"])');
+    for (const field of requiredFields) {
+        if (!field.checkValidity()) {
+            field.reportValidity();
+            // Find which section the field is in and navigate to it
+            const section = field.closest('.section');
+            if (section) {
+                const sectionId = section.id.replace('section', '');
+                nextSection(parseInt(sectionId));
+            }
+            event.preventDefault();
+            return false;
+        }
+    }
+
     // Populate hidden fields from checkboxes
     const cities = [];
     document.querySelectorAll('#section2 input[id]:not([name])').forEach(cb => {
@@ -747,14 +808,76 @@ function validateBeforeSubmit(event) {
     if (cities.length === 0) {
         alert('Please select at least one target city');
         nextSection(2);
+        event.preventDefault();
         return false;
     }
     
     document.getElementById('id_target_cities').value = cities.join(', ');
     document.getElementById('id_ad_format_preference').value = formats.join(', ');
+
+    // Final check for required files
+    const fileLabels = {
+        'id_registration_certificate': 'Company Registration Certificate',
+        'id_gst_certificate': 'GST Registration Certificate',
+        'id_pan_card': 'PAN Card (Company)',
+        'id_bank_details': 'Bank Account Details'
+    };
     
+    const existingFiles = {
+        'id_registration_certificate': {% if application.registration_certificate %}true{% else %}false{% endif %},
+        'id_gst_certificate': {% if application.gst_certificate %}true{% else %}false{% endif %},
+        'id_pan_card': {% if application.pan_card %}true{% else %}false{% endif %},
+        'id_bank_details': {% if application.bank_details %}true{% else %}false{% endif %}
+    };
+
+    const missing = [];
+    
+    for (const id in fileLabels) {
+        const input = document.getElementById(id);
+        const hasExisting = existingFiles[id];
+        if ((!input.files || input.files.length === 0) && !hasExisting) {
+            missing.push(fileLabels[id]);
+        }
+    }
+
+    if (missing.length > 0) {
+        alert('required documents must upload');
+        nextSection(3);
+        event.preventDefault();
+        return false;
+    }
+    
+    alert('Your application is received! We will review your documents and update you soon.');
     return true;
 }
+
+// Add real-time validation for GST and Phone
+document.addEventListener('DOMContentLoaded', function() {
+    const gstInput = document.getElementById('id_gst_number');
+    if (gstInput) {
+        gstInput.addEventListener('input', function() {
+            const gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+            this.value = this.value.toUpperCase();
+            if (this.value && !gstPattern.test(this.value)) {
+                this.setCustomValidity('Invalid GST format. Example: 22AAAAA0000A1Z5');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+
+    const phoneInput = document.getElementById('id_phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            const phonePattern = /^[1-9][0-9]{9}$/;
+            if (this.value && !phonePattern.test(this.value)) {
+                this.setCustomValidity('Phone number must be 10 digits and cannot start with 0');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+});
 </script>
 </body>
 </html>

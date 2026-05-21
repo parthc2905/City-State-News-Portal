@@ -22,7 +22,7 @@ class News_article(models.Model):
     content = models.TextField(null=False)
     category_id = models.ForeignKey(Category, on_delete=models.CASCADE)
     city_id = models.ForeignKey(City, on_delete=models.CASCADE)
-    author_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     choice = (('draft', 'draft'),("pending", "pending"), ("approved", "approved"), ("rejected", "rejected"))
     status = models.CharField(max_length=20, choices=choice, null=False, default='pending')
     VISIBILITY_CHOICES = [
